@@ -30,11 +30,9 @@ parfor k = 1:solver_step
     %maximize the minimum wrench
     [min_w] = w_solver(p_A,b);
     %store results
-    if (any(min_w))
-        wrench(:,k) = min_w;
-        n(k) = norm(min_w);
-        Amax(:,:,k) = p_A;
-    end
+    wrench(:,k) = min_w;
+    n(k) = norm(min_w);
+    Amax(:,:,k) = p_A;
 %     T = toc;
 %     sumT = sumT + T;
 %     if (mod(k,round(nCases/modsplit))==0)
