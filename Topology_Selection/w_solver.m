@@ -10,14 +10,22 @@ function [min_w] = w_solver(A,b,c)
 % end
 l = length(b);
 min_speeds = zeros(nrotors,l);
-I = eye(nrotors);
-z = ones(nrotors,1)*-eps;
-in = ones(nrotors,1)*inf;
-options = optimset('Display','off');
+H = eye(nrotors);
+f = zeros(nrotors,1);
+options = optimset('Display','off', 'MaxIter',100000);
 min_w = inf;
+
+if(size(null(A),2) ~= 1)
+    min_w = 0;
+    disp('null space wrong');
+    return;
+end
+
 for ii = 1:l
     try
-        min_speeds = quadprog(I,z,[],[],A,b(:,ii),z,in,[],options);
+        b(:,ii)
+        min_speeds = quadprog(H,f,[],[],A,b(:,ii),f,[],[], options);
+        A*min_speeds
     catch
         min_w = 0;
         return;
