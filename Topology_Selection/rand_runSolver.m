@@ -9,7 +9,7 @@ b = b_gen6(step);
 % h = plot(scat(1,:), scat(2,:), 'o-');
 % hold on;
 
-c = 1.51569;
+c = 1;
 
 best_A = [
    -0.4630    0.1688   -0.8032   -0.5595   -0.2376   -0.8357   -0.9806
@@ -21,10 +21,13 @@ best_A = [
 scat = zeros(2, 1);
 
 tic;
+delta = 0;
 
-solver_step = 20;
+solver_step = 10;
 nstep = 10;
 modsplit = 1;
+
+t_start = now;
 
 for i = 0:nstep-1
     A = rand_A_gen(solver_step);
@@ -51,18 +54,23 @@ for i = 0:nstep-1
     [max_c_found, best_ind] = max(n);
     
     if(max_c_found > c)
-        fprintf('Found better c: %03d\n\n',c);
+        fprintf('Found better c: %03d\n\n',max_c_found);
         best_A = A(:,:,best_ind)
         c = max_c_found;
     end
     
     scat = [scat, [i;c]];
     
-    T = toc;
-    
     if (mod(i+1,modsplit) == 0)
-        fprintf('%02d / %02d - %05.0f sec / %05.0f sec\n',...
-            i+1, nstep, T, (T/(i+1)*nstep));
+        
+        delta = delta + toc
+        n_total = nstep * solver_step;
+        n_run = (i+1) * solver_step;
+        n_left = n_total - n_run;
+        
+        fprintf('%02d / %02d - %03d sec / %03d sec\n',...
+            n_run, n_total, ...
+            (delta / n_run), (delta / n_run) * (n_left));
         display(['timestamp: ' datestr(now, 'HH:MM:SS')])
         fprintf('c: %03d\n\n',c);
 %         set(h, 'XData', scat(1,:));
@@ -73,7 +81,7 @@ for i = 0:nstep-1
 end
 
 figure(2);
-T = toc
+T = toc;
 Q = best_A(1:3,:);
 P = -cross(Q,best_A(4:6,:));
 quiver3(P(1,:),P(2,:),P(3,:),Q(1,:),Q(2,:),Q(3,:));
