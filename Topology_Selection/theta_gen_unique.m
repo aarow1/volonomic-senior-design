@@ -50,7 +50,7 @@ end
     c11_2 = nchoosek([1:n-1],2);
     num = nchoosek(n-1,2);
     theta4 = zeros([1320, 5]);
-for i = 1:12
+for i = 1:n
     opts = v;
     a = v(i);
     opts(opts == a) = []; % all angles except first chosen
@@ -68,7 +68,7 @@ end
 
 %% choose 2 2 1
 theta5 = zeros([2640 5]);
-for i = 1:12
+for i = 1:n
     opts = v;
     a = v(i);
     opts(opts == a) = [];
@@ -87,5 +87,40 @@ for i = 1:12
         theta5(g_4,:) = [a b c b c];
     end
 end
+
+%% choose 2 1 1 1
+c11_3 = nchoosek([1:11],3);
+num3 = nchoosek(n-1,3);
+theta6 = zeros([11880 5]);
+for i = 1:n
+    opts = v;
+    a = v(i);
+    opts(opts == a) = [];
+    for j = 1:num
+        b = opts(c11_3(j,1));
+        c = opts(c11_3(j,2));
+        d = opts(c11_3(j,3));
+
+        g_1 = (i-1)*990 + 6*j-5;
+        g_2 = (i-1)*990 + 6*j-4;
+        g_3 = (i-1)*990 + 6*j-3;
+        g_4 = (i-1)*990 + 6*j-2;
+        g_5 = (i-1)*990 + 6*j-1;
+        g_6 = (i-1)*990 + 6*j;
+
+        theta6(g_1,:) = [a a b c d];
+        theta6(g_2,:) = [a a b d c];
+        theta6(g_3,:) = [a a c b d];
+        theta6(g_4,:) = [b a d c a];
+        theta6(g_5,:) = [d a b c a];
+        theta6(g_6,:) = [c a d b a];
+    end
+end
+
+%% choose 1 1 1 1 1
+c12_5 = nchoosek([1:12],5);
+num5 = nchoosek(12,5);
+
+
 %% Total angle
 theta = [theta1(:,:); theta2(:,:); theta3(:,:); theta4(:,:); theta5(:,:)];
