@@ -20,14 +20,14 @@ display(['timestamp: ' datestr(now, 'HH:MM:SS')])
 step = pi/6;
 b = b_gen6(step);
 
-solver_step = 60;
-nstep = 10000;
+solver_step = 28992;
+nstep = 1;
 c = 0;
 max_c_found = 0;
-start_idx = 1;
-modsplit = 1000;
+start_idx = 600001;
+modsplit = 1;
 
-saveData = 0;
+saveData = 1;
 outputDir = 'unique_results/';
 file_idx = [0 50000];
 best_A = zeros(6,7);
@@ -36,7 +36,7 @@ tic;
 for i = 0:nstep-1
     lwr = start_idx+i*solver_step; upr = lwr+solver_step;
     p_A = []; wrench = []; n = []; Amax = [];
-   for k = 1:solver_step
+   parfor k = 1:solver_step
         %     tic;
         %recall position matrix
         p_A = A(:,:,k+lwr-1);
@@ -55,14 +55,14 @@ for i = 0:nstep-1
         %     end
         % ctr = ctr + 1;
     end
-    [max_c_found, best_ind] = max(n);
+%     [max_c_found, best_ind] = max(n);
     
-    if(max_c_found > c)
-        fprintf('Found better c: %03d\n\n',c);
-        best_A = A(:,:,best_ind)
-        c = max_c_found;
-    end
-    
+%     if(max_c_found > c)
+%         fprintf('Found better c: %03d\n\n',c);
+%         best_A = A(:,:,best_ind)
+%         c = max_c_found;
+%     end
+%     
 T = toc;
     % [~,I] = max(n);s
     % Amax = A(:,:,I);

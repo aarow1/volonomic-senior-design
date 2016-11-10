@@ -45,9 +45,9 @@ for i = 1:length(b)
     %     find min(R) for topology
     %     store this with reference to specific topology
     min_w = min(min_w, norm(R));
-    if (min_w < c)
-        return;
-    end
+%     if (min_w < c)
+%         return;
+%     end
 end
 end
 
