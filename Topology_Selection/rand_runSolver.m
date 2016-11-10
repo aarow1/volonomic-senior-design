@@ -25,8 +25,8 @@ scat = zeros(2, 1);
 tic;
 delta = 0;
 
-solver_step = 50000;
-nstep = 10;
+solver_step = 10000;
+nstep = 100;
 modsplit = 1;
 
 t_start = now;
