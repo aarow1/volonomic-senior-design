@@ -1,6 +1,6 @@
 clear all; close all;
-inputDir = './01-INPUT';
-outputDir = './02-OUTPUT';
+inputDir = './RESULTS/01-INPUT';
+outputDir = './RESULTS/02-OUTPUT';
 files = dir(inputDir);
 nfiles = size(files,1)-2;
 jobstamp = datestr(now, 'yyyy-mm-dd-HH-MM-SS');
@@ -20,8 +20,8 @@ for i = 1:nfiles
     n = length(w);
 %     curr_n = 0;
     for j = 1:n
-        curr_n = w(j);
-        if (curr_n > maxMin_overall)
+        if abs(round(maxMin_overall - w(j),2)) > 0
+            curr_n = w(j);
             A = Amax(:,:,j);
             maxA_overall = A;
             maxMin_overall = max(maxMin_overall, curr_n);
