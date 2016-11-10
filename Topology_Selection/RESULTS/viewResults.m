@@ -9,6 +9,14 @@ mkdir(outputDir, jobstamp);
 mkdir([outputDir '/' jobstamp], 'data');
 maxMin_overall = 0;
 maxA_overall = [];
+% 
+%     0.5000    0.3090    0.7006   -0.8090   -0.2676   -0.0000   -1.0000
+%          0    0.9511   -0.5090   -0.5878    0.8236   -1.0000    0.0000
+%    -0.8660    0.0000    0.5000    0.0000    0.5000         0         0
+%     0.8660   -0.0000    0.4045    0.0000   -0.1545   -1.0000   -0.0000
+%          0   -0.0000   -0.2939    0.0000    0.4755    0.0000   -1.0000
+%     0.5000    1.0000   -0.8660    1.0000   -0.8660         0         0
+
 for i = 1:nfiles
     [~,loadName,loadExt] = fileparts(files(i+2).name);
     load([inputDir '/' loadName loadExt]);
