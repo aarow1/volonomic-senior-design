@@ -20,8 +20,8 @@ display(['timestamp: ' datestr(now, 'HH:MM:SS')])
 step = pi/6;
 b = b_gen6(step);
 
-solver_step = 50;
-nstep = 10000;
+solver_step = 1;
+nstep = 5;
 c = 1.4;
 max_c_found = 0;
 start_idx = 1;
@@ -37,12 +37,12 @@ tic;
 for i = 0:nstep-1
     lwr = start_idx+i*solver_step; upr = lwr+solver_step;
     p_A = []; wrench = []; n = []; Amax = [];
-    parfor k = 1:solver_step
+    for k = 1:solver_step
         %     tic;
         %recall position matrix
         p_A = A(:,:,k+lwr);
         %maximize the minimum wrench
-        [min_w] = w_solver(p_A,b,c);
+        [min_w] = notQuadProg(p_A,b,c);
         %store results
         
         wrench(:,k) = min_w;
