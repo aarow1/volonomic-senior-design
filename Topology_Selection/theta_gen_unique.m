@@ -47,17 +47,17 @@ for i = 1:66 % a a b a b
 end
 
 %% choose 3 1 1
+    c11_2 = nchoosek([1:n-1],2);
+    num = nchoosek(n-1,2);
+    theta4 = zeros([1320, 5]);
 for i = 1:12
     opts = v;
     a = v(i);
     opts(opts == a) = []; % all angles except first chosen
-    combo_2 = nchoosek([1:n-1],2);
-    num = nchoosek(n-1,2);
     %     combo_2(end+1:end+num,:) = [combo_2(:,2), combo_2(:,1)];
-    theta4 = zeros([1320, 5]);
     for j = 1:num
-        b = opts(combo_2(j,1));
-        c = opts(combo_2(j,2));
+        b = opts(c11_2(j,1));
+        c = opts(c11_2(j,2));
         
         odd = (i-1)*110 + 2*j-1;
         even = (i-1)*110 + 2*j;
@@ -66,5 +66,26 @@ for i = 1:12
     end
 end
 
+%% choose 2 2 1
+theta5 = zeros([2640 5]);
+for i = 1:12
+    opts = v;
+    a = v(i);
+    opts(opts == a) = [];
+    for j = 1:num
+        b = opts(c11_2(j,1));
+        c = opts(c11_2(j,2));
+        
+        g_1 = (i-1)*220 + 4*j-3;
+        g_2 = (i-1)*220 + 4*j-2;
+        g_3 = (i-1)*220 + 4*j-1;
+        g_4 = (i-1)*220 + 4*j;
+        
+        theta5(g_1,:) = [a b c c b];
+        theta5(g_2,:) = [a c b b c];
+        theta5(g_3,:) = [a b b c c];
+        theta5(g_4,:) = [a b c b c];
+    end
+end
 %% Total angle
-theta = [theta1(:,:); theta2(:,:); theta3(:,:); theta4(:,:)];
+theta = [theta1(:,:); theta2(:,:); theta3(:,:); theta4(:,:); theta5(:,:)];
