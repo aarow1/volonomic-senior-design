@@ -2,8 +2,6 @@ clearvars -except A
 display('-----START-----')
 display(['timestamp: ' datestr(now, 'HH:MM:SS')])
 
-step = pi/6;
-b = b_gen6(step);
 
 % b = [1 0 0];
 % B = [1 0 -1 0; 0 1 0 -1; -1 1 -1 1];
@@ -17,14 +15,26 @@ b = b_gen6(step);
 % fprintf('Solving %d Cases\n',nCases);
 % sumT = 0;
 % ctr = 1;
-tic;
-solver_step = 4;
-nstep = 100;
-c = .3;
 
-modsplit = 1;
+%% PARAMETERS
+step = pi/6;
+b = b_gen6(step);
+
+solver_step = 20;
+nstep = 1000;
+c = 1.4;
+max_c_found = 0;
+start_idx = 1;
+modsplit = 100;
+
+saveData = 1;
+
+best_A = zeros(6,7);
+tic;
+
+%% ITERATE
 for i = 0:nstep-1
-    lwr = 1+i*solver_step; upr = lwr+solver_step;
+    lwr = start_idx+i*solver_step; upr = lwr+solver_step;
     p_A = []; wrench = []; n = []; Amax = [];
     parfor k = 1:solver_step
         %     tic;
@@ -45,7 +55,14 @@ for i = 0:nstep-1
         %     end
         % ctr = ctr + 1;
     end
-    c = max([c n]);
+    [max_c_found, best_ind] = max(n);
+    
+    if(max_c_found > c)
+        fprintf('Found better c: %03d\n\n',c);
+        best_A = A(:,:,best_ind)
+        c = max_c_found;
+    end
+    
     % T = toc
     % [~,I] = max(n);s
     % Amax = A(:,:,I);
@@ -55,18 +72,22 @@ for i = 0:nstep-1
     % hold on
     % quiver3(zeros(1,7),zeros(1,7),zeros(1,7),P(1,:),P(2,:),P(3,:));
     T = toc;
-    data.Amax = Amax;
-    data.n = n;
-    data.wrench = wrench;
-    angle = 'pi_6-';
-    range = strcat(num2str(lwr),'-',num2str(upr));
-    filename = strcat(angle,range);
-    save(filename,'data');
+    
+    %save data
+    if saveData
+        data.Amax = Amax;
+        data.n = n;
+        data.wrench = wrench;
+        angle = 'pi_6-';
+        range = strcat(num2str(lwr),'-',num2str(upr));
+        filename = strcat(angle,range);
+        save(filename,'data');
+    end
     
     if (mod(i+1,modsplit) == 0)
-    fprintf('%02d / %02d - %05.0f min / %05.0f min\n',...
-        i+1, nstep, T/60, (T/(i+1)*nstep)/60);
-    display(['timestamp: ' datestr(now, 'HH:MM:SS')])
-     fprintf('c: %03d\n\n',c);
+        fprintf('%02d / %02d - %05.0f min / %05.0f min\n',...
+            i+1, nstep, T/60, (T/(i+1)*nstep)/60);
+        display(['timestamp: ' datestr(now, 'HH:MM:SS')])
+        fprintf('c: %03d\n\n',c);
     end
 end
