@@ -1,4 +1,5 @@
-clear all
+function theta = A_gen_unique()
+% clear all
 step = pi/6;
 v = [0:step:11*pi/6];
 n = length(v);
