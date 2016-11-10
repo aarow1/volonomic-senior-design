@@ -20,27 +20,26 @@ display(['timestamp: ' datestr(now, 'HH:MM:SS')])
 step = pi/6;
 b = b_gen6(step);
 
-solver_step = 1;
-nstep = 5;
-c = 1.4;
+solver_step = 60;
+nstep = 10000;
+c = 0;
 max_c_found = 0;
 start_idx = 1;
-modsplit = 100;
+modsplit = 1000;
 
 saveData = 0;
 outputDir = 'unique_results/';
-file_idx = [250000 300000];
+file_idx = [0 50000];
 best_A = zeros(6,7);
 tic;
-
 %% ITERATE
 for i = 0:nstep-1
     lwr = start_idx+i*solver_step; upr = lwr+solver_step;
     p_A = []; wrench = []; n = []; Amax = [];
-    for k = 1:solver_step
+   for k = 1:solver_step
         %     tic;
         %recall position matrix
-        p_A = A(:,:,k+lwr);
+        p_A = A(:,:,k+lwr-1);
         %maximize the minimum wrench
         [min_w] = notQuadProg(p_A,b,c);
         %store results
@@ -64,15 +63,15 @@ for i = 0:nstep-1
         c = max_c_found;
     end
     
-    % T = toc
+T = toc;
     % [~,I] = max(n);s
     % Amax = A(:,:,I);
-    % Q = Amax(1:3,:);
-    % P = -cross(Q,Amax(4:6,:));
-    % quiver3(P(1,:),P(2,:),P(3,:),Q(1,:),Q(2,:),Q(3,:));
-    % hold on
-    % quiver3(zeros(1,7),zeros(1,7),zeros(1,7),P(1,:),P(2,:),P(3,:));
-    T = toc;
+%     Q = Amax(1:3,:);
+%     P = -cross(Q,Amax(4:6,:));
+%     quiver3(P(1,:),P(2,:),P(3,:),Q(1,:),Q(2,:),Q(3,:));
+%     hold on
+%     quiver3(zeros(1,7),zeros(1,7),zeros(1,7),P(1,:),P(2,:),P(3,:));
+%     T = toc;
     
     %save data
     if saveData
@@ -92,8 +91,8 @@ for i = 0:nstep-1
         fprintf('c: %03d\n\n',c);
     end
 end
-filename = strcat(outputDir,num2str(file_idx(1)),'-',num2str(file_idx(2)));
-filename_A = strcat(filename,'_A');
-filename_c = strcat(filename,'_c');
-save(filename_A,'best_A');
-save(filename_c,'c');
+% filename = strcat(outputDir,num2str(file_idx(1)),'-',num2str(file_idx(2)));
+% filename_A = strcat(filename,'_A');
+% filename_c = strcat(filename,'_c');
+% save(filename_A,'best_A');
+% save(filename_c,'c');
