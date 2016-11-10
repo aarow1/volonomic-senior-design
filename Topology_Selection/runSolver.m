@@ -20,15 +20,16 @@ display(['timestamp: ' datestr(now, 'HH:MM:SS')])
 step = pi/6;
 b = b_gen6(step);
 
-solver_step = 20;
-nstep = 1000;
+solver_step = 50;
+nstep = 10000;
 c = 1.4;
 max_c_found = 0;
 start_idx = 1;
 modsplit = 100;
 
-saveData = 1;
-
+saveData = 0;
+outputDir = 'unique_results/';
+file_idx = [250000 300000];
 best_A = zeros(6,7);
 tic;
 
@@ -91,3 +92,8 @@ for i = 0:nstep-1
         fprintf('c: %03d\n\n',c);
     end
 end
+filename = strcat(outputDir,num2str(file_idx(1)),'-',num2str(file_idx(2)));
+filename_A = strcat(filename,'_A');
+filename_c = strcat(filename,'_c');
+save(filename_A,'best_A');
+save(filename_c,'c');
