@@ -9,21 +9,23 @@ b = b_gen6(step);
 % h = plot(scat(1,:), scat(2,:), 'o-');
 % hold on;
 
-c = 1;
+c = 0.5842;
 
 best_A = [
-   -0.4630    0.1688   -0.8032   -0.5595   -0.2376   -0.8357   -0.9806
-         0    0.5194    0.5835   -0.4065    0.7313    0.5492    0.1962
-   -0.8864   -0.8377    0.1200   -0.7223   -0.6393         0         0
-    0.8864    0.2589    0.0971   -0.5844    0.1976    0.5492   -0.1962
-         0    0.7967   -0.0705   -0.4246   -0.6080    0.8357   -0.9806
-   -0.4630    0.5462    0.9928    0.6915   -0.7690         0         0];
+
+   -0.9356   -0.1819   -0.5902   -0.0737    0.2886    0.8672    0.8635
+         0   -0.5599    0.4288   -0.0536   -0.8882    0.4980    0.5043
+   -0.3530    0.8083   -0.6840    0.9958   -0.3574         0         0
+    0.3530   -0.2498   -0.5533    0.8057    0.1105    0.4980   -0.5043
+         0   -0.7688    0.4020    0.5853   -0.3399   -0.8672    0.8635
+   -0.9356   -0.5887    0.7295    0.0911    0.9339         0         0 ];
+
 scat = zeros(2, 1);
 
 tic;
 delta = 0;
 
-solver_step = 10;
+solver_step = 50000;
 nstep = 10;
 modsplit = 1;
 
@@ -37,7 +39,7 @@ for i = 0:nstep-1
         %recall position matrix
         p_A = A(:,:,k);
         %maximize the minimum wrench
-        [min_w] = w_solver(p_A,b,c);
+        [min_w] = notQuadProg(p_A,b,c);
         %store results
         
         wrench(:,k) = min_w;
@@ -72,18 +74,22 @@ for i = 0:nstep-1
             n_run, n_total, ...
             (delta / n_run), (delta / n_run) * (n_left));
         display(['timestamp: ' datestr(now, 'HH:MM:SS')])
-        fprintf('c: %03d\n\n',c);
-%         set(h, 'XData', scat(1,:));
-%         set(h, 'YData', scat(2,:));
+        fprintf('c = %03d\n\n',c);
+        
+        %         set(h, 'XData', scat(1,:));
+        %         set(h, 'YData', scat(2,:));
+        
+        figure(2);
+        T = toc;
+        Q = best_A(1:3,:);
+        P = -cross(Q,best_A(4:6,:));
+        quiver3(P(1,:),P(2,:),P(3,:),Q(1,:),Q(2,:),Q(3,:));
+        hold on
+        quiver3(zeros(1,7),zeros(1,7),zeros(1,7),P(1,:),P(2,:),P(3,:));
         drawnow;
         
     end
 end
 
-figure(2);
-T = toc;
-Q = best_A(1:3,:);
-P = -cross(Q,best_A(4:6,:));
-quiver3(P(1,:),P(2,:),P(3,:),Q(1,:),Q(2,:),Q(3,:));
-hold on
-quiver3(zeros(1,7),zeros(1,7),zeros(1,7),P(1,:),P(2,:),P(3,:));
+c
+best_A

@@ -34,10 +34,10 @@ for i = 1:length(b)
     x_p = pinv(A) * b(:,i);
     
     %       C = max(-x_p ./ x_h) // m = x_p + c * x_h
-    c = max(-x_p ./ x_h);
+    C = max(-x_p ./ x_h);
     
     %       m = x_p + c * x_h   // m is the motor speeds required to exert unit wrench y
-    m = x_p + c * x_h;
+    m = x_p + C * x_h;
     
     %       d = max(m)          // d is the maximum motor speed to make unit wrench
     d = max(m);
@@ -50,9 +50,10 @@ for i = 1:length(b)
     %     find min(R) for topology
     %     store this with reference to specific topology
     min_w = min(min_w, norm(R));
-    %     if (min_w < c)
-    %         return;
-    %     end
+    if (min_w < c)
+        min_w = 0;
+        return;
+    end
 end
 end
 

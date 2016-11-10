@@ -3,7 +3,6 @@ x = 'x';
 y = 'y';
 z = 'z';
 A = [];
-tic
 
 for ii = 1:n_A_mats
     
@@ -35,8 +34,6 @@ for ii = 1:n_A_mats
     A(:,:,ii) = W;
     
 end
-
-T1 = toc;
 
 end
 
