@@ -1,4 +1,5 @@
-clear all; close all;
+
+close all;
 tic;
 display('----START-----');
 display(['timestamp: ' datestr(now, 'HH:MM:SS')]);
@@ -9,8 +10,8 @@ z = 'z';
 index = 1;
 step = pi/12;
 stepEnd = 2*pi-step;
-theta = theta_gen_unique(pi/12);
-modsplit = 1000;
+%theta = theta_gen_unique(pi/12);
+modsplit = 2000;
 % A = zeros(6,7,length(theta));
 startVal = 1;
 endVal = length(theta);
@@ -49,8 +50,8 @@ for i = startVal:endVal;
     end
     T = toc;
     if (mod(i,modsplit) == 0)
-        display(['\ntimestamp: ' datestr(now, 'HH:MM:SS')]);
-        fprintf('%02d / %02d - %05.0f / %05.0f', ...
-            i, length(theta), T, T/i*length(theta));
+        display(['timestamp: ' datestr(now, 'HH:MM:SS')]);
+        fprintf('%02d / %02d - %05.0f min / %05.0f min \n', ...
+            i, length(theta),T/60,(1/60)*T/i*length(theta));
     end
 end

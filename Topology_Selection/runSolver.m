@@ -66,7 +66,7 @@ for i = 0:nstep-1
     
     if(max_c_found > c)
         fprintf('Found better c: %03d\n\n',c);
-        best_A = A(:,:,best_ind)
+        best_A = A(:,:,best_ind+lwr-1)
         c = max_c_found;
     end
 %     
