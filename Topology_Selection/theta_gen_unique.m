@@ -1,7 +1,7 @@
-function theta = theta_gen_unique()
+function theta = theta_gen_unique(step)
 % clear all
-step = pi/6;
-v = [0:step:11*pi/6];
+% step = pi/6;
+v = [0:step:2*pi-step];
 n = length(v);
 
 rd(1) = n; % all the same         % 5
@@ -19,7 +19,7 @@ c_2 = nchoosek([1:n],2);
 c_3 = nchoosek([1:n],3);
 
 %% choose 4 and 1
-for i = 1:66
+for i = 1:rd(2)/2
     odd = 2*i-1;
     even = 2*i;
     a = v(c_2(i,1));
@@ -29,7 +29,7 @@ for i = 1:66
 end
 
 %% choose 3 and 2
-for i = 1:66 % a a a b b
+for i = 1:rd(3)/4 % a a a b b
     odd = 2*i-1;
     even = 2*i;
     a = v(c_2(i,1));
@@ -37,7 +37,7 @@ for i = 1:66 % a a a b b
     theta3(odd,:) = [a*[1 1 1], b*[1 1]];
     theta3(even,:) = [b*[1 1 1], a*[1 1]];
 end
-for i = 1:66 % a a b a b
+for i = 1:rd(3)/4 % a a b a b
     odd = 132 + 2*i-1;
     even = 132 + 2*i;
     a = v(c_2(i,1));
@@ -49,7 +49,7 @@ end
 %% choose 3 1 1
     c11_2 = nchoosek([1:n-1],2);
     num = nchoosek(n-1,2);
-    theta4 = zeros([1320, 5]);
+    theta4 = zeros([rd(4), 5]);
 for i = 1:n
     opts = v;
     a = v(i);
@@ -67,7 +67,7 @@ for i = 1:n
 end
 
 %% choose 2 2 1
-theta5 = zeros([2640 5]);
+theta5 = zeros([rd(5) 5]);
 for i = 1:n
     opts = v;
     a = v(i);
@@ -89,14 +89,14 @@ for i = 1:n
 end
 
 %% choose 2 1 1 1
-c11_3 = nchoosek([1:11],3);
+c11_3 = nchoosek([1:n-1],3);
 num3 = nchoosek(n-1,3);
-theta6 = zeros([11880 5]);
+theta6 = zeros([rd(6) 5]);
 for i = 1:n
     opts = v;
     a = v(i);
     opts(opts == a) = [];
-    for j = 1:num
+    for j = 1:num3
         b = opts(c11_3(j,1));
         c = opts(c11_3(j,2));
         d = opts(c11_3(j,3));
@@ -117,12 +117,18 @@ for i = 1:n
     end
 end
 
-%% choose 1 1 1 1 1
-c12_5 = nchoosek([1:12],5);
-num5 = nchoosek(12,5);
-
-
+% %% choose 1 1 1 1 1
+% c12_5 = nchoosek([1:12],5);
+% num5 = nchoosek(12,5);
+% for i = 1:length(num5)
+%     a = num5(i,1);
+%     b = num5(i,2);
+%     c = num5(i,3);
+%     d = num5(i,4);
+%     e = num5(i,5);
+% 
+% end
 
 %% Total angle
-theta = [theta1(:,:); theta2(:,:); theta3(:,:); theta4(:,:); theta5(:,:); theta6];
+theta = [theta1(:,:); theta2(:,:); theta3(:,:); theta4(:,:); theta5(:,:); theta6(:,:)];
 end
