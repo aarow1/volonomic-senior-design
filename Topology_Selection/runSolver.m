@@ -5,6 +5,13 @@ display(['timestamp: ' datestr(now, 'HH:MM:SS')])
 
 % b = [1 0 0];
 % B = [1 0 -1 0; 0 1 0 -1; -1 1 -1 1];
+% 
+%    -0.5000    0.2676    0.4045   -0.7006    0.2676    1.0000    1.0000
+%          0    0.8236   -0.2939   -0.5090   -0.8236   -0.0000   -0.0000
+%    -0.8660    0.5000    0.8660   -0.5000    0.5000         0         0
+%     0.8660   -0.1545    0.7006   -0.4045   -0.1545   -0.0000    0.0000
+%          0   -0.4755   -0.5090   -0.2939    0.4755   -1.0000    1.0000
+%    -0.5000    0.8660   -0.5000    0.8660    0.8660         0         0
 
 % [m,n,o] = size(A);
 % nCases = o;
@@ -20,14 +27,14 @@ display(['timestamp: ' datestr(now, 'HH:MM:SS')])
 step = pi/6;
 b = b_gen6(step);
 
-solver_step = 28992;
+solver_step = 339712;
 nstep = 1;
-c = 0;
+c = 6.621439e-01;
 max_c_found = 0;
-start_idx = 1;
+start_idx = 1000000;
 modsplit = 1;
 
-saveData = 1;
+saveData = 0;
 outputDir = 'unique_results/';
 file_idx = [0 50000];
 best_A = zeros(6,7);
@@ -42,11 +49,11 @@ for i = 0:nstep-1
         p_A = A(:,:,k+lwr-1);
         %maximize the minimum wrench
         [min_w] = notQuadProg(p_A,b,c);
-        %store results
-        
+        %store results 
+
         wrench(:,k) = min_w;
         n(k) = norm(min_w);
-        Amax(:,:,k) = p_A;
+%         Amax(:,:,k) = p_A;
         %     T = toc;
         %     sumT = sumT + T;
         %     if (mod(k,round(nCases/modsplit))==0)
@@ -55,13 +62,13 @@ for i = 0:nstep-1
         %     end
         % ctr = ctr + 1;
     end
-%     [max_c_found, best_ind] = max(n);
+    [max_c_found, best_ind] = max(n);
     
-%     if(max_c_found > c)
-%         fprintf('Found better c: %03d\n\n',c);
-%         best_A = A(:,:,best_ind)
-%         c = max_c_found;
-%     end
+    if(max_c_found > c)
+        fprintf('Found better c: %03d\n\n',c);
+        best_A = A(:,:,best_ind)
+        c = max_c_found;
+    end
 %     
 T = toc;
     % [~,I] = max(n);s
