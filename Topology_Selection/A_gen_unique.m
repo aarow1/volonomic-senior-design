@@ -12,9 +12,10 @@ stepEnd = 2*pi-step;
 theta = theta_gen_unique(pi/12);
 modsplit = 1000;
 % A = zeros(6,7,length(theta));
+startVal = 1;
 endVal = length(theta);
 
-for i = 1:endVal;
+for i = startVal:endVal;
     t_1 = theta(i,1);
     t_2 = theta(i,2);
     t_3 = theta(i,3);
