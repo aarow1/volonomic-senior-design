@@ -1,4 +1,4 @@
-function theta = A_gen_unique()
+function theta = theta_gen_unique()
 % clear all
 step = pi/6;
 v = [0:step:11*pi/6];
@@ -122,5 +122,7 @@ c12_5 = nchoosek([1:12],5);
 num5 = nchoosek(12,5);
 
 
+
 %% Total angle
-theta = [theta1(:,:); theta2(:,:); theta3(:,:); theta4(:,:); theta5(:,:)];
+theta = [theta1(:,:); theta2(:,:); theta3(:,:); theta4(:,:); theta5(:,:); theta6];
+end
