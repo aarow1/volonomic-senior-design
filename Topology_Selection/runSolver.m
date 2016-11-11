@@ -24,7 +24,7 @@ solver_step = 28992;
 nstep = 1;
 c = 0;
 max_c_found = 0;
-start_idx = 600001;
+start_idx = 1;
 modsplit = 1;
 
 saveData = 1;
