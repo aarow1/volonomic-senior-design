@@ -2,14 +2,14 @@ clearvars
 display('-----START-----')
 display(['timestamp: ' datestr(now, 'HH:MM:SS')])
 
-step = pi/6;
+step = pi/24;
 b = b_gen6(step);
 
 % figure(1);
 % h = plot(scat(1,:), scat(2,:), 'o-');
 % hold on;
 
-c = 0.5842;
+c = 0.66;
 
 best_A = [
 

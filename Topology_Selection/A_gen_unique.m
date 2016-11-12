@@ -8,7 +8,7 @@ y = 'y';
 z = 'z';
 
 index = 1;
-step = pi/12;
+step = pi/6;
 stepEnd = 2*pi-step;
 %theta = theta_gen_unique(pi/12);
 modsplit = 2000;
