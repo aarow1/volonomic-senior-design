@@ -7,6 +7,11 @@ function A = A_gen_unique(thetaList, step)
 y = 'y';
 z = 'z';
 
+<<<<<<< HEAD
+index = 1;
+step = pi/6;
+=======
+>>>>>>> 5fdafda8bf6fa6173fface967652165d28964c87
 stepEnd = 2*pi-step;
 %theta = theta_gen_unique(pi/12);
 % modsplit = 2000;
