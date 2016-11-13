@@ -17,7 +17,7 @@ b = b_gen6(b_step);
 maxMin_n = .662;
 A_step = pi/10;
 
-nstep = 24;
+nstep = 40;
 modsplit = 1;
 
 saveData = 0;
