@@ -14,18 +14,24 @@ display(['timestamp: ' datestr(now, 'HH:MM:SS')])
 b_step = pi/6;
 b = b_gen6(b_step);
 
-maxMin_n = .662;
-A_step = pi/10;
+thetasDone = [pi/10 pi/12];
 
-nstep = 40;
+n_threshold = .662;
+A_step = pi/30;
+nstep = 200;
 modsplit = 1;
 
 saveData = 0;
 
 tic;
 %% GENERATE As
+disp('--Generating thetaList--');
 thetaList = theta_gen_unique(A_step);
+for i = 1:length(thetasDone)
+    thetaList = setdiff(thetaList,theta_gen_unique(thetasDone(i)),'rows');
+end
 
+disp('--Generating As and solving for min_w--');
 for i = 1:nstep
     thetaStep = round(length(thetaList)/nstep);
     lwr = (i-1)*thetaStep + 1;
@@ -39,10 +45,10 @@ for i = 1:nstep
     %% ITERATE
     parfor k = 1:o
         p_A = A(:,:,k);
-        min_w = notQuadProg(p_A,b,maxMin_n);
+        min_w = notQuadProg(p_A,b,n_threshold);
         if min_w ~= 0
             p_A
-            fprintf('Found better maxMin: %03d\n\n',min_w);
+            fprintf('Found maxMin over threshold: %03d\n\n',min_w);
         end
     end
     T = toc;
