@@ -7,11 +7,7 @@ function A = A_gen_unique(thetaList, step)
 y = 'y';
 z = 'z';
 
-<<<<<<< HEAD
 index = 1;
-step = pi/6;
-=======
->>>>>>> 5fdafda8bf6fa6173fface967652165d28964c87
 stepEnd = 2*pi-step;
 %theta = theta_gen_unique(pi/12);
 % modsplit = 2000;
@@ -51,7 +47,7 @@ for i = startVal:endVal;
             index = index+1;
         end
     end
-    T = toc;
+%     T = toc;
 %     if (mod(i,modsplit) == 0)
 %         display(['timestamp: ' datestr(now, 'HH:MM:SS')]);
 %         fprintf('%02d / %02d - %05.0f min / %05.0f min \n', ...
