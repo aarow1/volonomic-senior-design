@@ -10,6 +10,13 @@ display(['timestamp: ' datestr(now, 'HH:MM:SS')])
 %     0.8660   -0.1545    0.7006   -0.4045   -0.1545   -0.0000    0.0000
 %          0   -0.4755   -0.5090   -0.2939    0.4755   -1.0000    1.0000
 %    -0.5000    0.8660   -0.5000    0.8660    0.8660         0         0
+
+%          0    0.2676    0.2094   -0.2094   -0.2676   -0.9659    0.9659
+%          0    0.8236   -0.1521   -0.1521    0.8236    0.2588    0.2588
+%     1.0000    0.5000    0.9659   -0.9659   -0.5000         0         0
+%    -1.0000   -0.1545    0.7815   -0.7815    0.1545    0.2588   -0.2588
+%          0   -0.4755   -0.5678   -0.5678   -0.4755    0.9659    0.9659
+%          0    0.8660   -0.2588    0.2588   -0.8660         0         0
 % c = 6.621439e-01;
 
 %% PARAMETERS
@@ -47,26 +54,31 @@ for f = 1:nfiles
         %maximize the minimum wrench
         [min_w] = notQuadProg(p_A,b,c);
         n(k) = norm(min_w);
+        
+        if (n(k) > c)
+            p_A
+            fprintf('norm(min_w): %03d\n\n',n(k));
+        end
     end
-    [max_c_found, best_ind] = max(n);
+%     [max_c_found, best_ind] = max(n);
     
-    if(max_c_found > c)
-        fprintf('Found better c: %03d\n\n',c);
-        best_A = A(:,:,best_ind)
-        c = max_c_found;
-        Q = best_A(1:3,:);
-        P = -cross(Q,best_A(4:6,:));
-        quiver3(P(1,:),P(2,:),P(3,:),Q(1,:),Q(2,:),Q(3,:));
-        hold on
-        quiver3(zeros(1,7),zeros(1,7),zeros(1,7),P(1,:),P(2,:),P(3,:));
-        hold off
-    end
+%     if(max_c_found > c)
+%         fprintf('Found better c: %03d\n\n',c);
+%         best_A = A(:,:,best_ind)
+% %         c = max_c_found;
+%         Q = best_A(1:3,:);
+%         P = -cross(Q,best_A(4:6,:));
+%         quiver3(P(1,:),P(2,:),P(3,:),Q(1,:),Q(2,:),Q(3,:));
+%         hold on
+%         quiver3(zeros(1,7),zeros(1,7),zeros(1,7),P(1,:),P(2,:),P(3,:));
+%         hold off
+%     end
     
     movefile([inputDir '/' loadName loadExt],...
         [outputDir '/' jobstamp '/' loadName loadExt]);
     T = toc;
     fprintf('%02d / %02d - %05.0f min / %05.0f min\n',...
-        f, nstep, T/60, (T/f*nfiles)/60);
+        f, nfiles, T/60, (T/f*nfiles)/60);
     display(['timestamp: ' datestr(now, 'HH:MM:SS')])
     fprintf('c: %03d\n\n',c);
 end

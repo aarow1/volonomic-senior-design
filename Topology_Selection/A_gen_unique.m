@@ -1,30 +1,28 @@
 
-close all;
-tic;
-display('----START-----');
-display(['timestamp: ' datestr(now, 'HH:MM:SS')]);
-x = 'x';
+% close all;
+% tic;
+% display('----START-----');
+% display(['timestamp: ' datestr(now, 'HH:MM:SS')]);
+function A = A_gen_unique(thetaList, step)
 y = 'y';
 z = 'z';
 
-index = 1;
-step = pi/6;
 stepEnd = 2*pi-step;
 %theta = theta_gen_unique(pi/12);
-modsplit = 2000;
+% modsplit = 2000;
 % A = zeros(6,7,length(theta));
 startVal = 1;
-endVal = length(theta);
-
+endVal = length(thetaList);
+A = [];
 for i = startVal:endVal;
-    t_1 = theta(i,1);
-    t_2 = theta(i,2);
-    t_3 = theta(i,3);
-    t_4 = theta(i,4);
-    t_5 = theta(i,5);
+    t_1 = thetaList(i,1);
+    t_2 = thetaList(i,2);
+    t_3 = thetaList(i,3);
+    t_4 = thetaList(i,4);
+    t_5 = thetaList(i,5);
     for t_6 = 0:step:stepEnd
         for t_7 = 0:step:stepEnd
-%             index = (2*pi/step)^2*(i-1)+(2/step)*t_6*(pi/step)+t_7/step+1;
+             index = (2*pi/step)^2*(i-1)+(2/step)*t_6*(pi/step)+t_7/step+1;
             F = [Rot3D(z,0)*Rot3D(y,t_1)*[0 0 1 1]' ...
                 Rot3D(z,2*pi/5)*Rot3D(y,t_2)*[0 0 1 1]'...
                 Rot3D(z,4*pi/5)*Rot3D(y,t_3)*[0 0 1 1]' ...
@@ -49,9 +47,9 @@ for i = startVal:endVal;
         end
     end
     T = toc;
-    if (mod(i,modsplit) == 0)
-        display(['timestamp: ' datestr(now, 'HH:MM:SS')]);
-        fprintf('%02d / %02d - %05.0f min / %05.0f min \n', ...
-            i, length(theta),T/60,(1/60)*T/i*length(theta));
-    end
+%     if (mod(i,modsplit) == 0)
+%         display(['timestamp: ' datestr(now, 'HH:MM:SS')]);
+%         fprintf('%02d / %02d - %05.0f min / %05.0f min \n', ...
+%             i, length(theta),T/60,(1/60)*T/i*length(theta));
+%     end
 end
