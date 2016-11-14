@@ -6,6 +6,7 @@ function b = b_gen_hover_torque(theta_step, force_req, torque_req)
 
 t1 = 0:theta_step:2*pi;
 t2 = 0:theta_step:pi;
+b = [];
 
 for i1 = 1:length(t1)
   for i2 = 1:length(t2)
@@ -19,9 +20,9 @@ for i1 = 1:length(t1)
       for j2 = 1:length(t2)
        
         % Calculate torque vector
-        m_x = force_req * cos(t1(j1));
-        m_y = force_req * sin(t1(j1)) * cos(t2(j2));
-        m_z = force_req * sin(t1(j1)) * sin(t2(j2));
+        m_x = torque_req * cos(t1(j1));
+        m_y = torque_req * sin(t1(j1)) * cos(t2(j2));
+        m_z = torque_req * sin(t1(j1)) * sin(t2(j2));
 
         b = [b, [f_x; f_y; f_z; m_x; m_y; m_z]];
 
