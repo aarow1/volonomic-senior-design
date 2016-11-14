@@ -63,7 +63,6 @@ end
 
 %% Find min_w from b_maximize
 
-p_inv_A = pinv(A);
 x_p = p_inv_A * b_maximize; % Particular solutions from pseudo-inverse
 
 % TODO: vectorize the shit out of this
