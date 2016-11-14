@@ -43,37 +43,43 @@ end
 
 %% Check that b_satisfy is satisfied
 
+p_inv_A = pinv(A);
+x_p = p_inv_A * b_satisfy; % Particular solutions from pseudo-inverse
+
+% TODO: vectorize the shit out of this
+
+for i = 1:length(b_satisfy)
+    
+    C = max(-x_p(i) ./ x_h);    % number of x_h's to add
+    m = x_p + C * x_h;          % m: motor forces to make unit w
+    d = max(m);                 % d: maximum motor force to make unit w
+
+    if (d > 1)
+      min_w = 0;
+      return;
+    end
+
+end
+
 %% Find min_w from b_maximize
 
 p_inv_A = pinv(A);
 x_p = p_inv_A * b_maximize; % Particular solutions from pseudo-inverse
-C = max(-x_p ./ x_h); % Number of x_h's needed to add to x_p
 
+% TODO: vectorize the shit out of this
 
 for i = 1:length(b_maximize)
     
-    C = max(-x_p(i) ./ x_h);
-    
-    %       m = x_p + c * x_h   // m is the motor speeds required to exert unit wrench y
-    m = x_p + C * x_h;
-    
-    %       d = max(m)          // d is the maximum motor speed to make unit wrench
-    d = max(m);
-    %       M = m / d           // M is the highest attainable motor speeds
-    %                           // to make wrench in y direction
-    %                           // To explain: M has it's fastest motor speed set to 1
-    M = m / d;
-    %       R = A * M           // R is the highest attainable wrench in y direction
-    R = A* M;
-    %     find min(R) for topology
-    %     store this with reference to specific topology
-    min_w = min(min_w, norm(R));
+    C = max(-x_p(i) ./ x_h);    % number of x_h's to add
+    m = x_p + C * x_h;          % m: motor forces to make unit w
+    d = max(m);                 % d: maximum motor force to make unit w
+    M = m / d;                  % M: motor forces where one motor is saturated to 1
+    R = A * M;                  % R: resulting maximum wrench after saturation
+
+    min_w = min(min_w, norm(R)); % check if this is the new min_w
     if (min_w < best_min_w)
         min_w = 0;
         return;
     end
 end
 end
-
-% Choose topology with max(min(R))
-%
