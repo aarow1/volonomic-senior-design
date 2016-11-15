@@ -38,7 +38,7 @@ t_start = now;
 for i = 0:nstep-1
     A = rand_A_gen(solver_step);
 
-    for k = 1:solver_step
+    parfor k = 1:solver_step
         %recall position matrix
         p_A = A(:,:,k);
         %maximize the minimum wrench
