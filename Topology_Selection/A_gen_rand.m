@@ -3,10 +3,11 @@ x = 'x';
 y = 'y';
 z = 'z';
 A = [];
+n_steps = pi/n_steps;
 
 parfor ii = 1:n_A_mats
    
-    thetas = 2 * randi(n_steps, 1, 7) * (n_steps);
+    thetas = 2 * pi * randi(n_steps, 1, 7) / (n_steps);
     
     F_1 = Rot3D(z,0)*Rot3D(y,thetas(1))*[0 0 1 1]';
     F_2 = Rot3D(z,2*pi/5)*Rot3D(y,thetas(2))*[0 0 1 1]';

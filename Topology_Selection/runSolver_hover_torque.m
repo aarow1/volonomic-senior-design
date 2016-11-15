@@ -3,24 +3,23 @@ display('-----START-----')
 display(['timestamp: ' datestr(now, 'HH:MM:SS')])
 
 %% Parameters
-step = pi/12;
+b_step = pi/12;
 
 % b_satisfy is the set of all necessary torques from all hovers
 hover_force = 1;
 torque_req = 0.25;
-b_satisfy = b_gen_hover_torque(step, hover_force, torque_req);
+b_satisfy = b_gen_hover_torque(b_step, hover_force, torque_req);
 
 % b_maximize
-b_maximize = b_gen3_w(step);
+b_maximize = b_gen3_w(b_step);
 
 % A generation options
-%'A_gen_rand' 'A_gen_halton' 'A_gen_unique'
-A_gen = 'A_gen_rand';
-A_step = pi/60;
+A_gen = 'A_gen_rand'; %'A_gen_rand' 'A_gen_halton' 'A_gen_unique'
+A_step = pi/60; % this becomes pi/A_step in A_gen_rand
 
 %solver options
-solver_step = 1000;
-nstep = 10;
+solver_step = 100; % number of Amats at a time
+nstep = 10; % number of A batches
 modsplit = 1;
 
 %% Best configuration found
@@ -55,7 +54,6 @@ for i = 0:nstep-1
         %store results
         
         n(k) = min_w;
-        Amax(:,:,k) = p_A;
     end
 
     [max_c_found, best_ind] = max(n);
