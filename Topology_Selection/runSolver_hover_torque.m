@@ -111,14 +111,14 @@ c;
 best_A;
 
 save('best_as.mat', 'c', 'best_A');
-% for i = 1:length(c)
-%     figure(i);
-%     grid on;
-%     hold on;
-%     Q = best_A(1:3,:, i);
-%     P = -cross(Q,best_A(4:6,:, i));
-%     quiver3(P(1,:),P(2,:),P(3,:),Q(1,:),Q(2,:),Q(3,:));
-%     quiver3(zeros(1,7),zeros(1,7),zeros(1,7),P(1,:),P(2,:),P(3,:));
-%     axis equal;
-%     drawnow;
-% end
+for i = 1:length(c)
+figure(i);
+    Q = best_A(1:3,:,i);
+    P = -cross(Q,best_A(4:6,:, i));
+    quiver3(P(1,:),P(2,:),P(3,:),Q(1,:),Q(2,:),Q(3,:));
+    hold on;
+    quiver3(zeros(1,7),zeros(1,7),zeros(1,7),P(1,:),P(2,:),P(3,:));
+    axis equal;
+    xlabel('x'); ylabel('y'); zlabel('z');
+    drawnow;
+end
