@@ -5,7 +5,7 @@ z = 'z';
 A = [];
 p = haltonset(7); p = scramble(p,'RR2');
 thetaList = 2*pi*net(p,n_A_mats);
-for ii = 1:n_A_mats
+parfor ii = 1:n_A_mats
    
     thetas = thetaList(ii,:);
 %     thetas = 2*pi*rand([1 7]);

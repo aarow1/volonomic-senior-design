@@ -29,7 +29,7 @@ b_maximize = b_gen3_w(step);
 tic;
 delta = 0;
 
-solver_step = 10000;
+solver_step = 1000000;
 nstep = 10;
 modsplit = 1;
 
