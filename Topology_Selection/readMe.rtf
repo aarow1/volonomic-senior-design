@@ -1,0 +1,178 @@
+{\rtf1\ansi\ansicpg1252\cocoartf1265\cocoasubrtf210
+{\fonttbl\f0\fswiss\fcharset0 Helvetica;}
+{\colortbl;\red255\green255\blue255;}
+\margl1440\margr1440\vieww10800\viewh8400\viewkind0
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural
+
+\f0\b\fs24 \cf0 TOPOLOGY SELECTION README
+\b0 \
+
+\i These files aim to maximize the minimum wrench \'91x\'92  for a unidirectional 7 rotor ariel vehicle.\
+This is done by solving Ax = b where:\
+A represents the position/moment matrix [6x7]\
+x is the forces exerted by the motors [7x1]\
+b is the desired wrench output [6x1]\
+
+\i0 \
+*denotes use with most updated solving method\
+\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural
+
+\b \cf0 \'97runSolvers\'97 \
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural
+
+\i\b0 \cf0 Scripts that integrate functions\
+\
+
+\i0 *runSolver_hover_torque.m\
+	
+\i analyzes nstep batches of size solver_step A matrices to maximize the minimum wrench 	for A matrices that are able to satisfy a given hover force and torque.\
+	displays the current best A matrix and min_w at the end of each batch\
+	for A generation can chose A_gen_rand, A_gen_halton, or A_gen_unique\
+	parameters: \
+		b_step, hover_force, hover_torque\
+		A_gen, A_step\
+		solver_step, nstep, mod split\
+\
+
+\i0 runSolver_files.m\
+	
+\i analyzes A matrices that are stored as .mat files in \'9201-INPUT\'92. Moves analyzed files to \'9202-	OUTPUT\'92.\
+	displays the current best A matrix and min_w at the end of each file\
+	for A generation can chose A_gen_rand, A_gen_halton, or A_gen_unique\
+	parameters: \
+		b_step\
+		solver_step, nstep, mod split\
+\
+
+\i0 runSolver.m\
+	
+\i analyzes nstep batches of size solver_step A matrices to maximize the minimum wrench.\
+	A matrices are generated in A_gen_unique\
+	parameters:\
+		b_step, theta_step, thetasDone\
+		solver_step, nstep, mod split
+\i0 	\
+\
+runSolver_rand.m\
+	
+\i analyzes nstep batches of size solver_step A matrices to maximize the minimum wrench.\
+	A matrices are generated using A_gen_rand\
+	parameters:\
+		b_step, theta_step\
+		solver_step, nstep, mod split
+\i0 \
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural
+\cf0 \
+
+\b \'97A generation\'97 \
+
+\i\b0 generate A matrices \
+
+\i0 \
+\ul Random generators\ulnone \
+
+\i \
+
+\i0 *A = A_gen_halton(N,~)\
+	
+\i uses a scrambled Halton series to generate N 6x7 matrices \
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural
+
+\i0 \cf0 *A = A_gen_rand(N,n_step)\
+	
+\i uses pseudorandom integers from a uniform discrete distribution to generate N 6x7 matrices 	using a rotor angle step size of theta_step \
+\
+
+\i0 \ul Brute force generators \ulnone \
+
+\i \
+
+\i0 A = A_specific(thetas)\
+	
+\i generates one A matrix given 7 thetas\
+
+\i0 *A = A_gen_unique(~,theta_step)\
+	
+\i generates all unique A matrices for a given rotor angle step size of theta_step\
+	**where unique represents unique configurations of the 5 rotors \
+
+\i0 A_gen\
+	
+\i script that generates all possible A matrices for a step size. \
+	don\'92t use this \
+\
+
+\i0 \ul Supporting functions\
+\ulnone theta_gen_unique.m [supports brute force generators]\
+store_A.m [post processing for brute force generators]\ul \
+\ulnone Rot3D.m\
+Trans3D.m\
+
+\i \
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural
+
+\i0\b \cf0 \'97b generation\'97 
+\i\b0 \
+generate b matricies\
+\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural
+
+\i0 \cf0 *b = b_gen_hover_torque(theta_step, force_req, torque_req)\
+	
+\i generates all N unique wrenches that produce the given force_req and torque_req that span a 	unit 6-sphere using a step size of theta_step\
+	output is a 6xN matrix\
+
+\i0 b = b_gen3(step)\
+	
+\i generates all N unique unit wrenches that span a span a unit sphere using a step size of 	theta_step\
+	output is a 3xN matrix\
+
+\i0 b = b_gen6(step)\
+	
+\i generates all N unique unit wrenches that span a span a unit 6-sphere using a step size of 	theta_step\
+	output is a 6xN matrix\
+
+\i0 *b = b_gen3_w(step)\
+	
+\i essentially the same thing as b_gen3
+\i0 \
+	
+\i generates all N unique unit wrenches that span a span a unit sphere using a step size of 	theta_step\
+	output is a 3xN matrix\
+\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural
+
+\i0\b \cf0 \'97w solvers\'97 \
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural
+
+\i\b0 \cf0 solve Ax = b\
+\
+
+\i0 *min_w = check_A(A,b_statisfy,b_maximize,current_min)\
+	
+\i uses a pseudo inverse to solve Ax = b for one A and a 6xN matrix of bs. \
+	returns 0 if the A matrix is invalid (i.e. is unable to solve for \'91x\'92 given a \'91b\'92), is unable to satisfy \
+	the force/torques required in b_statisfy\
+	returns the norm of the minimum wrench if it is greater than the current_min\
+\
+
+\i0 min_w = notQuadProg(A,b,current_min)\
+	
+\i uses a pseudo inverse to solve Ax = b for one A and a 6xN matrix of bs. \
+	returns 0 if the A matrix is invalid (i.e. is unable to solve for \'91x\'92 given a \'91b\'92)\
+	returns the norm of the minimum wrench if it is greater than the current_min\
+\
+
+\i0 min_w = w_solver(A,b,current_min)\
+	
+\i uses quadProg to solve Ax = b for one A and a 6xN matrix of bs. \
+	returns 0 if the A matrix is invalid (i.e. is unable to solve for \'91x\'92 given a \'91b\'92)\
+	returns the norm of the minimum wrench if it is greater than the current_min\
+	\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural
+
+\i0 \cf0 \ul \ulc0 Supporting functions\
+\ulnone matmult3d.m [supports w_solver]\
+\
+}
