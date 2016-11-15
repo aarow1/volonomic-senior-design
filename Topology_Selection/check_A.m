@@ -63,14 +63,13 @@ end
 
 %% Find min_w from b_maximize
 
-x_p = p_inv_A * b_maximize; % Particular solutions from pseudo-inverse
-
 % TODO: vectorize the shit out of this
 
 for i = 1:length(b_maximize)
     
-    C = max(-x_p(i) ./ x_h);    % number of x_h's to add
-    m = x_p(i) + C * x_h;          % m: motor forces to make unit w
+    x_p = p_inv_A * b_maximize(:,i); % Particular solutions from pseudo-inverse
+    C = max(-x_p ./ x_h);       % number of x_h's to add
+    m = x_p + C * x_h;       % m: motor forces to make unit w
     d = max(m);                 % d: maximum motor force to make unit w
     M = m / d;                  % M: motor forces where one motor is saturated to 1
     R = A * M;                  % R: resulting maximum wrench after saturation

@@ -25,14 +25,14 @@ scat = zeros(2, 1);
 tic;
 delta = 0;
 
-solver_step = 10000;
-nstep = 100;
+solver_step = 1000;
+nstep = 20;
 modsplit = 1;
 
 t_start = now;
 
 for i = 0:nstep-1
-    A = rand_A_gen(solver_step);
+    A = real_rand_A_gen(solver_step);
     p_A = []; wrench = []; n = []; Amax = [];
     parfor k = 1:solver_step
         %     tic;

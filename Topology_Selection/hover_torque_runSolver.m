@@ -3,7 +3,7 @@ display('-----START-----')
 display(['timestamp: ' datestr(now, 'HH:MM:SS')])
 
 %% Parameters
-step = pi/6;
+step = pi/12;
 
 % b_satisfy is the set of all necessary torques from all hovers
 hover_force = 1;
@@ -14,29 +14,32 @@ b_satisfy = b_gen_hover_torque(step, hover_force, torque_req);
 b_maximize = b_gen3_w(step);
 
 %% Best configuration found
-% c = 1.3451;
+c = 0.7559;
+
+
+best_A = [
+
+   -0.9945    0.0955    0.7694   -0.0846    0.3090   -0.5000    0.9945
+         0    0.2939   -0.5590   -0.0614   -0.9511    0.8660    0.1045
+    0.1045    0.9511    0.3090   -0.9945    0.0000         0         0
+   -0.1045   -0.2939    0.2500   -0.8046   -0.0000    0.8660   -0.1045
+         0   -0.9045   -0.1816   -0.5846    0.0000    0.5000    0.9945
+   -0.9945    0.3090   -0.9511    0.1045    1.0000         0         0 ];
 % 
-% 
-% best_A = [
-% 
-%     0.8910   -0.1510    0.7493   -0.6916   -0.1798   -0.8090    0.9845
-%          0   -0.4647   -0.5444   -0.5025    0.5533    0.5879    0.1752
-%     0.4539    0.8725    0.3772   -0.5189   -0.8133         0         0
-%    -0.4539   -0.2696    0.3051   -0.4198    0.2513    0.5879   -0.1752
-%          0   -0.8298   -0.2217   -0.3050   -0.7735    0.8090    0.9845
-%     0.8910   -0.4886   -0.9261    0.8548   -0.5818         0         0 ];
+% c = 0.1;
+% best_A = [];
 
 tic;
 delta = 0;
 
-solver_step = 1000000;
-nstep = 10;
+solver_step = 100000;
+nstep = 100;
 modsplit = 1;
 
 t_start = now;
 
 for i = 0:nstep-1
-    A = rand_A_gen(solver_step);
+    A = real_rand_A_gen(solver_step, 60);
 
     parfor k = 1:solver_step
         %recall position matrix
@@ -60,14 +63,16 @@ for i = 0:nstep-1
     %% print on modsplit
     if (mod(i+1,modsplit) == 0)
         
-        delta = delta + toc
+        delta = delta + toc;
+        tic;
         n_total = nstep * solver_step;
         n_run = (i+1) * solver_step;
         n_left = n_total - n_run;
         
-        fprintf('%02d / %02d - %03f sec / %03f sec\n',...
-            n_run, n_total, ...
-            (delta / n_run), (delta / n_run) * (n_left));
+        fprintf('Configurations Checked: %02d / %02d\n', n_run, n_total);
+        fprintf('Time Taken so far: %03f sec\n', delta);
+        fprintf('Time Taken per A Configuration: %03f sec\n', (delta / n_run));
+        fprintf('Time left to run: %03f sec\n', (delta / n_run) * (n_left));
         display(['timestamp: ' datestr(now, 'HH:MM:SS')])
         fprintf('c = %03d\n\n',c);
         
