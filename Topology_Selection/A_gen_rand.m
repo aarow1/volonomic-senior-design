@@ -1,14 +1,12 @@
-function A = rand_A_gen(n_A_mats)
+function A = A_gen_rand(n_A_mats, n_steps)
 x = 'x';
 y = 'y';
 z = 'z';
 A = [];
-p = haltonset(7); p = scramble(p,'RR2');
-thetaList = 2*pi*net(p,n_A_mats);
+
 parfor ii = 1:n_A_mats
    
-    thetas = thetaList(ii,:);
-%     thetas = 2*pi*rand([1 7]);
+    thetas = 2 * randi(n_steps, 1, 7) * (n_steps);
     
     F_1 = Rot3D(z,0)*Rot3D(y,thetas(1))*[0 0 1 1]';
     F_2 = Rot3D(z,2*pi/5)*Rot3D(y,thetas(2))*[0 0 1 1]';

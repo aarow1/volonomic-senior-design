@@ -3,7 +3,13 @@
 % tic;
 % display('----START-----');
 % display(['timestamp: ' datestr(now, 'HH:MM:SS')]);
-function A = A_gen_unique(thetaList, step)
+function A = A_gen_unique(~, step)
+
+thetaList = theta_gen_unique(A_step);
+for i = 1:length(thetasDone)
+    thetaList = setdiff(thetaList,theta_gen_unique(thetasDone(i)),'rows');
+end
+
 y = 'y';
 z = 'z';
 

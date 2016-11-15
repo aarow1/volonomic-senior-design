@@ -13,6 +13,16 @@ b_satisfy = b_gen_hover_torque(step, hover_force, torque_req);
 % b_maximize
 b_maximize = b_gen3_w(step);
 
+% A generation options
+%'A_gen_rand' 'A_gen_halton' 'A_gen_unique'
+A_gen = 'A_gen_rand';
+A_step = pi/60;
+
+%solver options
+solver_step = 1000;
+nstep = 10;
+modsplit = 1;
+
 %% Best configuration found
 c = 0.7559;
 
@@ -32,16 +42,12 @@ best_A = [
 tic;
 delta = 0;
 
-solver_step = 100000;
-nstep = 100;
-modsplit = 1;
-
 t_start = now;
 
 for i = 0:nstep-1
-    A = real_rand_A_gen(solver_step, 60);
-
-    parfor k = 1:solver_step
+    A = feval(A_gen,solver_step,A_step);
+    [~,~,n_Amats] = size(A);
+    parfor k = 1:n_Amats
         %recall position matrix
         p_A = A(:,:,k);
         %maximize the minimum wrench
