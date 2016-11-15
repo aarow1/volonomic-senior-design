@@ -19,14 +19,14 @@ A_gen = 'A_gen_rand';   %'A_gen_rand' 'A_gen_halton' 'A_gen_unique'
 A_step = pi/60;         % this becomes pi/A_step in A_gen_rand
 
 %solver options
-solver_step = 10000;      % number of Amats at a time
+solver_step = 40000;      % number of Amats at a time
 nstep = 10;             % number of A batches
 modsplit = 1;
 
 %% Best configurations found
 % Store the best n matrices to try to draw connections between the best ones found
 
-n_configs_saved = 10;   % Number of best A configs to save
+n_configs_saved = 100;   % Number of best A configs to save
 % c = zeros(n_configs_saved, 1);
 % best_A = zeros(6, 7, n_configs_saved);
 
