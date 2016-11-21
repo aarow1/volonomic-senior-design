@@ -1,5 +1,5 @@
 function [ neighborIdx ] = findNeighbors(size, idx)
-[y,x] = ind2sub(size(indexes),idx);
+[y,x] = ind2sub(size,idx);
 [m,n] = size(indexes);
 neighborIdx = zeros(4);
 

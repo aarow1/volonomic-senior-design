@@ -1,5 +1,5 @@
 function resultImg = seamlessCloningPoisson(sourceImg, targetImg, mask, offsetX, offsetY)
-[targetH, targetW] = size(targetImg);
+[targetH, targetW,~] = size(targetImg);
 indexes = getIndexes(mask,targetH,targetW,offsetX,offsetY);
 coefM = getCoefMatrix(indexes);
 solVectorR = getSolutionVect(indexes, sourceImg(:,:,1), targetImg(:,:,1), offsetX, offsetY);

@@ -7,6 +7,6 @@ indexes = zeros(targetH, targetW);
 % left = min(x);
 % right = max(x);   
 for i = 1:m
-    indexes(y(i)+offsetY, x(i)+offsetX) = sub2ind([y x],x,y);
+    indexes(int8(y(i)+offsetY), int8(x(i)+offsetX)) = sub2ind(size(mask),x(i),y(i));
 end
 end

@@ -1,5 +1,5 @@
-sourceImg = 'football.jpg';
-targetImg = 'cameraman.tif';
+sourceImg = imread('football.jpg');
+targetImg = imread('football.jpg');
 [mask] = maskImage(sourceImg);
 figure();
 imshow(targetImg);
