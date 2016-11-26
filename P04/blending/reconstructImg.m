@@ -5,6 +5,6 @@ N = length(idx);
 resultImg = targetImg;
 for i = 1:N
     tempVect(1,1,:) = [red(i),green(i),blue(i)];
-    resultImg(Y(i),X(i),:) = tempVect;
+    resultImg(Y(i),X(i),:) = uint8(tempVect);
 end
 end

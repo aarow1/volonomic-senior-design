@@ -1,6 +1,6 @@
 function coefM = getCoefMatrix(indexes)
 [m,n] = size(indexes);
-idx = find(indexes ~= 0)';
+idx = find(indexes ~= 0);
 N = length(idx);
 coefM = 4*speye(N,N);
 for i = 1:N
