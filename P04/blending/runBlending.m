@@ -1,11 +1,13 @@
+close all;
+clear all;
+%read in images
 sourceImg = imread('source.jpg');
 targetImg = imread('target.jpg');
+
+%create mask
 [mask] = maskImage(sourceImg);
-idx = find(mask~=0);
-[y,x] = ind2sub(size(mask),idx(1));
-figure();
-imshow(targetImg);
-[offsetY,offsetX] = ginput(1); %get x y offset maybe this is correct)
-[resultImg] = seamlessCloningPoisson(sourceImg, targetImg, mask, -offsetX+x, -(offsetY-y));
+%blend image using hardcoded x and y offsets
+[resultImg] = seamlessCloningPoisson(sourceImg, targetImg, mask, 75, 100);
+%show image
 figure();
 imshow(resultImg);
