@@ -4,7 +4,7 @@ display('-----START-----')
 display(['timestamp: ' datestr(now, 'HH:MM:SS')])
 
 %% Parameters
-b_step = pi/12;
+b_step = pi/6;
 
 % b_satisfy is the set of all necessary torques from all hovers
 hover_force = 1;
@@ -19,14 +19,15 @@ A_gen = 'A_gen_rand';   %'A_gen_rand' 'A_gen_halton' 'A_gen_unique'
 A_step = pi/60;         % this becomes pi/A_step in A_gen_rand
 
 %solver options
-solver_step = 40000;      % number of Amats at a time
+w_solver = 'w_solver_LB'; %'w_solver' 'check_A' 'w_solver_LB' 'notQuadProg'
+solver_step = 10;      % number of Amats at a time
 nstep = 10;             % number of A batches
 modsplit = 1;
 
 %% Best configurations found
 % Store the best n matrices to try to draw connections between the best ones found
 
-n_configs_saved = 100;   % Number of best A configs to save
+n_configs_saved = 10;   % Number of best A configs to save
 % c = zeros(n_configs_saved, 1);
 % best_A = zeros(6, 7, n_configs_saved);
 
@@ -59,7 +60,7 @@ for i = 0:nstep-1
         %recall position matrix
         p_A = A(:,:,k);
         %maximize the minimum wrench
-        [min_w] = check_A(p_A,b_satisfy, b_maximize, c(n_configs_saved));
+        [min_w] = feval(w_solver, p_A,b_satisfy, b_maximize, c(n_configs_saved));
         %store results
        
         n(k) = min_w;
