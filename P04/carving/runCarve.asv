@@ -1,0 +1,8 @@
+%% Generate red seams
+I = imread('greens.jpg');
+imshow(I);
+[Ic, T] = carvRed(I,1,1);
+figure
+imshow(Ic);
+
+%% Remove seams

@@ -10,8 +10,8 @@ My(:,1) = e(:,1);
 My = padarray(My,[1 0], inf, 'both');
 
 %% Add your code here
-for i = 2:ny+1
-    for j = 2:nx
+for j = 2:nx
+    for i = 2:ny+1
         My(i,j) = e(i-1,j) + min(My(i-1:i+1,j-1));
         [~,idx] = min(My(i-1:i+1,j-1));
         Tby(i-1,j) = idx;
