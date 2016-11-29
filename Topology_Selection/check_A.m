@@ -50,8 +50,8 @@ x_p = p_inv_A * b_satisfy; % Particular solutions from pseudo-inverse
 
 for i = 1:length(b_satisfy)
     
-    C = max(-x_p(i) ./ x_h);    % number of x_h's to add
-    m = x_p(i) + C * x_h;          % m: motor forces to make unit w
+    C = max(-x_p(:,i) ./ x_h);    % number of x_h's to add
+    m = x_p(:,i) + C * x_h;          % m: motor forces to make unit w
     d = max(m);                 % d: maximum motor force to make unit w
 
     if (d > 1)
