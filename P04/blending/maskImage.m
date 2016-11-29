@@ -7,4 +7,3 @@ wait(h);
 %create mask
 mask = createMask(h);
 end
-
