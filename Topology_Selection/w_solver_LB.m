@@ -13,6 +13,7 @@ l = length(b_satisfy);
 H = eye(nrotors);
 f = zeros(nrotors,1);
 LB = -.15*ones(nrotors,1);
+UB = ones(nrotors,1);
 options = optimset('Display','off', 'MaxIter',100000);
 min_w = inf;
 
@@ -27,7 +28,7 @@ end
 for ii = 1:l
     try
         %         b(:,ii)
-        min_speeds = quadprog(H,f,[],[],A,b_satisfy(:,ii),LB,[],[], options);
+        min_speeds = quadprog(H,f,[],[],A,b_satisfy(:,ii),LB,UB,[], options);
         %         A*min_speeds
     catch
         min_w = 0;
@@ -49,7 +50,7 @@ end
 for ii = 1:length(b_maximize)
     try
         %         b(:,ii)
-        min_speeds = quadprog(H,f,[],[],A,b_maximize(:,ii),LB,[],[], options);
+        min_speeds = quadprog(H,f,[],[],A,b_maximize(:,ii),LB,UB,[], options);
         %         A*min_speeds
     catch
         min_w = 0;
@@ -59,7 +60,7 @@ for ii = 1:length(b_maximize)
         absMax = max(abs(min_speeds));
         max_speeds = min_speeds ./ absMax;
         max_w = A*max_speeds;
-        min_w = min(min_w, norm(max_w));
+        min_w = min(min_w, norm(max_w))
         if (min_w < c)
             min_w = 0;
             return;
