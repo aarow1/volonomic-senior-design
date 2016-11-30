@@ -17,7 +17,7 @@ min_w = inf;
 %% Check linear algebra validity
 %     Find the null space basis of A, this is the homogenous solution
 %       x_h = null space basis
-x_h = null(A);
+x_h = round(null(A),4);
 [~,n] = size(x_h);
 %       if dim(null(A)) ~= 1, then move to next topology
 if (n ~= 1)
@@ -32,7 +32,7 @@ if (rank(A) ~= nSpace)
 end
 %       all elements of x_h must be positive
 %         or if they are all negative, make them all positive
-isPos = x_h >= 0;
+isPos = (x_h >= 0);
 if ~all(isPos)
     x_h = x_h * -1;
     if ~all(x_h >= 0)

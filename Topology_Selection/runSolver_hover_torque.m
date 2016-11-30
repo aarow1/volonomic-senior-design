@@ -1,5 +1,5 @@
 clearvars -except c best_A
-load('best_as.mat');
+% load('best_as.mat');
 display('-----START-----')
 display(['timestamp: ' datestr(now, 'HH:MM:SS')])
 
@@ -19,7 +19,7 @@ A_gen = 'A_gen_rand';   %'A_gen_rand' 'A_gen_halton' 'A_gen_unique'
 A_step = pi/60;         % this becomes pi/A_step in A_gen_rand
 
 %solver options
-w_solver = 'w_solver_LB'; %'w_solver' 'check_A' 'w_solver_LB' 'notQuadProg'
+w_solver = 'check_A'; %'w_solver' 'check_A' 'w_solver_LB' 'notQuadProg'
 solver_step = 10;      % number of Amats at a time
 nstep = 10;             % number of A batches
 modsplit = 1;
@@ -28,8 +28,8 @@ modsplit = 1;
 % Store the best n matrices to try to draw connections between the best ones found
 
 n_configs_saved = 10;   % Number of best A configs to save
-% c = zeros(n_configs_saved, 1);
-% best_A = zeros(6, 7, n_configs_saved);
+c = zeros(n_configs_saved, 1);
+best_A = zeros(6, 7, n_configs_saved);
 
 % c(1) = 0.7559;
 % 
@@ -56,7 +56,7 @@ for i = 0:nstep-1
 
     n = zeros(n_Amats, 1);
     
-    parfor k = 1:n_Amats
+    for k = 1:n_Amats
         %recall position matrix
         p_A = A(:,:,k);
         %maximize the minimum wrench
@@ -111,7 +111,7 @@ end
 c;
 best_A;
 
-save('best_as.mat', 'c', 'best_A');
+% save('best_as.mat', 'c', 'best_A');
 for i = 1:length(c)
 figure(i);
     Q = best_A(1:3,:,i);

@@ -5,7 +5,7 @@ z = 'z';
 A = [];
 n_steps = pi/n_steps;
 
-parfor ii = 1:n_A_mats
+for ii = 1:n_A_mats
    
     thetas = 2 * pi * randi(n_steps, 1, 7) / (n_steps);
     
