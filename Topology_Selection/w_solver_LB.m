@@ -44,7 +44,7 @@ end
 for ii = 1:length(b_maximize)
     try
         %         b(:,ii)
-        min_speeds = quadprog(H,f,[],[],A,b_maximize(:,ii),LB,UB,[], options);
+        min_speeds = quadprog(H,f,[],[],A,b_maximize(:,ii),LB,[],[], options);
         %         A*min_speeds
     catch
         min_w = 0;
