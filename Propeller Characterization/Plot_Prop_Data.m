@@ -1,8 +1,8 @@
 close all
 %% PARAMETERS
-propName = 'APC Unidirectional RH';
+propName = 'APC Bidirectional LH';
 maxSpeed = 1700; %max rad/s prop is rated for
-isUni = 1; %1 if unidirectional prop
+isUni = 0; %1 if unidirectional prop
 
 %% SCRIPT
 speed = summary.speed.value;
@@ -49,10 +49,10 @@ if isUni
     ylabel('|Force| (N)');
     text(-200,4,['f = ' num2str(f2.p1) 'x^2'],'FontSize',14);
     legend('Data', 'Fitted Curve', 'Location', 'southwest');
-    scatter(speed_val(end),force_func(end));
-    text(speed_val(end),force_func(end),['(' num2str(speed_val(end)) ',' ...
-        num2str(force_func(end)) ') \rightarrow'], ...
-        'HorizontalAlignment', 'right');
+%     scatter(speed_val(end),force_func(end));
+%     text(speed_val(end),force_func(end),['(' num2str(speed_val(end)) ',' ...
+%         num2str(force_func(end)) ') \rightarrow'], ...
+%         'HorizontalAlignment', 'right');
     grid on
     axis tight
     saveas(gcf,[propName '-Force.jpg']);
@@ -71,10 +71,10 @@ else
     ylabel('|Force| (N)');
     text(-200,4,['f = ' num2str(f.p1) 'x^2'],'FontSize',14);
     legend('Data', 'Fitted Curve', 'Location', 'southwest');
-    scatter(speed_val(end),force_func(end));
-    text(speed_val(end),force_func(end),['(' num2str(speed_val(end)) ',' ...
-        num2str(force_func(end)) ') \rightarrow'], ...
-        'HorizontalAlignment', 'right');
+%     scatter(speed_val(end),force_func(end));
+%     text(speed_val(end),force_func(end),['(' num2str(speed_val(end)) ',' ...
+%         num2str(force_func(end)) ') \rightarrow'], ...
+%         'HorizontalAlignment', 'right');
     grid on
     axis tight
     saveas(gcf,[propName '-Force.jpg']);
@@ -94,10 +94,10 @@ xlabel('Speed (rad/sec)');
 ylabel('|Torque| (mNm)');
 text(-200,70,['f = ' num2str(g.p1) 'x^2'],'FontSize',14);
 legend('Data', 'Fitted Curve', 'Location', 'southwest');
-scatter(speed_val(end),torque_func(end));
-text(speed_val(end),torque_func(end),['(' num2str(speed_val(end)) ',' ...
-    num2str(torque_func(end)) ') \rightarrow'], ...
-    'HorizontalAlignment', 'right');
+% scatter(speed_val(end),torque_func(end));
+% text(speed_val(end),torque_func(end),['(' num2str(speed_val(end)) ',' ...
+%     num2str(torque_func(end)) ') \rightarrow'], ...
+%     'HorizontalAlignment', 'right');
 grid on
 axis tight
 saveas(gcf,[propName '-Torque.jpg']);
