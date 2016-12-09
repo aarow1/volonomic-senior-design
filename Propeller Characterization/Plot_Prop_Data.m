@@ -6,7 +6,7 @@ isUni = 0; %1 if unidirectional prop
 
 %% SCRIPT
 speed = summary.speed.value;
-force = summary.wrench.value(:,3)';
+force = 2*summary.wrench.value(:,3)';
 torque = summary.wrench.value(:,6)';
 
 for i = 1:length(speed)
@@ -31,7 +31,7 @@ torque = abs(torque);
 %% PLOT DATA
 if isUni
     figure
-    title(['Force vs. Speed' ' for ' propName]);
+   % title(['Force vs. Speed' ' for ' propName]);
     l1 = round(length(speed)/2);
     l2 = round(length(speed_val)/2);
     idx = find(speed_val == -round(min(abs(speed_val(1:l2-1))+abs(speed(1)))));
@@ -47,20 +47,21 @@ if isUni
     plot(speed_val(l2:end), force_func2);
     xlabel('Speed (rad/sec)');
     ylabel('|Force| (N)');
-    text(-200,4,['f = ' num2str(f2.p1) 'x^2'],'FontSize',14);
-    legend('Data', 'Fitted Curve', 'Location', 'southwest');
+    %text(-200,4,['f = ' num2str(f2.p1) 'x^2'],'FontSize',14);
+%     legend('Data', 'Fitted Curve', 'Location', 'southeast');
 %     scatter(speed_val(end),force_func(end));
 %     text(speed_val(end),force_func(end),['(' num2str(speed_val(end)) ',' ...
 %         num2str(force_func(end)) ') \rightarrow'], ...
 %         'HorizontalAlignment', 'right');
     grid on
     axis tight
-    saveas(gcf,[propName '-Force.jpg']);
+    set(gca,'color','none');
+    saveas(gcf,[propName '-Force.png']);
 else
     figure
     % subplot(1,2,1);
     scatter(speed,force,'.');
-    title(['Force vs. Speed' ' for ' propName]);
+   % title(['Force vs. Speed' ' for ' propName]);
     options = fitoptions('poly2','Lower',[-Inf 0 0], 'Upper', [Inf 0 0]);
     f = fit(speed',force','poly2',options);
     force_func = f.p1*speed_val.^2;
@@ -69,21 +70,24 @@ else
     plot(speed_val, force_func);
     xlabel('Speed (rad/sec)');
     ylabel('|Force| (N)');
-    text(-200,4,['f = ' num2str(f.p1) 'x^2'],'FontSize',14);
-    legend('Data', 'Fitted Curve', 'Location', 'southwest');
+   % text(-200,4,['f = ' num2str(f.p1) 'x^2'],'FontSize',14);
+%     legend('Data', 'Fitted Curve', 'Location', 'southeast');
+
 %     scatter(speed_val(end),force_func(end));
 %     text(speed_val(end),force_func(end),['(' num2str(speed_val(end)) ',' ...
 %         num2str(force_func(end)) ') \rightarrow'], ...
 %         'HorizontalAlignment', 'right');
+
     grid on
     axis tight
-    saveas(gcf,[propName '-Force.jpg']);
+    set(gca,'color','none');
+    saveas(gcf,[propName '-Force.png']);
 end
 
 figure
 % subplot(1,2,2);
 scatter(speed,torque,'.');
-title(['Torque vs. Speed' ' for ' propName]);
+%title(['Torque vs. Speed' ' for ' propName]);
 options = fitoptions('poly2','Lower',[-Inf 0 0], 'Upper', [Inf 0 0]);
 g = fit(speed',torque','poly2',options);
 torque_func = g.p1*speed_val.^2;
@@ -93,11 +97,14 @@ plot(speed_val, torque_func);
 xlabel('Speed (rad/sec)');
 ylabel('|Torque| (mNm)');
 text(-200,70,['f = ' num2str(g.p1) 'x^2'],'FontSize',14);
-legend('Data', 'Fitted Curve', 'Location', 'southwest');
+% legend('Data', 'Fitted Curve', 'Location', 'southeast');
+
 % scatter(speed_val(end),torque_func(end));
 % text(speed_val(end),torque_func(end),['(' num2str(speed_val(end)) ',' ...
 %     num2str(torque_func(end)) ') \rightarrow'], ...
 %     'HorizontalAlignment', 'right');
+
 grid on
 axis tight
-saveas(gcf,[propName '-Torque.jpg']);
+set(gca,'color','none');
+saveas(gcf,[propName '-Torque.png']);
