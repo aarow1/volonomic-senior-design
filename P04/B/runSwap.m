@@ -2,4 +2,5 @@ clear all;
 close all;
 img = imread('Capture.png');
 boundBox = detectFace(img);
-features = detectFeat(boundBox,img);
+featPts = detectFeat(boundBox,img);
+idx = matchFeat(featPts,img);
