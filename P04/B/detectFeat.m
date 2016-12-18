@@ -12,7 +12,7 @@ for i = 1:m
 % box = boundBox(i,:);
 % faceImg = insertObjectAnnotation(img,'rectangle',box,'Face');
 % imshow(faceImg);
-featPts{i} = detectMinEigenFeatures(imgGray,'ROI',boundBox(i,:));
+featPts{i} = detectMinEigenFeatures(imgGray,'ROI',boundBox(i,:)+[20, 10, -20, -20],'MinQuality',.015);
 % featPts = featPts.selectStrongest(100);
 plot(featPts{1,i});
 
