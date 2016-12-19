@@ -2,7 +2,7 @@ function [ box ] = findFeat( img,boundBox,name,showImg )
 %detect features using MatLab CascadeObjectDetector
 %input: image, boundBox of face, name of feature to detect, show image
 %output: box around feature [x y h w]
-featDetect = vision.CascadeObjectDetector(name,'MergeThreshold',7,'UseROI',true);
+featDetect = vision.CascadeObjectDetector(name,'MergeThreshold',15,'UseROI',true);
 [m,n] = size(boundBox);
 if showImg
     figure();

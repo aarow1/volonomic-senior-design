@@ -3,12 +3,16 @@ function img_frame = faceSwapWrapper(img)
 % clear all;
 %
 % img = imread('Capture.png');
+disp('FINDING FEATURES');
 boundBox = [detectFace(img,[600, 60, 400, 600]); detectFace(img,[1800, 60, 500, 600])];
-showAll = 0;
+showAll = 1;
 boxNose = findFeat(img,boundBox,'Nose',showAll);
-boxMouth = findFeat(img,boundBox+[0 boundBox(1,3)/2 0 0;  0 boundBox(2,4)/2 0 -boundBox(2,3)/2;],'Mouth',showAll);
-boxEyeR = findFeat(img,boundBox+[0 -boundBox(1,3)/4 0 0;  0 -boundBox(2,4)/3 0 0;],'RightEyeCART',showAll);
-boxEyeL = findFeat(img,boundBox+[0 -boundBox(1,3)/4 0 0;  boundBox(2,4)/2 -boundBox(2,4)/3 0 0;],'LeftEyeCART',showAll);
+boxMouth = findFeat(img,boundBox+[0 boundBox(1,3)/2 0 0;...
+    0 boundBox(2,4)/2 0 -boundBox(2,3)/2;],'Mouth',showAll);
+boxEyeR = findFeat(img,boundBox+[0 -boundBox(1,3)/4 0 0;...
+    -boundBox(2,4)/2 -boundBox(2,4)/3 0 0;],'RightEyeCART',showAll);
+boxEyeL = findFeat(img,boundBox+[0 -boundBox(1,3)/4 0 0;...
+    boundBox(2,4)/2 -boundBox(2,4)/3 -boundBox(2,4)/2 -boundBox(2,4)/3;],'LeftEyeCART',showAll);
 
 
 % boxNose = findFeat(img,boundBox,'Nose',1);
@@ -29,10 +33,17 @@ convHullY = faceShapeY(:,1:4);
 
 img_mask1 = makeMask(img,convHullX(1,:),convHullY(1,:));
 img_mask2 = makeMask(img,convHullX(2,:),convHullY(2,:));
+
+disp('MORPHING IMAGE');
+try
 img_morph1 = morph_tps_wrapper(img_mask1,img_mask2,[faceShapeX(1,:)' faceShapeY(1,:)'],...
     [faceShapeX(2,:)' faceShapeY(2,:)'],1,0);
 img_morph2 = morph_tps_wrapper(img_mask2,img_mask1,[faceShapeX(2,:)' faceShapeY(2,:)'],...
     [faceShapeX(1,:)' faceShapeY(1,:)'],1,0);
+catch
+    img_frame = img;
+    return
+end
 
 img_faces = img_morph1 + img_morph2;
 pullframe = uint8(img_faces == 0);
