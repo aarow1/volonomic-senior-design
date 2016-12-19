@@ -6,13 +6,13 @@ function img_frame = faceSwapWrapper(img)
 disp('FINDING FEATURES');
 boundBox = [detectFace(img,[600, 60, 400, 600]); detectFace(img,[1800, 60, 500, 600])];
 showAll = 1;
-boxNose = findFeat(img,boundBox,'Nose',showAll);
-boxMouth = findFeat(img,boundBox+[0 boundBox(1,3)/2 0 0;...
-    0 boundBox(2,4)/2 0 -boundBox(2,3)/2;],'Mouth',showAll);
+boxNose = findFeat(img,boundBox,'Nose',showAll,15);
+boxMouth = findFeat(img,boundBox+[0 2*boundBox(1,3)/3 0 -boundBox(1,3)/2;...
+    0 2*boundBox(2,4)/3 0 -boundBox(2,3)/2;],'Mouth',showAll, 15);
 boxEyeR = findFeat(img,boundBox+[0 -boundBox(1,3)/4 0 0;...
-    -boundBox(2,4)/2 -boundBox(2,4)/3 0 0;],'RightEyeCART',showAll);
-boxEyeL = findFeat(img,boundBox+[0 -boundBox(1,3)/4 0 0;...
-    boundBox(2,4)/2 -boundBox(2,4)/3 -boundBox(2,4)/2 -boundBox(2,4)/3;],'LeftEyeCART',showAll);
+    0 0 -boundBox(2,4)/2 -boundBox(2,4)/3;],'RightEyeCART',showAll, 5);
+boxEyeL = findFeat(img,boundBox+[boundBox(2,4)/2 -boundBox(1,3)/4 0 0;...
+    boundBox(2,4)/2 0 -boundBox(2,4)/4 -boundBox(2,4)/3;],'LeftEyeCART',showAll,15);
 
 
 % boxNose = findFeat(img,boundBox,'Nose',1);

@@ -1,15 +1,21 @@
-function [ box ] = findFeat( img,boundBox,name )
-%UNTITLED4 Summary of this function goes here
-%   Detailed explanation goes here
-featDetect = vision.CascadeObjectDetector(name,'MergeThreshold',1,'UseROI',true);
+function [ box ] = findFeat( img,boundBox,name,showImg,threshold )
+%detect features using MatLab CascadeObjectDetector
+%input: image, boundBox of face, name of feature to detect, show image
+%output: box around feature [x y h w]
+featDetect = vision.CascadeObjectDetector(name,'MergeThreshold',threshold,'UseROI',true);
 [m,n] = size(boundBox);
-figure();
-imshow(img);hold on;
+if showImg
+    figure();
+    imshow(img);hold on;
+end
 for i = 1:m
     try
-    box_temp = step(featDetect,img,boundBox(i,:));
-    box(i,:) = box_temp(1,:);
-    rectangle('Position',box(i,:),'LineWidth',4,'LineStyle','-','EdgeColor','b');
+        box_temp = step(featDetect,img,boundBox(i,:));
+        box(i,:) = box_temp(1,:);
+        if showImg
+            rectangle('Position',boundBox(i,:),'LineWidth',2,'LineStyle','-','EdgeColor','r');
+            rectangle('Position',box(i,:),'LineWidth',4,'LineStyle','-','EdgeColor','b');
+        end
     catch
         box(i,:) = NaN;
     end
