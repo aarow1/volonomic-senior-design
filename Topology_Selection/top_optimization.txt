@@ -1,0 +1,24 @@
+Set rotor positions
+For each rotor 1 direction perpendicular to position
+  7 total nested for loops, 1 for each rotor direction
+    Now you have set rotor positions and directions
+    Construct controllability matrix, A
+    Find the null space basis of A, this is the homogenous solution
+      x_h = null space basis 
+      if dim(null(A)) ~= 1, then move to next topology
+      equivalently if dim(rowspace(A)) ~= 6, move to next topology
+      all elements of x_h must be positive
+        or if they are all negative, make them all positive      
+    for each unit direciton of wrench, y
+      calculate x_p using pseudo-inverse of A
+      C = max(-x_p ./ x_h) // m = x_p + c * x_h
+      m = x_p + c * x_h   // m is the motor speeds required to exert unit wrench y 
+      d = max(m)          // d is the maximum motor speed to make unit wrench
+      M = m / d           // M is the highest attainable motor speeds 
+                          // to make wrench in y direction
+                          // To explain: M has it's fastest motor speed set to 1
+      R = A * M           // R is the highest attainable wrench in y direction
+    find min(R) for topology
+    store this with reference to specific topology
+Choose topology with max(min(R))
+
