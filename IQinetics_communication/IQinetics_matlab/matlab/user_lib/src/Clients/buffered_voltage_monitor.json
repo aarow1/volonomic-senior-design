@@ -1,0 +1,9 @@
+[
+
+{"type_idn":42, "param":"volts_raw",              "param_idn":  0, "format":"f", "unit": "V"},
+{"type_idn":42, "param":"volts",                  "param_idn":  2, "format":"f", "unit": "V"},
+{"type_idn":42, "param":"volts_gain",             "param_idn":  11, "format":"f", "unit": ""},
+{"type_idn":42, "param":"filter_fs",              "param_idn":  16, "format":"I", "unit": "Hz"},
+{"type_idn":42, "param":"filter_fc",              "param_idn":  17, "format":"I", "unit": "Hz"}
+
+]
