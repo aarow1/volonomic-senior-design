@@ -165,42 +165,42 @@ close(fig_handle);
            case 'downarrow'
                lead = mot.get('lead_time')-1e-6
                mot.set('lead_time',lead);
-           case 'pagedown'
+           case 'd'
                speed_samp = mot.get('cmd_velocity');
                if isempty(speed_samp) || isnan(speed_samp) || speed_samp == 0
                    speed_samp = 0;
                end
                speed = speed_samp-10
                mot.set('cmd_velocity',speed);
-           case 'pageup'
+           case 'e'
                speed_samp = mot.get('cmd_velocity');
                if isempty(speed_samp) || isnan(speed_samp) || speed_samp == 0
                    speed_samp = 0;
                end
                speed = speed_samp+10
                mot.set('cmd_velocity',speed);
-           case 'home'
+           case 'w'
                speed_samp = mot.get('cmd_velocity');
                if isempty(speed_samp) || isnan(speed_samp) || speed_samp == 0
                    speed_samp = 0;
                end
                speed = speed_samp+1
                mot.set('cmd_velocity',speed);
-           case 'end'
+           case 's'
                speed_samp = mot.get('cmd_velocity');
                if isempty(speed_samp) || isnan(speed_samp) || speed_samp == 0
                    speed_samp = 0;
                end
                speed = speed_samp-1
                mot.set('cmd_velocity',speed);
-           case 'insert'
+           case 'q'
                pwm_samp = mot.get('cmd_spin_pwm');
                if isempty(pwm_samp) ||isnan(pwm_samp) || pwm_samp == 0
                    pwm_samp = 0;
                end
                pwm = pwm_samp + .01
                mot.set('cmd_spin_pwm',pwm);
-           case 'delete'
+           case 'a'
                pwm_samp = mot.get('cmd_spin_pwm');
                if isempty(pwm_samp) || isnan(pwm_samp) || pwm_samp == 0
                    pwm_samp = 0;
@@ -209,9 +209,9 @@ close(fig_handle);
                mot.set('cmd_spin_pwm',pwm);
            case 't'
                mot.set('motor_emf_shape',0);
-           case 's'
+           case 'c'
                mot.set('motor_emf_shape',1);
-           case 'q'
+           case 'z'
                disp('Shutting down');
                run=0;
                rampToPwm(mot,0,1);

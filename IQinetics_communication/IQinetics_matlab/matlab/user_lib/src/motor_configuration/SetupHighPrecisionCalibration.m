@@ -16,7 +16,7 @@ function [cal_angle, electric_lead_rate] = SetupHighPrecisionCalibration(mot,bat
     
     mot_prop = mot.get_all();
     
-    test_current = mot_prop.motor_I_max*.75; % test at 3/4 current, worst case (if it stalls for some reason)
+    test_current = mot_prop.motor_I_max*3.0; % test at 3/4 current, worst case (if it stalls for some reason)
 
     pwm_cmd = test_current*mot_prop.motor_R_ohm/bat.get('volts');
     
