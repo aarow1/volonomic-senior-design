@@ -1,7 +1,7 @@
-start_volts = 0;
-end_volts = 3;
-num_tests = 100;
-test_per_volt = 3;
+start_volts = 0.4;
+end_volts = 5.2;
+num_tests = 200;
+test_per_volt = 7;
 volts_incr = (end_volts - start_volts) / num_tests;
 
 obs_volt = zeros(num_tests*test_per_volt,1);
@@ -31,11 +31,13 @@ for test = 1:num_tests
     end
 end
 
+save(['ff_data' datestr(now)]);
+
 %%
 hold on;
-plot(obs_volt, obs_vel, 'x');
-xlabel('drive voltage');
-ylabel('speed [rad/s]');
+plot(obs_vel, obs_volt, 'x');
+xlabel('speed [rad/s]');
+ylabel('drive voltage');
 
 % fit = polyfit(obs_volt, obs_vel, 2)
 % x1 = linspace(0, max(obs_volt));
@@ -43,7 +45,7 @@ ylabel('speed [rad/s]');
 % plot(x1, y1, 'linewidth', 2);
 
 fit2 = polyfit(obs_vel, obs_volt, 2)
-y2 = linspace(min(obs_vel), max(obs_vel));
-x2 = fit2(3) + y2*fit2(2) + y2*fit2(1);
+x2 = linspace(min(obs_vel), max(obs_vel));
+y2 = fit2(3) + x2*fit2(2) + x2.^2*fit2(1);
 plot(x2, y2, 'linewidth', 2);
 

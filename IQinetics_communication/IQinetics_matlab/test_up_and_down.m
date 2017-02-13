@@ -1,37 +1,42 @@
+max_spd = 400;
+num_cycles = 2;
+period = .6;
+delta_t = .005;
+num_points = num_cycles*period/delta_t;
 
 mot.set('velocity_ff0', 0);
-mot.set('velocity_ff1', 0.004648555991083);
-mot.set('velocity_ff2', 0.000000121309706);
-
-mot.set('velocity_Kp', 0.03);
-mot.set('velocity_Ki', 0.0002);
-mot.set('velocity_Kd', 0.00);
-mot.save_all();
+mot.set('velocity_ff1', 0.004575644785294);
+mot.set('velocity_ff2', 0.000000464824121);
+mot.set('velocity_Kp', 0.05);
+mot.set('velocity_Ki', 0.03);
+mot.set('velocity_Kd', 0);
+% mot.save_all();
 pause(1);
 
-vels = zeros(400,1);
+vels = zeros(num_points,1);
+spds = zeros(num_points,1);
 ind = 1;
 
-num_tries = 6;
-
 tic
-for ii = 1:num_tries
-    spd = 600 * (ii/num_tries) * (-1)^(ii)
+for ii = 1:num_points
+%     spd = max_spd * (ii/num_points) * sin((2*pi/period) * ii * delta_t);
+    spd = max_spd * sin((2*pi/period) * ii * delta_t);
+    spds(ii) = spd;
+    
     mot.set('cmd_velocity', spd);
-    while(toc < 3)
-        vels(ind) = mot.get('obs_velocity');
-        ind = ind+1;
+    while(toc < delta_t)
     end
-    tic
+    vels(ii) = mot.get('obs_velocity');
+    %%
+    % filterPoints = 10;
+    % filtercoeffs = ones(1, filterPoints)/filterPoints;
+    %
+    % vels = filter(filtercoeffs, 1, vels);
 end
-
-%%
-filterPoints = 10;
-filtercoeffs = ones(1, filterPoints)/filterPoints;
-
-vels = filter(filtercoeffs, 1, vels);
-
-
-hold on;
-plot(vels);
-grid on;
+    %%
+    
+    hold on;
+    plot(spds);
+    plot(vels);
+    legend('in', 'out')
+    grid on;
