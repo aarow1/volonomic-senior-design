@@ -16,9 +16,10 @@
 
 // Includes required for communication
 // Message forming interface
-#include <generic_interface.hpp> 
+#include "generic_interface.hpp"
+
 // Client that speaks to complex motor controllers
-#include <complex_motor_control_client.hpp> 
+#include "complex_motor_control_client.hpp"
 
 // LED pin
 const int kLedPin =  13;

@@ -12,6 +12,7 @@
 % This makes a communication object allowing other objects talk over serial
 % replace 'COM18' with the com port of the FTDI, 
 % If using Mac/Linux it will likely be '/dev/ttyUSB'.
+% com = MessageInterface('/dev/tty.usbserial-AFYJJVYG',115200);
 com = MessageInterface('/dev/tty.usbserial-AFYJJVYG',115200);
 
 % This makes a motor control client, which allows you to send commands and 
@@ -33,7 +34,7 @@ mot.get('obs_supply_volts')
 mot.set('velocity_Kp', .03);
 
 % Set and get after to make sure
-mot.set_verify('velocity_Kp', .04);
+mot.set_verify('velocity_Kp', .03);
 
 % Set multiple things
 mot_gains.velocity_Kp = .03;
@@ -80,3 +81,7 @@ enc = EncoderClient('com',com);
 % mot.set('ctrl_spin_amps',1); % Amps
 % This sets a desired torque (also estimated, +-25%)
 % mot.set('ctrl_spin_torque', .01); %Nm
+% 
+% rampToSpeed(mot, 1000, 1);
+% cmd_vel = ...
+% obs_vel = ...

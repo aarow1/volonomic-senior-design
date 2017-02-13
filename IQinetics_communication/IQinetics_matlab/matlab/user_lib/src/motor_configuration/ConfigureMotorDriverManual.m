@@ -154,10 +154,10 @@ close(fig_handle);
     function KeyPressCallback(src,evt)
        switch evt.Key
            case 'rightarrow'
-               calibration = mot.get('calibration_angle')+2*pi/4096
+               calibration = mot.get('calibration_angle')+2*pi/(8192*4)
                mot.set('calibration_angle',calibration)
            case 'leftarrow'
-               calibration = mot.get('calibration_angle')-2*pi/4096
+               calibration = mot.get('calibration_angle')-2*pi/(8192*4)
                mot.set('calibration_angle',calibration)
            case 'uparrow'
                lead = mot.get('lead_time')+1e-6
@@ -170,28 +170,28 @@ close(fig_handle);
                if isempty(speed_samp) || isnan(speed_samp) || speed_samp == 0
                    speed_samp = 0;
                end
-               speed = speed_samp-10
+               speed = speed_samp-50
                mot.set('cmd_velocity',speed);
            case 'e'
                speed_samp = mot.get('cmd_velocity');
                if isempty(speed_samp) || isnan(speed_samp) || speed_samp == 0
                    speed_samp = 0;
                end
-               speed = speed_samp+10
+               speed = speed_samp+50
                mot.set('cmd_velocity',speed);
            case 'w'
                speed_samp = mot.get('cmd_velocity');
                if isempty(speed_samp) || isnan(speed_samp) || speed_samp == 0
                    speed_samp = 0;
                end
-               speed = speed_samp+1
+               speed = speed_samp+10
                mot.set('cmd_velocity',speed);
            case 's'
                speed_samp = mot.get('cmd_velocity');
                if isempty(speed_samp) || isnan(speed_samp) || speed_samp == 0
                    speed_samp = 0;
                end
-               speed = speed_samp-1
+               speed = speed_samp-10
                mot.set('cmd_velocity',speed);
            case 'q'
                pwm_samp = mot.get('cmd_spin_pwm');
