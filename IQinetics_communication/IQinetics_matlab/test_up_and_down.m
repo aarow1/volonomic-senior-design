@@ -1,8 +1,8 @@
-max_spd = 400;
-num_cycles = 2;
+max_spd = 600;
+num_cycles = 3;
 period = .6;
 delta_t = .005;
-num_points = num_cycles*period/delta_t;
+num_points = ceil(num_cycles*period/delta_t);
 
 mot.set('velocity_ff0', 0);
 mot.set('velocity_ff1', 0.004575644785294);
