@@ -1,12 +1,20 @@
+<<<<<<< HEAD
 target_spd = 1450;
+=======
+target_spd = -50;
+>>>>>>> a935cae90d82174606bdb40e969d3a671b94359f
 margin = .9;
 vels = [];
 close all
 ts = [];
+<<<<<<< HEAD
 pwms = [];
 vs = [];
 currents = [];
 hold_time = 2;
+=======
+hold_time = 3;
+>>>>>>> a935cae90d82174606bdb40e969d3a671b94359f
 tic
 while toc < hold_time
     mot.set('cmd_velocity', target_spd);
