@@ -1,7 +1,7 @@
-start_volts = 0.4;
-end_volts = 5.2;
-num_tests = 200;
-test_per_volt = 7;
+start_volts = 0.6;
+end_volts = 6;
+num_tests = 100;
+test_per_volt = 6;
 volts_incr = (end_volts - start_volts) / num_tests;
 
 obs_volt = zeros(num_tests*test_per_volt,1);

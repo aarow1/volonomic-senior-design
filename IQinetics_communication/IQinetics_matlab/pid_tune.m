@@ -8,10 +8,10 @@ speed = 200;
 current_spd = 0;
 
 mot.set('velocity_ff0', 0);
-mot.set('velocity_ff1', 0.004575644785294);
-mot.set('velocity_ff2', 0.000000464824121);
-mot.set('velocity_Kp', 0.01);
-mot.set('velocity_Ki', 0.04);
+mot.set('velocity_ff1', 0.004506239887297);
+mot.set('velocity_ff2', 0.000000383741267);
+mot.set('velocity_Kp', 0.03);
+mot.set('velocity_Ki', 0.05);
 mot.set('velocity_Kd', 0);
 
 pause(1);

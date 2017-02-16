@@ -154,10 +154,10 @@ close(fig_handle);
     function KeyPressCallback(src,evt)
        switch evt.Key
            case 'rightarrow'
-               calibration = mot.get('calibration_angle')+2*pi/(8192*4)
+               calibration = mot.get('calibration_angle')+2*pi/(4096)
                mot.set('calibration_angle',calibration)
            case 'leftarrow'
-               calibration = mot.get('calibration_angle')-2*pi/(8192*4)
+               calibration = mot.get('calibration_angle')-2*pi/(4096)
                mot.set('calibration_angle',calibration)
            case 'uparrow'
                lead = mot.get('lead_time')+1e-6
