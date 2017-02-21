@@ -24,7 +24,9 @@ unsigned long communication_time_last;
 // Make a communication interface object
 GenericInterface com;
 // Make a complex motor control object
-ComplexMotorControlClient motor_client(0);
+ComplexMotorControlClient motor_client_0(0); //
+ComplexMotorControlClient motor_client_1(1); //
+
 
 void setup() {
   // Initialize the Serial peripheral
