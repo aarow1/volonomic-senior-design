@@ -1,3 +1,4 @@
+
 /* 
  *  IQinetics serial communication example.
  *  
@@ -16,10 +17,9 @@
 
 // Includes required for communication
 // Message forming interface
-#include "generic_interface.hpp"
-
+#include <generic_interface.hpp>
 // Client that speaks to complex motor controllers
-#include "complex_motor_control_client.hpp"
+#include <complex_motor_control_client.hpp> 
 
 // LED pin
 const int kLedPin =  13;
@@ -40,7 +40,7 @@ ComplexMotorControlClient motor_client(0);
 
 void setup() {
   // Initialize the Serial peripheral
-  Serial1.begin(115200);
+  Serial3.begin(115200);
   // Initialize the LED pin as an output:
   pinMode(kLedPin, OUTPUT);
 
@@ -58,14 +58,14 @@ void loop() {
   if(com.GetTxBytes(communication_buffer,communication_length))
   {
     // Use Arduino serial hardware to send messages
-    Serial1.write(communication_buffer,communication_length);
+    Serial3.write(communication_buffer,communication_length);
   }
   
   // wait a bit so as not to send massive amounts of data
   delay(100);
 
   // Reads however many bytes are currently available
-  communication_length = Serial1.readBytes(communication_buffer, Serial1.available());
+  communication_length = Serial3.readBytes(communication_buffer, Serial3.available());
   // Puts the recently read bytes into com's receive queue
   com.SetRxBytes(communication_buffer,communication_length);
 
