@@ -1,5 +1,11 @@
 [
 
-{"type":"As5047", "type_idn":56, "param":"position",          "param_idn":  0, "format":"f", "unit": "rad"}
+{"type":"As5047", "type_idn":56, "param":"position",          "param_idn":  0, "format":"f", "unit": "rad"},
+{"type":"As5047", "type_idn":56, "param":"angle_source",      "param_idn":  1, "format":"B", "unit": ""},
+{"type":"As5047", "type_idn":56, "param":"settings1",         "param_idn":  2, "format":"H", "unit": ""},
+{"type":"As5047", "type_idn":56, "param":"settings2",         "param_idn":  3, "format":"H", "unit": ""},
+{"type":"As5047", "type_idn":56, "param":"diagnostic",        "param_idn":  4, "format":"H", "unit": ""},
+{"type":"As5047", "type_idn":56, "param":"errfl",             "param_idn":  5, "format":"H", "unit": ""},
+{"type":"As5047", "type_idn":56, "param":"one_time_program",  "param_idn":  6, "format":"", "unit": ""}
 
 ]
