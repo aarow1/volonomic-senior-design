@@ -1,3 +1,5 @@
+#include <Quaternion.h>
+#include <BasicLinearAlgebra.h>
 #include <UM7.h>
 
 //Connect the RX pin on the UM7 to TX1 (pin 18) on the DUE
@@ -11,18 +13,16 @@ void setup() {
   Serial.begin(115200);
   Serial2.begin(115200);
   pinMode(13, OUTPUT);
+  Quaternion q_des = Quaternion();
 }
 
 void loop() {
 
   if (Serial2.available()) {
-    long t_last = micros();
-    int bytes_read = 0;
     while (Serial2.available()) {
       imu.encode(Serial2.read());
-      bytes_read++;
     }
-    Serial.printf("time spent reading was: %i\t pitch is %2.2f\t and i read %i bytes\n", 
-      micros() - t_last, imu.pitch, bytes_read);
   }
+
+  
 }
