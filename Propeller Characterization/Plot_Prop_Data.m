@@ -1,12 +1,12 @@
 close all
 %% PARAMETERS
 propName = 'APC Bidirectional LH';
-maxSpeed = 1700; %max rad/s prop is rated for
+maxSpeed = 1000; %max rad/s prop is rated for
 isUni = 0; %1 if unidirectional prop
 
 %% SCRIPT
 speed = summary.speed.value;
-force = 2*summary.wrench.value(:,3)';
+force = summary.wrench.value(:,3)';
 torque = summary.wrench.value(:,6)';
 
 for i = 1:length(speed)
