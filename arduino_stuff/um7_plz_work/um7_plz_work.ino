@@ -13,8 +13,10 @@ void setup() {
   Serial.begin(115200);
   Serial2.begin(115200);
   pinMode(13, OUTPUT);
-  Quaternion q_des = Quaternion();
 }
+
+Quaternion q_des = Quaternion();
+Quaternion q_err;
 
 void loop() {
 
@@ -24,5 +26,13 @@ void loop() {
     }
   }
 
-  
+  q_err = imu.q_att.inverse().multiply(q_des);
+
+  Serial.print("q_cur = ");
+  Serial.print(imu.q_att.toString());
+  Serial.print("q_des = ");
+  Serial.print(q_des.toString());
+  Serial.print("q_err = ");
+  Serial.println(q_err.toString());
+
 }
