@@ -12,10 +12,10 @@ end
 
 %% INPUT
 
-att_curr = [1.23 3.14 1 0]; 
-att_des = [0 0 0 0]; 
-omegadot_des = [0 0 0];
-forcelin_des = [0 0 0]; 
+att_curr = [1 2 3 4]; 
+att_des = [5 6 7 8]; 
+omegadot_des = [9 10 11];
+forcelin_des = [12 13 14]; 
 pkt = [att_curr att_des omegadot_des forcelin_des];
 
 fwrite(xbee,pkt,'float32');
