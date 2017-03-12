@@ -50,6 +50,8 @@ void loop() {
     }
   }
 
+  
+
   qinverse(q_curr, q_curr_inv);
   qmultiply(q_curr_inv, q_des, q_err);
 
@@ -64,7 +66,7 @@ void loop() {
   Serial.printf("q_cur = [%2.2f,\t%2.2f,\t%2.2f,\t%2.2f]\n",
                 imu.q_att(0), imu.q_att(1), imu.q_att(2), imu.q_att(3));
   Serial.printf("w = [%2.2f,\t%2.2f,\t%2.2f]\n", imu.w(0), imu.w(1), imu.w(2));
-  Serial.printf("x = [%2.2f,\t%2.2f,\t%2.2f, \t%2.2f, \t%2.2f, \t%2.2f]\n", x(0),x(1),x(2),x(3),x(4),x(5));
+  Serial.printf("x = [%2.2f,\t%2.2f,\t%2.2f,\t%2.2f,\t%2.2f,\t%2.2f]\n", x(0),x(1),x(2),x(3),x(4),x(5));
   //  Serial.println("q_des = " + q);
   //    Serial.print(q_des.toString());
   //    Serial.print("q_err = ");
