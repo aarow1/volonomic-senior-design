@@ -19,9 +19,9 @@ Vec3 forcelin_des;
 Vec6 motor_forces;
 
 Quaternion q_curr;
-Matrix<3, 1, double> w_ff;
-Matrix<3, 1, double> f_des;
-Matrix<3, 1, double> w_curr;
+Vec3 w_ff;
+Vec3 f_des;
+Vec3 w_curr;
 
 #define SerialXbee Serial1
 XBee xbee = XBee();
