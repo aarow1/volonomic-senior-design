@@ -5,7 +5,7 @@ int pktIdx = 0;
 int state = 0;
 int i = 0;
 bool fin = 0;
-enum {PKT_START, ATT_CURR, ATT_DES, OMEGADOT_DES, FORCELIN_DES, PKT_END};
+enum {PKT_START, ATT_CURR, ATT_DES, OMEGA_DES, FORCELIN_DES, PKT_END};
 byte START_NUM = 32;
 byte END_NUM = 26;
 
@@ -65,13 +65,13 @@ void readXbee() {
 
     case OMEGA_DES:
       Serial.println("omegadot_des");
-      w_ff_des[i] = u.f;
+      w_ff_des_temp[i] = u.f;
       i++;
       if (i >= 3) {
         i = 0;
         state = FORCELIN_DES;
         Serial.printf("omega_des = [%2.2f,\t%2.2f,\t%2.2f]\n",
-                      w_ff_des_temp[0], w_ff_des_temp[1], w_Ff_des_temp[2]);
+                      w_ff_des_temp[0], w_ff_des_temp[1], w_ff_des_temp[2]);
       }
       break;
 
@@ -106,7 +106,7 @@ void readXbee() {
       break;
 
     default:
-      Serial.println("defaul");
+      Serial.println("default");
       state = PKT_START;
       break;
   }
