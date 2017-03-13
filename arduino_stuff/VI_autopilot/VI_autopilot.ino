@@ -66,7 +66,7 @@ void loop() {
   q_curr = (imu.q_att + att_curr); //for now
   w_curr = imu.w;
   motor_forces = calculateMotorForces(q_curr,att_des,w_ff,forcelin_des,w_curr);
-  spinMotors();
+//  spinMotors();
 }
 
 
