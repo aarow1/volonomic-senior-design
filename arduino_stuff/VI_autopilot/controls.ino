@@ -6,6 +6,7 @@ Quaternion q_err;
 
 double J_vi_arr[3][3] = {{1, 0, 0}, {0, 1, 0}, {0, 0, 1}};
 Matrix<3, 3, double> J_vi(J_vi_arr);
+
 double A_vi_arr[6][6] = {{1, 1, 0, 0, 0, 0}, {0, 0, 1, 1, 0, 0}, {0, 0, 0, 0, 1, 1},
   {0, 0, 1, -1, 0, 0}, {0, 0, 0, 0, 1, -1}, {1, -1, 0, 0, 0, 0}
 };
@@ -13,17 +14,18 @@ Matrix<6, 6, double> A_vi(A_vi_arr);
 Matrix<6, 6, double> A_inv = A_vi.Inverse();
 
 //Matrix<3, 1, double> w_ff;
-Matrix<3, 1, double> w_des;
-Matrix<3, 1, double> t_des;
+Vec3 w_des;
+Vec3 t_des;
 //Matrix<3, 1, double> f_des;
-Matrix<6, 1, double> x;
+Vec6 x;
+
 double tau_att = 1.0;
 double tau_w = 1.0;
 
 template <typename T> T sign(T val);
-void qinverse(Matrix<4, 1> q, Matrix<4, 1> q_inv);
-void qmultiply(Matrix<4, 1> a, Matrix<4, 1> b, Matrix<4, 1> c);
-Matrix <3, 1> cross(Matrix<3, 1> a, Matrix<3, 1> b);
+void qinverse(Quaternion q, Quaternion q_inv);
+void qmultiply(Quaternion a, Quaternion b, Quaternion c);
+Vec3 cross(Matrix<3, 1> a, Matrix<3, 1> b);
 Matrix<3, 1> scalar_multiply(double a, Matrix<3, 1> b);
 
 void readUM7() {

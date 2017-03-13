@@ -40,7 +40,7 @@ void readXbee();
 
 // Functions for controls
 void readUM7();
-Matrix<6,1> calculateMotorForces(Quaternion q_curr, Quaternion q_des, Matrix<3,1> w_ff, Matrix<3,1> f_des, Matrix<3,1> w_curr);
+Vec6 calculateMotorForces(Quaternion q_curr, Quaternion q_des, Vec3 w_ff, Vec3 f_des, Vec3 w_curr);
 void spinMotors();
 
 ///////////////////////////////////////////////////////////////////////////
