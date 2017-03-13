@@ -16,7 +16,7 @@ void qinverse(Matrix<4,1> q, Matrix<4,1> q_inv){
   q_inv(3) = -q(3);
 };
 
-Matrix<3,1> cross(Matrix<3,1> a, Matrix<3,1> b){
+Vec3 cross(Matrix<3,1> a, Matrix<3,1> b){
   Matrix<3,1> c;
   c(0) = a(1)*b(2) - a(2)*b(1);
   c(1) = a(2)*b(0) - a(0)*b(2);
