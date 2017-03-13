@@ -16,6 +16,8 @@
 Quaternion q_des;
 
 Quaternion q_curr_vicon; // Attitude from vicon, read from xbee
+Quaternion q_curr_imu; // Attitude from imu, at time of reading xbee
+Quaternion q_curr_imu_inv; Quaternion q_curr_shift;
 Quaternion q_curr; // Attitude merged from imu and vicon
 
 Vec3 w_ff;
@@ -42,8 +44,10 @@ int readXbee(Quaternion q_curr);
 
 // Functions for controls
 void readUM7();
-Vec6 calculateMotorForces(Quaternion q_curr, Quaternion q_des, Vec3 w_ff, Vec3 f_des, Vec3 w_curr);
+Vec6 calculateMotorForces();
 void spinMotors(Vec6 motorForces);
+
+void q_toString(Quaternion q);
 
 ///////////////////////////////////////////////////////////////////////////
 // Autopilot code
@@ -78,15 +82,29 @@ void setup() {
 }
 
 void loop() {
-  readXbee();
   readUM7();
-//  q_curr = (imu.q_curr + q_curr_vicon); //for now
-  q_curr = q_curr_vicon;
-  w_curr = imu.w_curr;
-  motor_forces = calculateMotorForces(q_curr,q_des,w_ff,f_des,w_curr);
-  Serial.printf("motors speeds: [%2.2f, %2.2f, %2.2f, %2.2f, %2.2f, %2.2f]\n",
-                motor_forces(0), motor_forces(1), motor_forces(2), motor_forces(3), motor_forces(4), motor_forces(5));
-  delay(100);
+  if (readXbee()) {
+    q_curr_imu = imu.q_curr;
+    qinverse(q_curr_imu, q_curr_imu_inv);
+    qmultiply(q_curr_vicon,q_curr_imu_inv,q_curr_shift);
+  }
+  
+  // R0 = vicon RS = imu at that time
+  // Rts = newest imu //store Rto
+  qmultiply(q_curr_shift,imu.q_curr,q_curr);
+
+  //  w_curr = imu.w_curr;
+  //  motor_forces = calculateMotorForces(q_curr,q_des,w_ff,f_des,w_curr);
+//  if (testQuat) {
+//    q_curr(0) = q_curr_vicon(0); q_curr(1) = q_curr_vicon(1);
+//    q_curr(2) = q_curr_vicon(2); q_curr(3) = q_curr_vicon(3);
+//    w_curr(0) = 0; w_curr(1) = 0; w_curr(2) = 0;
+//    Serial.print("q_curr main"); q_toString(q_curr);
+    motor_forces = calculateMotorForces();
+    Serial.printf("motors speeds: [%2.2f, %2.2f, %2.2f, %2.2f, %2.2f, %2.2f]\n",
+                  motor_forces(0), motor_forces(1), motor_forces(2), motor_forces(3), motor_forces(4), motor_forces(5));
+//  }
+  //  delay(100);
 }
 
 

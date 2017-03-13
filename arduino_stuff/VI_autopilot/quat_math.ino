@@ -1,15 +1,15 @@
-template <typename T> T sign(T val) {
-    return (T(0) < val) - (val < T(0));
+template <typename T> T sign(T& val) {
+    return (T(0) <= val) - (val < T(0));
 }
 
-void qmultiply(Quaternion a, Quaternion b, Quaternion c){
+void qmultiply(Quaternion& a, Quaternion& b, Quaternion& c){
   c(0) = b(0)*a(0) - b(1)*a(1) - b(2)*a(2) - b(3)*a(3);
   c(1) = b(0)*a(1) + b(1)*a(0) - b(2)*a(3) + b(3)*a(2);
   c(2) = b(0)*a(2) + b(1)*a(3) + b(2)*a(0) - b(3)*a(1);
   c(3) = b(0)*a(3) - b(1)*a(2) + b(2)*a(1) + b(3)*a(0);
 };
 
-void qinverse(Quaternion q, Quaternion q_inv){
+void qinverse(Quaternion& q, Quaternion& q_inv){
   q_inv(0) = q(0);
   q_inv(1) = -q(1);
   q_inv(2) = -q(2);
@@ -30,5 +30,9 @@ Vec3 scalar_multiply(float a, Vec3 b){
     c(i) = a*b(i);
   }
   return c;
+}
+
+void q_toString(Quaternion q){
+  Serial.printf("[%2.2f,\t%2.2f,\t%2.2f,\t%2.2f]\n", q(0), q(1), q(2), q(3));
 }
 
