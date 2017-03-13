@@ -8,9 +8,9 @@
 
 // Stuff from xbee
 //curent attitude(4), des att(4), des angular rates(3), des linear force (3)
-#define Quaternion Matrix<4,1,double>
-#define Vec3 Matrix<3,1,double>
-#define Vec6 Matrix<6,1,double>
+#define Quaternion Matrix<4,1,float>
+#define Vec3 Matrix<3,1,float>
+#define Vec6 Matrix<6,1,float>
 
 Quaternion att_curr;
 Quaternion att_des;

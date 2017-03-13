@@ -24,7 +24,7 @@ Vec3 cross(Vec3 a, Vec3 b){
   return c;
 };
 
-Vec3 scalar_multiply(double a, Vec3 b){
+Vec3 scalar_multiply(float a, Vec3 b){
   Vec3 c;
   for(int i = 0; i<3; i++){
     c(i) = a*b(i);

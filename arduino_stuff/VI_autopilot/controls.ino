@@ -1,32 +1,32 @@
 //Quaternion q_curr;
 Quaternion q_curr_inv;
-//double id[4][1] = {1, 0, 0, 0};
+//float id[4][1] = {1, 0, 0, 0};
 //Quaternion q_des(id);
 Quaternion q_err;
 
-double J_vi_arr[3][3] = {{1, 0, 0}, {0, 1, 0}, {0, 0, 1}};
-Matrix<3, 3, double> J_vi(J_vi_arr);
+float J_vi_arr[3][3] = {{1, 0, 0}, {0, 1, 0}, {0, 0, 1}};
+Matrix<3, 3, float> J_vi(J_vi_arr);
 
-double A_vi_arr[6][6] = {{1, 1, 0, 0, 0, 0}, {0, 0, 1, 1, 0, 0}, {0, 0, 0, 0, 1, 1},
+float A_vi_arr[6][6] = {{1, 1, 0, 0, 0, 0}, {0, 0, 1, 1, 0, 0}, {0, 0, 0, 0, 1, 1},
   {0, 0, 1, -1, 0, 0}, {0, 0, 0, 0, 1, -1}, {1, -1, 0, 0, 0, 0}
 };
-Matrix<6, 6, double> A_vi(A_vi_arr);
-Matrix<6, 6, double> A_inv = A_vi.Inverse();
+Matrix<6, 6, float> A_vi(A_vi_arr);
+Matrix<6, 6, float> A_inv = A_vi.Inverse();
 
-//Matrix<3, 1, double> w_ff;
+//Matrix<3, 1, float> w_ff;
 Vec3 w_des;
 Vec3 t_des;
-//Matrix<3, 1, double> f_des;
+//Matrix<3, 1, float> f_des;
 Vec6 x;
 
-double tau_att = 1.0;
-double tau_w = 1.0;
+float tau_att = 1.0;
+float tau_w = 1.0;
 
 template <typename T> T sign(T val);
 void qinverse(Quaternion q, Quaternion q_inv);
 void qmultiply(Quaternion a, Quaternion b, Quaternion c);
 Vec3 cross(Vec3 a, Vec3 b);
-Vec3 scalar_multiply(double a, Vec3 b);
+Vec3 scalar_multiply(float a, Vec3 b);
 
 void readUM7() {
 
