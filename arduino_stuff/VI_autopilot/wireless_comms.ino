@@ -17,7 +17,7 @@ union {
 } u;
 
 //temporary stored attitude(4), des att(4), des angular rates(3), des linear force (3)
-float q_curr_temp[4];
+float q_curr_vicon_temp[4];
 float q_des_temp[4];
 float w_ff_temp[3];
 float f_des_temp[3];
@@ -65,13 +65,13 @@ int readXbee() {
         break;
       case Q_CURR:
         Serial.println("att_curr");
-        q_curr_temp[i] = u.f;
+        q_curr_vicon_temp[i] = u.f;
         i++;
         if (i >= 4) {
           i = 0;
           state = Q_DES;
           Serial.printf("att_curr = [%2.2f,\t%2.2f,\t%2.2f,\t%2.2f]\n",
-                        q_curr_temp[0], q_curr_temp[1], q_curr_temp[2], q_curr_temp[3]);
+                        q_curr_vicon_temp[0], q_curr_vicon_temp[1], q_curr_vicon_temp[2], q_curr_vicon_temp[3]);
         }
         break;
 
@@ -116,7 +116,7 @@ int readXbee() {
         Serial.println("pkt_end");
         if (u.f == END_NUM) {
           for (int j = 0; j < 4; j++) {
-            q_curr(j) = q_curr_temp[j];
+            q_curr_vicon(j) = q_curr_vicon_temp[j];
             q_des(j) = q_des_temp[j];
           }
           for (int j = 0; j < 3; j++) {

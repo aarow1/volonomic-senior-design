@@ -13,17 +13,14 @@
 #define Vec3 Matrix<3,1,float>
 #define Vec6 Matrix<6,1,float>
 
-// Stuff from xbee
-//curent attitude(4), des att(4), des angular rates(3), des linear force (3)
-Quaternion q_curr;
 Quaternion q_des;
+
+Quaternion q_curr_vicon; // Attitude from vicon, read from xbee
+Quaternion q_curr; // Attitude merged from imu and vicon
+
 Vec3 w_ff;
 Vec3 f_des;
-
-//stuff from IMU
 Vec3 w_curr;
-
-Quaternion q; //combined q
 Vec6 motor_forces;
 
 #define SerialXbee Serial1
@@ -41,7 +38,7 @@ const int ledPin = 13;
 ///////////////////////////////////////////////////////////////////////////
 
 // Functions for wireless communications
-int readXbee();
+int readXbee(Quaternion q_curr);
 
 // Functions for controls
 void readUM7();
@@ -81,16 +78,15 @@ void setup() {
 }
 
 void loop() {
-  if(readXbee()){
-    spinMotors(motor_forces);
-  }
-  //readUM7();
-  //q = (imu.q_att + q_curr); //for now
-  //w_curr = imu.w;
-  //motor_forces = calculateMotorForces(q,q_des,w_ff,f_des,w_curr);
-//  Serial.printf("motors speeds: [%2.2f, %2.2f, %2.2f, %2.2f, %2.2f, %2.2f]\n",
-//                motor_forces(0), motor_forces(1), motor_forces(2), motor_forces(3), motor_forces(4), motor_forces(5));
-//  delay(100);
+  readXbee();
+  readUM7();
+//  q_curr = (imu.q_curr + q_curr_vicon); //for now
+  q_curr = q_curr_vicon;
+  w_curr = imu.w_curr;
+  motor_forces = calculateMotorForces(q_curr,q_des,w_ff,f_des,w_curr);
+  Serial.printf("motors speeds: [%2.2f, %2.2f, %2.2f, %2.2f, %2.2f, %2.2f]\n",
+                motor_forces(0), motor_forces(1), motor_forces(2), motor_forces(3), motor_forces(4), motor_forces(5));
+  delay(100);
 }
 
 
