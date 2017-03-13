@@ -11,7 +11,6 @@ penis
 // Stuff from xbee
 //curent attitude(4), des att(4), des angular rates(3), des linear force (3)
 
->>>>>>> daad734d60d787cbc84e5132ce0f2d020a215880
 #define Quaternion Matrix<4,1,float>
 #define Vec3 Matrix<3,1,float>
 #define Vec6 Matrix<6,1,float>
