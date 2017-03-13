@@ -6,22 +6,22 @@
 // Declare stuff
 ////////////////////////////////////////////////////////////////////////////
 
-// Stuff from xbee
-//curent attitude(4), des att(4), des angular rates(3), des linear force (3)
 #define Quaternion Matrix<4,1,float>
 #define Vec3 Matrix<3,1,float>
 #define Vec6 Matrix<6,1,float>
 
-Quaternion att_curr;
-Quaternion att_des;
-Vec3 w_ff_des;
-Vec3 forcelin_des;
-Vec6 motor_forces;
-
+// Stuff from xbee
+//curent attitude(4), des att(4), des angular rates(3), des linear force (3)
 Quaternion q_curr;
+Quaternion q_des;
 Vec3 w_ff;
 Vec3 f_des;
+
+//stuff from IMU
 Vec3 w_curr;
+
+Quaternion q; //combined q
+Vec6 motor_forces;
 
 #define SerialXbee Serial1
 XBee xbee = XBee();
@@ -63,9 +63,9 @@ void setup() {
 void loop() {
   readXbee();
   readUM7();
-  q_curr = (imu.q_att + att_curr); //for now
+  q = (imu.q_att + q_curr); //for now
   w_curr = imu.w;
-  motor_forces = calculateMotorForces(q_curr,att_des,w_ff,forcelin_des,w_curr);
+  motor_forces = calculateMotorForces(q,q_des,w_ff,f_des,w_curr);
 //  spinMotors();
 }
 
