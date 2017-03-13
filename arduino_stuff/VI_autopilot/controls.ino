@@ -25,8 +25,8 @@ double tau_w = 1.0;
 template <typename T> T sign(T val);
 void qinverse(Quaternion q, Quaternion q_inv);
 void qmultiply(Quaternion a, Quaternion b, Quaternion c);
-Vec3 cross(Matrix<3, 1> a, Matrix<3, 1> b);
-Matrix<3, 1> scalar_multiply(double a, Matrix<3, 1> b);
+Vec3 cross(Vec3 a, Vec3 b);
+Vec3 scalar_multiply(double a, Vec3 b);
 
 void readUM7() {
 
@@ -38,7 +38,7 @@ void readUM7() {
 
 }
 
-Matrix<6,1> calculateMotorForces(Quaternion q_curr, Quaternion q_des, Matrix<3,1> w_ff, Matrix<3,1> f_des, Matrix<3,1> w_curr) {
+Vec6 calculateMotorForces(Quaternion q_curr, Quaternion q_des, Vec3 w_ff, Vec3 f_des, Vec3 w_curr) {
   qinverse(q_curr, q_curr_inv);
   qmultiply(q_curr_inv, q_des, q_err);
 
