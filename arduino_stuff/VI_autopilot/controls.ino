@@ -59,6 +59,7 @@ Matrix<6,1> calculateMotorForces(Quaternion q_curr, Quaternion q_des, Matrix<3,1
   //    Serial.print("q_err = ");
   //    Serial.print(q_err.toString());
   //  Serial.printf("\tw_des = [%2.2f, %2.2f, %2.2f]\n", w_des(0), w_des(1), w_des(2));
+  return x;
 }
 
 
