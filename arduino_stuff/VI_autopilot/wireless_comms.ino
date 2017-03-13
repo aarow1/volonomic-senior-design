@@ -18,7 +18,7 @@ union {
 //temporary stored attitude(4), des att(4), des angular rates(3), des linear force (3)
 float att_curr_temp[4];
 float att_des_temp[4];
-float omegadot_des_temp[3];
+float w_ff_des_temp[3];
 float forcelin_des_temp[3];
 
 void readXbee() {
@@ -57,21 +57,21 @@ void readXbee() {
       i++;
       if (i >= 4) {
         i = 0;
-        state = OMEGADOT_DES;
+        state = OMEGA_DES;
         Serial.printf("att_des = [%2.2f,\t%2.2f,\t%2.2f,\t%2.2f]\n",
                       att_des_temp[0], att_des_temp[1], att_des_temp[2], att_des_temp[3]);
       }
       break;
 
-    case OMEGADOT_DES:
+    case OMEGA_DES:
       Serial.println("omegadot_des");
-      omegadot_des_temp[i] = u.f;
+      w_ff_des[i] = u.f;
       i++;
       if (i >= 3) {
         i = 0;
         state = FORCELIN_DES;
-        Serial.printf("omegadot_des = [%2.2f,\t%2.2f,\t%2.2f]\n",
-                      omegadot_des_temp[0], omegadot_des_temp[1], omegadot_des_temp[2]);
+        Serial.printf("omega_des = [%2.2f,\t%2.2f,\t%2.2f]\n",
+                      w_ff_des_temp[0], w_ff_des_temp[1], w_Ff_des_temp[2]);
       }
       break;
 
@@ -92,12 +92,12 @@ void readXbee() {
       Serial.println("pkt_end");
       if (u.f == END_NUM) {
         for (int j = 0; j < 4; j++) {
-          att_curr[j] = att_curr_temp[j];
-          att_des[j] = att_des_temp[j];
+          att_curr(j) = att_curr_temp[j];
+          att_des(j) = att_des_temp[j];
         }
         for (int j = 0; j < 3; j++) {
-          omegadot_des[j] = omegadot_des_temp[j];
-          forcelin_des[j] = forcelin_des_temp[j];
+          w_ff_des(j) = w_ff_des_temp[j];
+          forcelin_des(j) = forcelin_des_temp[j];
         }
         Serial.println("stored stuff");
       }

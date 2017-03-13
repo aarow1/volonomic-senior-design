@@ -8,13 +8,17 @@
 
 // Stuff from xbee
 //curent attitude(4), des att(4), des angular rates(3), des linear force (3)
-float att_curr[4];
-float att_des[4];
-float omegadot_des[3];
-float forcelin_des[3];
-Matrix<6, 1, double> motor_forces;
+Matrix<4,1 double> att_curr;
+Matrix<4,1 double> att_des;
+Matrix<3,1 double> w_ff_des;
+Matrix<3,1 double> forcelin_des;
+Matrix<6,1, double> motor_forces;
 
 #define Quaternion Matrix<4,1,double>
+Quaternion q_curr;
+Matrix<3, 1, double> w_ff;
+Matrix<3, 1, double> f_des;
+Matrix<3, 1, double> w_curr;
 
 #define SerialXbee Serial1
 XBee xbee = XBee();
@@ -33,7 +37,8 @@ void readXbee();
 
 // Functions for controls
 void readUM7();
-void calculateMotorForces();
+Matrix<6,1> calculateMotorForces(Quaternion q_curr, Quaternion q_des, Matrix<3,1> w_ff, Matrix<3,1> f_des, Matrix<3,1> w_curr);
+void spinMotors();
 
 ///////////////////////////////////////////////////////////////////////////
 // Autopilot code
@@ -41,9 +46,9 @@ void calculateMotorForces();
 
 void setup() {
   Serial.begin(9600); //USB
-  Serial1.begin(9600); //XBee
-  Serial2.begin(115200); //imu
-  xbee.setSerial(Serial1);
+  SerialXbee.begin(9600); //XBee
+  SerialUM7.begin(115200); //imu
+  xbee.setSerial(SerialXbee);
 
   pinMode(ledPin, OUTPUT);
   digitalWrite(ledPin, HIGH);
@@ -55,8 +60,10 @@ void setup() {
 void loop() {
   readXbee();
   readUM7();
-  calculateMotorForces();
-  spinMotors(x);
+  q_curr = (imu.q_att + att_curr); //for now
+  w_curr = imu.w;
+  motor_forces = calculateMotorForces(q_curr,att_des,w_ff,forcelin_des,w_curr);
+  spinMotors();
 }
 
 
