@@ -18,7 +18,7 @@ union {
 //temporary stored attitude(4), des att(4), des angular rates(3), des linear force (3)
 double q_curr_temp[4];
 double q_des_temp[4];
-double w_ff_des_temp[3];
+double w_ff_temp[3];
 double f_des_temp[3];
 
 void readXbee() {
@@ -65,13 +65,13 @@ void readXbee() {
 
     case W_DES:
       Serial.println("omegadot_des");
-      w_ff_des_temp[i] = u.f;
+      w_ff_temp[i] = u.f;
       i++;
       if (i >= 3) {
         i = 0;
         state = F_DES;
         Serial.printf("omega_des = [%2.2f,\t%2.2f,\t%2.2f]\n",
-                      w_ff_des_temp[0], w_ff_des_temp[1], w_ff_des_temp[2]);
+                      w_ff_temp[0], w_ff_temp[1], w_ff_temp[2]);
       }
       break;
 
@@ -96,7 +96,7 @@ void readXbee() {
           q_des(j) = q_des_temp[j];
         }
         for (int j = 0; j < 3; j++) {
-          w_ff_des(j) = w_ff_des_temp[j];
+          w_ff(j) = w_ff_temp[j];
           f_des(j) = f_des_temp[j];
         }
         Serial.println("stored stuff");

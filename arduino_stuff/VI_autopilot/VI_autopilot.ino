@@ -6,8 +6,6 @@
 // Declare stuff
 ////////////////////////////////////////////////////////////////////////////
 
-penis
-
 // Stuff from xbee
 //curent attitude(4), des att(4), des angular rates(3), des linear force (3)
 
