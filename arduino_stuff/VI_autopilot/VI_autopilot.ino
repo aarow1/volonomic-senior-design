@@ -8,13 +8,16 @@
 
 // Stuff from xbee
 //curent attitude(4), des att(4), des angular rates(3), des linear force (3)
-Matrix<4,1 double> att_curr;
-Matrix<4,1 double> att_des;
-Matrix<3,1 double> w_ff_des;
-Matrix<3,1 double> forcelin_des;
-Matrix<6,1, double> motor_forces;
-
 #define Quaternion Matrix<4,1,double>
+#define Vec3 Matrix<3,1,double>
+#define Vec6 Matrix<6,1,double>
+
+Quaternion att_curr;
+Quaternion att_des;
+Vec3 w_ff_des;
+Vec3 forcelin_des;
+Vec6 motor_forces;
+
 Quaternion q_curr;
 Matrix<3, 1, double> w_ff;
 Matrix<3, 1, double> f_des;
