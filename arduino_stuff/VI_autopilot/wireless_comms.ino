@@ -12,14 +12,14 @@ byte END_NUM = 26;
 // union magic
 union {
   byte b[4];
-  double f;
+  float f;
 } u;
 
 //temporary stored attitude(4), des att(4), des angular rates(3), des linear force (3)
-double q_curr_temp[4];
-double q_des_temp[4];
-double w_ff_temp[3];
-double f_des_temp[3];
+float q_curr_temp[4];
+float q_des_temp[4];
+float w_ff_temp[3];
+float f_des_temp[3];
 
 void readXbee() {
   if(Serial1.available() > 0) {
