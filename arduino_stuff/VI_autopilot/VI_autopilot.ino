@@ -2,6 +2,7 @@
 #include <BasicLinearAlgebra.h>
 #include <UM7.h>
 
+
 ////////////////////////////////////////////////////////////////////////////
 // Declare stuff
 ////////////////////////////////////////////////////////////////////////////
@@ -13,17 +14,22 @@
 #define Vec3 Matrix<3,1,float>
 #define Vec6 Matrix<6,1,float>
 
-Quaternion q_des;
+float quat_id[4][1] = {1,0,0,0};
 
-Quaternion q_curr_vicon; // Attitude from vicon, read from xbee
-Quaternion q_curr_imu; // Attitude from imu, at time of reading xbee
-Quaternion q_curr_imu_inv; Quaternion q_curr_shift;
-Quaternion q_curr; // Attitude merged from imu and vicon
+float quat_1[4][1] = {0, -0.7071, 0, 0.7071};
+
+Quaternion q_des(quat_id);
+Quaternion q_curr_vicon(quat_1); // Attitude from vicon, read from xbee
+Quaternion q_curr_imu(quat_id); // Attitude from imu, at time of reading xbee
+Quaternion q_curr_imu_inv(quat_id); 
+Quaternion q_curr_shift(quat_id);
+Quaternion q_curr(quat_id); // Attitude merged from imu and vicon
 
 Vec3 w_ff;
 Vec3 f_des;
 Vec3 w_curr;
-Vec6 motor_forces;
+float six_zeros[6][1] = {0,0,0,0,0,0};
+Vec6 motor_forces(six_zeros);
 
 #define SerialXbee Serial1
 XBee xbee = XBee();
@@ -35,18 +41,24 @@ UM7 imu;
 
 const int ledPin = 13;
 
+#define NORMAL_MODE 33
+#define MOT_SPDS_MODE 34
+byte current_mode = MOT_SPDS_MODE;
+
 ///////////////////////////////////////////////////////////////////////////
 // Declare functions from other files
 ///////////////////////////////////////////////////////////////////////////
 
 // Functions for wireless communications
-int readXbee(Quaternion q_curr);
+bool readXbee(Quaternion q_curr); // Return true if XBee reads a full packet. current_mode is set there too
 
 // Functions for controls
 void readUM7();
-Vec6 calculateMotorForces();
-void spinMotors(Vec6 motorForces);
+void calculateMotorForces();  // Set motor forces based on attitude control and stuff
+void spinMotors();
 
+void qinverse(Quaternion& q, Quaternion& q_inv);
+void qmultiply(Quaternion& a, Quaternion& b, Quaternion& c);
 void q_toString(Quaternion q);
 
 ///////////////////////////////////////////////////////////////////////////
@@ -65,46 +77,39 @@ void setup() {
   delay(500);
   digitalWrite(ledPin, LOW);
   Serial.println("teensy ready");
-  //
-  //  delay(1000);
-  //  Serial.println("Spinnging some motors");
-  //  float mot_spd_arr[6][1] = {0, -100, -50, 50, 100, 0};
-  //  Matrix<6,1,float> mot_spd(mot_spd_arr);
-  //  Serial.printf("motors speeds: [%2.2f, %2.2f, %2.2f, %2.2f, %2.2f, %2.2f]\n", mot_spd(0), mot_spd(1), mot_spd(2), mot_spd(3), mot_spd(4), mot_spd(5));
-  //  Serial.println("spinning in 3");
-  //  delay(1000);
-  //  Serial.println("spinning in 2");
-  //  delay(1000);
-  //  Serial.println("spinning in 1");
-  //  delay(1000);
-  //  spinMotors(mot_spd);
-  //  delay(1000);
 }
 
 void loop() {
   readUM7();
-  if (readXbee()) {
+
+  if (readXbee() && (current_mode == NORMAL_MODE)){
+    // Correct imu drift
     q_curr_imu = imu.q_curr;
     qinverse(q_curr_imu, q_curr_imu_inv);
     qmultiply(q_curr_vicon,q_curr_imu_inv,q_curr_shift);
   }
   
-  // R0 = vicon RS = imu at that time
-  // Rts = newest imu //store Rto
-  qmultiply(q_curr_shift,imu.q_curr,q_curr);
+  //State machine
+  switch (current_mode) {
+    case NORMAL_MODE:
+      // Adjust imu reading, comment if not flying with real vicon data
+      // qmultiply(q_curr_shift,(Quaternion&)imu.q_curr,q_curr);
+      q_curr = imu.q_curr;
+      // Serial.print("q_curr"); q_toString(q_curr);
+      // Calculate necessary motor forces
+      calculateMotorForces();
+      break;
+    case MOT_SPDS_MODE:
+      // Don't need to calculate motor forces, just use what is currently set
+      break;
+    default:
+      break;
+    }
 
-  //  w_curr = imu.w_curr;
-  //  motor_forces = calculateMotorForces(q_curr,q_des,w_ff,f_des,w_curr);
-//  if (testQuat) {
-//    q_curr(0) = q_curr_vicon(0); q_curr(1) = q_curr_vicon(1);
-//    q_curr(2) = q_curr_vicon(2); q_curr(3) = q_curr_vicon(3);
-//    w_curr(0) = 0; w_curr(1) = 0; w_curr(2) = 0;
-//    Serial.print("q_curr main"); q_toString(q_curr);
-    motor_forces = calculateMotorForces();
-    Serial.printf("motors speeds: [%2.2f, %2.2f, %2.2f, %2.2f, %2.2f, %2.2f]\n",
-                  motor_forces(0), motor_forces(1), motor_forces(2), motor_forces(3), motor_forces(4), motor_forces(5));
-//  }
-  //  delay(100);
+    // Always spin motors
+    spinMotors();
+    // Serial.printf("motor forces: [%2.2f, %2.2f, %2.2f, %2.2f, %2.2f, %2.2f]\n",
+                  // motor_forces(0), motor_forces(1), motor_forces(2), motor_forces(3), motor_forces(4), motor_forces(5));
 }
 
 
