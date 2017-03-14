@@ -4,12 +4,12 @@ int pktIdx = 0;
 int state = 0;
 int i = 0;
 bool fin = 0;
+
 enum {PKT_START, PKT_TYPE, Q_CURR, Q_DES, W_DES, F_DES, MOT_SPDS, PKT_END};
-byte START_NUM = 32;
-byte NORMAL_TYPE_NUM = 33;
-byte MOT_SPDS_TYPE_NUM = 34;
-byte CURRENT_PKT_TYPE;
-byte END_NUM = 69;
+#define START_NUM 32;
+#define END_NUM 69;
+
+byte current_pkt_type;
 
 // union magic
 union {
@@ -26,7 +26,6 @@ float motor_forces_temp[6];
 
 int readXbee() {
   if (Serial1.available() > 0) {
-
     while (pktIdx < 4) {
       u.b[pktIdx] = Serial1.read();
       pktIdx++;
@@ -44,12 +43,12 @@ int readXbee() {
 
       case PKT_TYPE:
         Serial.printf("pkt_type: %i\n", u.f);
-        if (u.f == NORMAL_TYPE_NUM) {
+        if (u.f == NORMAL_MODE) {
           state = Q_CURR;
-          CURRENT_PKT_TYPE = NORMAL_TYPE_NUM;
-        } else if (u.f == MOT_SPDS_TYPE_NUM) {
+          current_pkt_type = NORMAL_MODE;
+        } else if (u.f == MOT_SPDS_MODE) {
           state = MOT_SPDS;
-          CURRENT_PKT_TYPE = MOT_SPDS_TYPE_NUM;
+          current_pkt_type = MOT_SPDS_MODE;
         } else {
           state = PKT_START;
         }
@@ -117,21 +116,29 @@ int readXbee() {
         break;
 
       case PKT_END:
-        Serial.println("pkt_end");
         if (u.f == END_NUM) {
-          for (int j = 0; j < 4; j++) {
-            q_curr_vicon(j) = q_curr_vicon_temp[j];
-            q_des(j) = q_des_temp[j];
-          }
-          for (int j = 0; j < 3; j++) {
-            w_ff(j) = w_ff_temp[j];
-            f_des(j) = f_des_temp[j];
-          }
-          Serial.println("stored stuff");
-        }
+          Serial.println("pkt_end");
 
-        state = PKT_START;
-        return 1;
+          if (current_pkt_type == NORMAL_MODE) {
+            for (int j = 0; j < 4; j++) {
+              q_curr_vicon(j) = q_curr_vicon_temp[j];
+              q_des(j) = q_des_temp[j];
+            }
+            for (int j = 0; j < 3; j++) {
+              w_ff(j) = w_ff_temp[j];
+              f_des(j) = f_des_temp[j];
+            }
+            Serial.println("stored normal stuff");
+            state = PKT_START;
+          }
+          else if (current_pkt_type == MOT_SPDS_MODE){
+            for(int j=0; j<6; j++){
+              motor_forces(j)=motor_forces_temp[j];
+            }
+            state = PKT_START;
+          }
+        }
+        current_mode = current_pkt_type;
         break;
 
       default:
