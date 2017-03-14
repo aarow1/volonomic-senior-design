@@ -112,9 +112,9 @@ void UM7::save(){
 			pitch_rate = pitch_rate_s / 16.0;
 			yaw_rate = yaw_rate_s / 16.0;
 
-			w(0) = roll_rate;
-			w(1) = pitch_rate;
-			w(2) = yaw_rate;
+			w_curr(0) = roll_rate;
+			w_curr(1) = pitch_rate;
+			w_curr(2) = yaw_rate;
 		}
 		break;
   case DREG_QUAT_AB :
@@ -125,10 +125,10 @@ void UM7::save(){
       quat_c_s = (data[4] << 8) + data[5];
       quat_d_s = (data[6] << 8) + data[7];
 
-      q_att(0) = quat_a_s / 29789.09091;
-      q_att(1) = quat_b_s / 29789.09091;
-      q_att(2) = quat_c_s / 29789.09091;
-      q_att(3) = quat_d_s / 29789.09091;
+      q_curr(0) = quat_a_s / 29789.09091;
+      q_curr(1) = quat_b_s / 29789.09091;
+      q_curr(2) = quat_c_s / 29789.09091;
+      q_curr(3) = quat_d_s / 29789.09091;
     }
     break;
 	}
