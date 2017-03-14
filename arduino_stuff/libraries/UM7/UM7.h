@@ -8,17 +8,17 @@
 #endif
 
 #include <stdlib.h>
-#include <Quaternion.h>
+// #include <Quaternion.h>
 #include <BasicLinearAlgebra.h>
 
 class UM7{
 public:
 	short roll_s, pitch_s, yaw_s, roll_rate_s, pitch_rate_s, yaw_rate_s;
 	double roll, pitch, yaw, roll_rate, pitch_rate, yaw_rate;
-	Matrix<3,1,double> w;
+	Matrix<3,1,double> w_curr;
   
 	short quat_a_s, quat_b_s, quat_c_s, quat_d_s;
-  	Matrix<4,1,double> q_att;
+  	Matrix<4,1,double> q_curr;
 	
 	UM7();
 	
