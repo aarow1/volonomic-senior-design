@@ -1,23 +1,19 @@
 function [] = sendPkt(mot_spds)
+start_byte = 0; type_byte = 0; data = 0; end_byte = 0;
 if nargin == 1
     start_byte = 32;
-    
-    mot_spds_type_byte = 34;
+    type_byte = 34;
     end_byte = 69;
     
-    pkt = [start_byte mot_spds_type_byte mot_spds end_byte];
-    
-    fwrite(xbee,pkt,'float32');
+    data = mot_spds;
 else
     start_byte = 32;
-    
-    normal_type_byte = 33;
+    type_byte = 33;
     end_byte = 69;
     
-    pkt = [start_byte normal_type_byte q_curr_vicon q_des w_ff f_des end_byte];
-    
-    fwrite(xbee,pkt,'float32');
+    data = [q_curr_vicon q_des w_ff f_des];
 end
-
+    pkt = [start_byte type_byte data end_byte];
+    fwrite(xbee,pkt,'float32');
 end
 
