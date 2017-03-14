@@ -26,13 +26,12 @@ ComplexMotorControlClient motor_client_5(5); //
 //}
 
 void spinMotors(Vec6 motorForces) {
-   
-    motor_client_0.cmd_velocity_.set(com,motorForces(0));
-    motor_client_1.cmd_velocity_.set(com,motorForces(1));
-    motor_client_2.cmd_velocity_.set(com,motorForces(2));
-    motor_client_3.cmd_velocity_.set(com,motorForces(3));
-    motor_client_4.cmd_velocity_.set(com,motorForces(4));
-    motor_client_5.cmd_velocity_.set(com,motorForces(5));
+    motor_client_0.cmd_velocity_.set(com,10/121*(sqrt(1210000*motorForces(0)+25281)+159));
+    motor_client_1.cmd_velocity_.set(com,10/121*(sqrt(1210000*motorForces(1)+25281)+159));
+    motor_client_2.cmd_velocity_.set(com,10/121*(sqrt(1210000*motorForces(2)+25281)+159));
+    motor_client_3.cmd_velocity_.set(com,10/121*(sqrt(1210000*motorForces(3)+25281)+159));
+    motor_client_4.cmd_velocity_.set(com,10/121*(sqrt(1210000*motorForces(4)+25281)+159));
+    motor_client_5.cmd_velocity_.set(com,10/121*(sqrt(1210000*motorForces(5)+25281)+159));
     if(com.GetTxBytes(communication_buffer,communication_length))
     {
       // Use Arduino serial hardware to send messages
