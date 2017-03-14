@@ -3,12 +3,14 @@ close all
 clc
 
 %% System parameters
-tau_attitude = .1;
-tau_w = 0.01;
+tau_attitude = .5;
+tau_w = .5;
 
-J = eye(3);
+J = [0.0106063129,	0.00030489483,	-0.00022202219;
+0.00030489483,	0.01063727884,	0.00031613497;
+-0.00022202219,	0.00031613497,	0.01058215165];
 
-dt = .005;
+dt = .05;
 
 % Define unit normals for props
 X = [   1   0   0;
@@ -55,7 +57,7 @@ if (det(R10) < 0)
     R10(:,1) = -R10(:,1);
 end
 
-% R10 = [0 1 0; -1 0 0; 0 0 1];
+R10 = [0 1 0; -1 0 0; 0 0 1];
 
 r_curr = R10; 
 q_curr = rotm2quat(r_curr)
@@ -87,7 +89,7 @@ theta_err = 100;
 
 %% Controls
 % while abs(theta_err(end) - theta_err(end-1)) > .01
-for n = 1:1;ñ
+for n = 1:100;
     w_in = [0, 0, 0];
     q_des_dot = qmultiply((1/2) * q_des, [0, w_in]);
     
