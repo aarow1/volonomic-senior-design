@@ -26,6 +26,7 @@ ComplexMotorControlClient motor_client_5(5); //
 //}
 
 void spinMotors(Vec6 motorForces) {
+   
     motor_client_0.cmd_velocity_.set(com,motorForces(0));
     motor_client_1.cmd_velocity_.set(com,motorForces(1));
     motor_client_2.cmd_velocity_.set(com,motorForces(2));
