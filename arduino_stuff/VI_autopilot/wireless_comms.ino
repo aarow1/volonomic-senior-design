@@ -8,6 +8,7 @@ enum {PKT_START, PKT_TYPE, Q_CURR, Q_DES, W_DES, F_DES, MOT_SPDS, PKT_END};
 byte START_NUM = 32;
 byte NORMAL_TYPE_NUM = 33;
 byte MOT_SPDS_TYPE_NUM = 34;
+byte CURRENT_PKT_TYPE;
 byte END_NUM = 69;
 
 // union magic
@@ -21,6 +22,7 @@ float q_curr_vicon_temp[4];
 float q_des_temp[4];
 float w_ff_temp[3];
 float f_des_temp[3];
+float motor_forces_temp[6];
 
 int readXbee() {
   if (Serial1.available() > 0) {
@@ -44,8 +46,10 @@ int readXbee() {
         Serial.printf("pkt_type: %i\n", u.f);
         if (u.f == NORMAL_TYPE_NUM) {
           state = Q_CURR;
+          CURRENT_PKT_TYPE = NORMAL_TYPE_NUM;
         } else if (u.f == MOT_SPDS_TYPE_NUM) {
           state = MOT_SPDS;
+          CURRENT_PKT_TYPE = MOT_SPDS_TYPE_NUM;
         } else {
           state = PKT_START;
         }
@@ -54,7 +58,7 @@ int readXbee() {
 
       case MOT_SPDS:
         Serial.println("mot_spds");
-        motor_forces(i) = u.f;
+        motor_forces_temp[i] = u.f;
         i++;
         if (i >= 6) {
           i = 0;
