@@ -26,13 +26,32 @@ ComplexMotorControlClient motor_client_5(5); //
 //  Serial3.begin(115200);
 //}
 
-void spinMotors(Vec6 motorForces) {
-    motor_client_0.cmd_velocity_.set(com,10/121*(sqrt(1210000*motorForces(0)+25281)+159));
-    motor_client_1.cmd_velocity_.set(com,10/121*(sqrt(1210000*motorForces(1)+25281)+159));
-    motor_client_2.cmd_velocity_.set(com,10/121*(sqrt(1210000*motorForces(2)+25281)+159));
-    motor_client_3.cmd_velocity_.set(com,10/121*(sqrt(1210000*motorForces(3)+25281)+159));
-    motor_client_4.cmd_velocity_.set(com,10/121*(sqrt(1210000*motorForces(4)+25281)+159));
-    motor_client_5.cmd_velocity_.set(com,10/121*(sqrt(1210000*motorForces(5)+25281)+159));
+Vec6 motor_speeds;
+#define MAX_MOTOR_SPEED 100
+
+void spinMotors() {
+
+    for(int j=0; j<6; j++){
+        motor_speeds(j) = 10/121*(sqrt(1210000*motor_forces(j)+25281)+159);
+
+        // Limit motor speed to not go crazy
+        if(motor_speeds(j) > MAX_MOTOR_SPEED) 
+            motor_speeds(j) = MAX_MOTOR_SPEED;
+        else if(motor_speeds(j) < -1*MAX_MOTOR_SPEED) 
+            motor_speeds(j) = -1*MAX_MOTOR_SPEED;
+    }
+
+    // motor_client_0.cmd_velocity_.set(com,motor_speeds(0));
+    // motor_client_1.cmd_velocity_.set(com,motor_speeds(1));
+    // motor_client_2.cmd_velocity_.set(com,motor_speeds(2));
+    // motor_client_3.cmd_velocity_.set(com,motor_speeds(3));
+    // motor_client_4.cmd_velocity_.set(com,motor_speeds(4));
+    // motor_client_5.cmd_velocity_.set(com,motor_speeds(5));
+
+    Serial.printf("motor_speeds = [%2.2f,\t%2.2f,\t%2.2f,\t%2.2f,\t%2.2f,\t%2.2f]\n",
+        motor_speeds(0),motor_speeds(1),motor_speeds(2),
+        motor_speeds(3),motor_speeds(4),motor_speeds(5));
+
     if(com.GetTxBytes(communication_buffer,communication_length))
     {
       // Use Arduino serial hardware to send messages

@@ -6,8 +6,8 @@ int i = 0;
 bool fin = 0;
 
 enum {PKT_START, PKT_TYPE, Q_CURR, Q_DES, W_DES, F_DES, MOT_SPDS, PKT_END};
-#define START_NUM 32;
-#define END_NUM 69;
+#define START_NUM 32
+#define END_NUM 69
 
 byte current_pkt_type;
 
@@ -24,7 +24,7 @@ float w_ff_temp[3];
 float f_des_temp[3];
 float motor_forces_temp[6];
 
-int readXbee() {
+bool readXbee() {
   if (Serial1.available() > 0) {
     while (pktIdx < 4) {
       u.b[pktIdx] = Serial1.read();
@@ -139,6 +139,7 @@ int readXbee() {
           }
         }
         current_mode = current_pkt_type;
+        return 1;
         break;
 
       default:

@@ -39,7 +39,7 @@ void readUM7() {
 
 }
 
-Vec6 calculateMotorForces() {
+void calculateMotorForces() {
   Serial.print("q_curr"); q_toString(q_curr);
   Serial.print("q_des"); q_toString(q_des);
   
@@ -54,18 +54,7 @@ Vec6 calculateMotorForces() {
   w_des(2) = (2 / tau_att) * sign(q_err(0)) * q_err(3) + w_ff(2);
 
   t_des = scalar_multiply((1 / tau_w), J_vi * (w_des - w_curr)) + cross(w_curr, J_vi * w_curr);
-  Multiply(A_inv, (f_des && t_des), x);
-  // scalar_multiply(tau_att, w_des);
-
-  //  Serial.printf("q_cur = [%2.2f,\t%2.2f,\t%2.2f,\t%2.2f]\n",
-  //                imu.q_att(0), imu.q_att(1), imu.q_att(2), imu.q_att(3));
-  //  Serial.printf("w = [%2.2f,\t%2.2f,\t%2.2f]\n", imu.w(0), imu.w(1), imu.w(2));
-  //  Serial.printf("x = [%2.2f,\t%2.2f,\t%2.2f,\t%2.2f,\t%2.2f,\t%2.2f]\n", x(0), x(1), x(2), x(3), x(4), x(5));
-  //  Serial.println("q_des = " + q);
-  //    Serial.print(q_des.toString());
-  //    Serial.print(q_err.toString());
-  //  Serial.printf("\tw_des = [%2.2f, %2.2f, %2.2f]\n", w_des(0), w_des(1), w_des(2));
-  return x;
+  Multiply(A_inv, (f_des && t_des), motor_forces);
 }
 
 
