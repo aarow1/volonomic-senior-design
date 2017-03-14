@@ -135,6 +135,7 @@ bool readXbee() {
             for(int j=0; j<6; j++){
               motor_forces(j)=motor_forces_temp[j];
             }
+            Serial.println("stored motor forces");
             state = PKT_START;
           }
         }

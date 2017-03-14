@@ -14,18 +14,20 @@
 #define Vec3 Matrix<3,1,float>
 #define Vec6 Matrix<6,1,float>
 
-Quaternion q_des;
+float quat_id[4][1] = {1,0,0,0};
 
-Quaternion q_curr_vicon; // Attitude from vicon, read from xbee
-Quaternion q_curr_imu; // Attitude from imu, at time of reading xbee
-Quaternion q_curr_imu_inv; Quaternion q_curr_shift;
-Quaternion q_curr; // Attitude merged from imu and vicon
+Quaternion q_des(quat_id);
+Quaternion q_curr_vicon(quat_id); // Attitude from vicon, read from xbee
+Quaternion q_curr_imu(quat_id); // Attitude from imu, at time of reading xbee
+Quaternion q_curr_imu_inv(quat_id); 
+Quaternion q_curr_shift(quat_id);
+Quaternion q_curr(quat_id); // Attitude merged from imu and vicon
 
 Vec3 w_ff;
 Vec3 f_des;
 Vec3 w_curr;
-float six_zeros[6] = {0,0,0,0,0,0};
-Vec6 motor_forces = six_zeros;
+float six_zeros[6][1] = {0,0,0,0,0,0};
+Vec6 motor_forces(six_zeros);
 
 #define SerialXbee Serial1
 XBee xbee = XBee();
@@ -88,8 +90,10 @@ void loop() {
   //State machine
   switch (current_mode) {
     case NORMAL_MODE:
-      // Adjust imu reading
-      qmultiply(q_curr_shift,(Quaternion&)imu.q_curr,q_curr);
+      // Adjust imu reading, comment if not flying with real vicon data
+      // qmultiply(q_curr_shift,(Quaternion&)imu.q_curr,q_curr);
+      q_curr = imu.q_curr;
+      // Serial.print("q_curr"); q_toString(q_curr);
       // Calculate necessary motor forces
       calculateMotorForces();
       break;
@@ -102,7 +106,7 @@ void loop() {
 
     // Always spin motors
     spinMotors();
-    // Serial.printf("motors speeds: [%2.2f, %2.2f, %2.2f, %2.2f, %2.2f, %2.2f]\n",
+    // Serial.printf("motor forces: [%2.2f, %2.2f, %2.2f, %2.2f, %2.2f, %2.2f]\n",
                   // motor_forces(0), motor_forces(1), motor_forces(2), motor_forces(3), motor_forces(4), motor_forces(5));
 }
 
