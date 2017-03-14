@@ -3,8 +3,8 @@ close all
 clc
 
 %% System parameters
-tau_attitude = 0.1;
-tau_w = .1;
+tau_attitude = .1;
+tau_w = 0.01;
 
 J = eye(3);
 
@@ -57,13 +57,18 @@ end
 
 % R10 = [0 1 0; -1 0 0; 0 0 1];
 
-r_curr = R10;
-q_curr = rotm2quat(r_curr);
+r_curr = R10; 
+q_curr = rotm2quat(r_curr)
 %%
 
 
-r_des = [1 0 0; 0 1 0; 0 0 1];
-q_des = rotm2quat(r_des);
+% r_des = [1 0 0; 0 1 0; 0 0 1];
+% q_des = rotm2quat(r_des)
+
+% q_curr = [1 0 0 0];
+q_des = [0 1 0 0];
+% r_curr = quat2rotm(q_curr);
+r_des = quat2rotm(q_des);
 
 w_curr = zeros(3,1);
 t_curr = zeros(3,1);
@@ -82,8 +87,8 @@ theta_err = 100;
 
 %% Controls
 % while abs(theta_err(end) - theta_err(end-1)) > .01
-for n = 1:50;
-    w_in = [0, 0, 3];
+for n = 1:1;ñ
+    w_in = [0, 0, 0];
     q_des_dot = qmultiply((1/2) * q_des, [0, w_in]);
     
     q_des = q_des + q_des_dot * dt;
@@ -95,13 +100,13 @@ for n = 1:50;
     w_ff = qmultiply(qmultiply(qmultiply...
         (2 * q_err, quat_inverse(q_des)), q_des_dot), quat_inverse(q_err));
     
-    w_des = (((2 / tau_attitude) * sign(q_err(1))) * q_err(2:4))';
+    w_des = ((2 / tau_attitude) * sign_good(q_err(1))) * q_err(2:4)';
     w_des = w_des + w_ff(2:4)';
     
     torque = (1 / tau_w) * J * (w_des - w_curr) + cross(w_curr, J*w_curr);
     force = zeros(3,1);
     
-    f_props = M_inv * [force; torque];
+    f_props = M_inv * [force; torque]
     
     w_curr = w_curr + torque * dt;
     
@@ -115,7 +120,7 @@ for n = 1:50;
     h_0 = plotCoordinateFrame(r_curr, 0, [0 0 1]);
     h_1 = plotCoordinateFrame(r_des, 2, [0 1 0]);
     
-    plotPropForces(f_props, r_curr, X, P);
+%     plotPropForces(f_props, r_curr, X, P);
 
     axis equal;
     grid on;
@@ -125,16 +130,18 @@ for n = 1:50;
 %     pause(dt);
     abs(theta_err(end));
     
-    frame = getframe(1);
-    im = frame2im(frame);
-    [imind,cm] = rgb2ind(im,256);
-    
-    if n == 1;
-        imwrite(imind,cm,'recording.gif','gif', 'Loopcount',inf);
-    else
-        imwrite(imind,cm,'recording.gif','gif','WriteMode','append');
-    end
+%     frame = getframe(1);
+%     im = frame2im(frame);
+%     [imind,cm] = rgb2ind(im,256);
+%     
+%     if n == 1;
+%         imwrite(imind,cm,'recording.gif','gif', 'Loopcount',inf);
+%     else
+%         imwrite(imind,cm,'recording.gif','gif','WriteMode','append');
+%     end
     
     clf;
 
 end;
+
+plot(theta_err);
