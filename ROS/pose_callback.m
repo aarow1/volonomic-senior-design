@@ -1,4 +1,5 @@
 function [] = pose_callback(src,msg)
+global q_curr_vicon pos_vicon pos_gains
     persistent pos_vicon_prev err_prev int
     T = toc;
     q_curr_vicon(1) = msg.Pose.Orientation.X;
@@ -22,5 +23,3 @@ function [] = pose_callback(src,msg)
     sendPkt();
     tic; 
 end
-
-% a bunch of listeners 

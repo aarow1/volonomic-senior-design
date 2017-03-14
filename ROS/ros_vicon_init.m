@@ -1,5 +1,7 @@
 %% SET UP XBEE
-xbee = serial('/dev/tty.usbserial-DN02MM5K')
+% xbee = serial('/dev/tty.usbserial-DN02MM5K') %MAC
+global xbee
+xbee = serial('/dev/ttyUSB2') %LINUX
 set(xbee,'DataBits',8)
 set(xbee,'StopBits',1)
 set(xbee,'Parity','none')
@@ -20,6 +22,8 @@ pos_gains = [1  1  0; %x
 odom_sub = rossubscriber('/vicon/VI/pose', @pose_callback)
 %%
 running = 1;
+customForce = .1*zeros(1,6);
+% sendPkt(lowForce);
 while running
     inp = input('Press a button or some shit: ', 's');
     inp = lower(inp);
@@ -28,6 +32,19 @@ while running
         case 'q'
             sendPkt(zeros(1,6));
             running = 0;
+        case 'u'
+            customForce = customForce+.05*ones(1,6)
+            sendPkt(customForce);
+        case 'j'
+            customForce = customForce-.05*ones(1,6)
+            sendPkt(customForce)
+        case 'z' 
+            customForce = zeros(1,6)
+            sendPkt(customForce);
+        case 'n'
+            q_des = [1 0 0 0]; w_ff = [0 0 0]; f_des = [0 0 0];
+            q_curr_vicon = [1 0 0 0];
+            sendPkt();
         otherwise
             disp('fuck you');
     end
