@@ -16,8 +16,10 @@
 
 float quat_id[4][1] = {1,0,0,0};
 
+float quat_1[4][1] = {0, -0.7071, 0, 0.7071};
+
 Quaternion q_des(quat_id);
-Quaternion q_curr_vicon(quat_id); // Attitude from vicon, read from xbee
+Quaternion q_curr_vicon(quat_1); // Attitude from vicon, read from xbee
 Quaternion q_curr_imu(quat_id); // Attitude from imu, at time of reading xbee
 Quaternion q_curr_imu_inv(quat_id); 
 Quaternion q_curr_shift(quat_id);
