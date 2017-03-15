@@ -14,6 +14,9 @@ fopen(xbee);
 addpath 'VI FUNCTIONS'
 global q_curr_vicon pos_vicon pos_gains q_des w_ff f_des vicon_on
 
+% Global variables for vehicle position and stuff
+global q_curr_vicon pos_vicon pos_gains q_des w_ff f_des
+
 q_curr_vicon = zeros(1,4);
 pos_vicon = zeros(1,3); pos_vicon_store = zeros(1,3);
         %kp kd ki
