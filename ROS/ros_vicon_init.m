@@ -15,10 +15,11 @@ global q_curr_vicon pos_vicon pos_gains q_des w_ff f_des
 
 q_curr_vicon = zeros(1,4);
 pos_vicon = zeros(1,3); pos_vicon_store = zeros(1,3);
-            %kp kd ki
-pos_gains = [1  1  0; %x
-             1  1  0; %y
-             1  1  0];%z
+        %kp kd ki
+gains = [1  1  0];
+pos_gains = [gains; %x
+             gains; %y
+             gains];%z
 odom_sub = rossubscriber('/vicon/VI/pose', @pose_callback)
 %%
 running = 1;
