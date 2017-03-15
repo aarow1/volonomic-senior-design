@@ -30,6 +30,8 @@ Vec3 f_des;
 Vec3 w_curr;
 float six_zeros[6][1] = {0,0,0,0,0,0};
 Vec6 motor_forces(six_zeros);
+float tau_att = .05;
+float tau_w = .01;
 
 #define SerialXbee Serial1
 XBee xbee = XBee();

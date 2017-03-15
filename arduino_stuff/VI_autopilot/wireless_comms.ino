@@ -5,7 +5,7 @@ int state = 0;
 int i = 0;
 bool fin = 0;
 
-enum {PKT_START, PKT_TYPE, Q_CURR, Q_DES, W_DES, F_DES, MOT_SPDS, PKT_END};
+enum {PKT_START, PKT_TYPE, Q_CURR, Q_DES, W_DES, F_DES, MOT_SPDS, TAU_ATT, TAU_W, PKT_END};
 #define START_NUM 32
 #define END_NUM 69
 
@@ -23,6 +23,10 @@ float q_des_temp[4];
 float w_ff_temp[3];
 float f_des_temp[3];
 float motor_forces_temp[6];
+
+//temporary stored gain values
+float tau_att_temp;
+float tau_w_temp; 
 
 bool readXbee() {
   if (Serial1.available() > 0) {
@@ -52,6 +56,9 @@ bool readXbee() {
         } else if (u.f == NO_VICON_MODE) {
           state = Q_DES;
           current_pkt_type = NO_VICON_MODE;
+        } else if (u.f == GAINS_MODE) {
+          state = TAU_ATT;
+          current_pkt_type = GAINS_MODE;
         }
           else {
           state = PKT_START;
@@ -118,6 +125,16 @@ bool readXbee() {
 //                        f_des_temp[0], f_des_temp[1], f_des_temp[2]);
         }
         break;
+      case TAU_ATT:
+        Serial.println("tau_att");
+        tau_att_temp = u.f;
+        state = TAU_W;
+      break;
+      case TAU_W:
+        Serial.println("tau_w");
+        tau_w_temp = u.f;
+        state = PKT_END;
+      break;
 
       case PKT_END:
         if (u.f == END_NUM) {
@@ -142,6 +159,9 @@ bool readXbee() {
             Serial.println("stored motor forces");
             state = PKT_START;
           }
+          else if (current_pkt_type == GAINS_MODE)
+            tau_att = tau_att_temp;
+            tau_w = tau_w_temp;
         }
         current_mode = current_pkt_type;
         return 1;
