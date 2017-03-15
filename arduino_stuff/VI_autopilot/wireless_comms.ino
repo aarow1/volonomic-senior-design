@@ -49,7 +49,11 @@ bool readXbee() {
         } else if (u.f == MOT_SPDS_MODE) {
           state = MOT_SPDS;
           current_pkt_type = MOT_SPDS_MODE;
-        } else {
+        } else if (u.f == NO_VICON_MODE) {
+          state = Q_DES;
+          current_pkt_type = NO_VICON_MODE;
+        }
+          else {
           state = PKT_START;
         }
         i = 0;
@@ -66,7 +70,7 @@ bool readXbee() {
 //                        motor_forces(0), motor_forces(1), motor_forces(2), motor_forces(3), motor_forces(4), motor_forces(5));
         }
         break;
-      case Q_CURR:
+      case Q_CURR:  
         Serial.println("att_curr");
         q_curr_vicon_temp[i] = u.f;
         i++;

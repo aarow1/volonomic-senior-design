@@ -20,6 +20,6 @@ global q_curr_vicon pos_vicon pos_gains
     pos_vicon = sum(pos_gains.*[err' der' int'],2)';
     pos_vicon_prev = pos_vicon; 
     
-    sendPkt();
+    sendPkt([],1);
     tic; 
 end

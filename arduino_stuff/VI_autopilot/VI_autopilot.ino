@@ -43,6 +43,7 @@ const int ledPin = 13;
 
 #define NORMAL_MODE 33
 #define MOT_SPDS_MODE 34
+#define NO_VICON_MODE 22
 byte current_mode = MOT_SPDS_MODE;
 
 ///////////////////////////////////////////////////////////////////////////
@@ -102,6 +103,8 @@ void loop() {
     case MOT_SPDS_MODE:
       // Don't need to calculate motor forces, just use what is currently set
       break;
+    case NO_VICON_MODE:
+    break;
     default:
       break;
     }

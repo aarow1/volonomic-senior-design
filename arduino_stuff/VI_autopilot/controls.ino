@@ -25,7 +25,7 @@ Matrix<6, 6, float> A_inv = A_vi.Inverse();
 Vec3 w_des;
 Vec3 t_des;
 //Matrix<3, 1, float> f_des;
-Vec6 x;
+// Vec6 x;
 
 float tau_att = .05;
 float tau_w = .01;

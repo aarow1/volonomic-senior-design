@@ -43,8 +43,14 @@ while running
             sendPkt(customForce);
         case 'n'
             q_des = [1 0 0 0]; w_ff = [0 0 0]; f_des = [0 0 0];
+%             q_curr_vicon = [1 0 0 0];
+            useVicon = 0;
+            sendPkt([],useVicon);
+        case 'v' 
+            q_des = [1 0 0 0]; w_ff = [0 0 0]; f_des = [0 0 0];
             q_curr_vicon = [1 0 0 0];
-            sendPkt();
+            useVicon = 1;
+            sendPkt([],useVicon);
         otherwise
             disp('fuck you');
     end
