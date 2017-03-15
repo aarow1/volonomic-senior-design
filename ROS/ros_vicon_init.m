@@ -11,7 +11,7 @@ fopen(xbee);
 %% SET UP ROS
 %rosinit;
 %rostopic list
-addpath('/VI\ FUNCTIONS');
+addpath 'VI FUNCTIONS'
 global q_curr_vicon pos_vicon pos_gains q_des w_ff f_des vicon_on
 
 q_curr_vicon = zeros(1,4);
