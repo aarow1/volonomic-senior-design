@@ -44,6 +44,7 @@ const int ledPin = 13;
 #define NORMAL_MODE 33
 #define MOT_SPDS_MODE 34
 #define NO_VICON_MODE 22
+#define GAINS_MODE 15
 byte current_mode = MOT_SPDS_MODE;
 
 ///////////////////////////////////////////////////////////////////////////
@@ -106,6 +107,8 @@ void loop() {
     case NO_VICON_MODE:
     break;
     default:
+    case GAINS_MODE:
+    break;
       break;
     }
 
