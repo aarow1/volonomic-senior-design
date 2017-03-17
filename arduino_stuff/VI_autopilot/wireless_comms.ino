@@ -33,8 +33,8 @@ float tau_w_temp;
 #define PKT_END_ENTRY 69
 
 // Enumeration of next expected entry types
-enum {PKT_START, PKT_TYPE, PKT_END,
-      Q_CURR, Q_DES, W_DES, F_DES, MOT_SPDS, TAU_ATT, TAU_W
+enum {PKT_START, PKT_TYPE_ENTRY, PKT_END,
+      Q_CURR_VICON, Q_DES, W_DES, F_DES, MOTOR_FORCES, TAU_ATT, TAU_W
      };
 
 #define DEBUG_readXbee 1
@@ -86,158 +86,157 @@ bool readXbee() {
             expected_entry = PKT_START;
             break;
         }
-    }
-    static int entryIdx;  // Tracks which entry in a data structure you're on
-    entryIdx = 0; // Start at 0 for every new piece of data
-    break;
+        static int entryIdx;  // Tracks which entry in a data structure you're on
+        entryIdx = 0; // Start at 0 for every new piece of data
+        break;
 
-    // Expecting q_curr_vicon data structure, has 4 entries
-  case Q_CURR_VICON:
-    if (DEBUG_readXbee) Serial.printf("q_curr_vicon entry %i: %2.2f\n", entryIdx, u.f);
-    q_curr_vicon_temp[entryIdx] = u.f;
-    entryIdx++;
-    if (entryIdx >= 4) {
-      if (DEBUG_readXbee) {
-        Serial.printf("q_curr_vicon_temp = [%2.2f,\t%2.2f,\t%2.2f,\t%2.2f]\n", q_curr_vicon_temp[0], q_curr_vicon_temp[1], q_curr_vicon_temp[2], q_curr_vicon_temp[3]);
-      }
-      expected_entry = Q_DES;
-      entryIdx = 0;
-    }
-    break;
-
-    // Expecting q_des data structure, has 4 entries
-  case Q_DES:
-    if (DEBUG_readXbee) Serial.printf("q_des entry %i: %2.2f\n", entryIdx, u.f);
-    q_des_temp[entryIdx] = u.f;
-    entryIdx++;
-    if (entryIdx >= 4) {
-      entryIdx = 0;
-      expected_entry = W_DES;
-      if (DEBUG_readXbee) {
-        Serial.printf("from wireless comms q_des_vicon = [%2.2f,\t%2.2f,\t%2.2f,\t%2.2f]\n",
-                      q_des_temp[0], q_des_temp[1], q_des_temp[2], q_des_temp[3]);
-      }
-    }
-    break;
-
-    // Expecting w_des data structure, has 3 entries
-  case W_DES:
-    if (DEBUG_readXbee) Serial.printf("w_des entry %i: %2.2f\n", entryIdx, u.f);
-    w_ff_temp[entryIdx] = u.f;
-    entryIdx++;
-    if (entryIdx >= 3) {
-      entryIdx = 0;
-      expected_entry = F_DES;
-      if (DEBUG_readXbee) {
-        Serial.printf("omega_des = [%2.2f,\t%2.2f,\t%2.2f]\n",
-                      w_ff_temp[0], w_ff_temp[1], w_ff_temp[2]);
-      }
-    }
-    break;
-
-    // Expecting f_des data structure, has 3 entries
-  case F_DES:
-    if (DEBUG_readXbee) Serial.printf("f_des entry %i: %2.2f\n", entryIdx, u.f);
-    f_des_temp[entryIdx] = u.f;
-    entryIdx++;
-    if (entryIdx >= 3) {
-      entryIdx = 0;
-      expected_entry = PKT_END;
-      if (DEBUG_readXbee) {
-        Serial.printf("forcelin_des = [%2.2f,\t%2.2f,\t%2.2f]\n",
-                      f_des_temp[0], f_des_temp[1], f_des_temp[2]);
-      }
-    }
-    break;
-
-    // Expecting motor_forces data structure, has 6 entries
-  case MOTOR_FORCES:
-    if (DEBUG_readXbee) Serial.printf("motor_forces entry %i: %2.2f\n", entryIdx, u.f);
-    motor_forces_temp[entryIdx] = u.f;
-    entryIdx++;
-    if (entryIdx >= 6) {
-      entryIdx = 0;
-      expected_entry = PKT_END;
-      if (DEBUG_readXbee) {
-        Serial.printf("Motor speeds are = [%2.2f,\t%2.2f,\t%2.2f,\t%2.2f,\t%2.2f,\t%2.2f]\n",
-                      motor_forces(0), motor_forces(1), motor_forces(2), motor_forces(3), motor_forces(4), motor_forces(5));
-      }
-    }
-    break;
-
-    // Expecting tau_att data structure, has 1 entry
-  case TAU_ATT:
-    if (DEBUG_readXbee) Serial.printf("tau_att entry %2.2f\n", u.f);
-    tau_att_temp = u.f;
-    expected_entry = TAU_W;
-    break;
-
-    // Expecting tau_w data structure, has 1 entry
-  case TAU_W:
-    if (DEBUG_readXbee) Serial.printf("tau_w entry %2.2f\n", u.f);
-    tau_w_temp = u.f;
-    expected_entry = PKT_END;
-    break;
-
-    // Expecting end of packet, we store the variables here
-  case PKT_END:
-    if (u.f == PKT_END_ENTRY) {
-      if (DEBUG_readXbee) Serial.printf("pkt_end entry\n");
-
-      switch (current_pkt_type) {
-        case ALL_INPUTS_TYPE:
-          for (int j = 0; j < 4; j++) {
-            q_curr_vicon(j) = q_curr_vicon_temp[j];
-            q_des(j) = q_des_temp[j];
+      // Expecting q_curr_vicon data structure, has 4 entries
+      case Q_CURR_VICON:
+        if (DEBUG_readXbee) Serial.printf("q_curr_vicon entry %i: %2.2f\n", entryIdx, u.f);
+        q_curr_vicon_temp[entryIdx] = u.f;
+        entryIdx++;
+        if (entryIdx >= 4) {
+          if (DEBUG_readXbee) {
+            Serial.printf("q_curr_vicon_temp = [%2.2f,\t%2.2f,\t%2.2f,\t%2.2f]\n", q_curr_vicon_temp[0], q_curr_vicon_temp[1], q_curr_vicon_temp[2], q_curr_vicon_temp[3]);
           }
-          for (int j = 0; j < 3; j++) {
-            w_ff(j) = w_ff_temp[j];
-            f_des(j) = f_des_temp[j];
-          }
-          Serial.println("stored all_inputs packet");
-          expected_entry = PKT_START;
-          current_mode = FLIGHT_MODE;
-          break;
+          expected_entry = Q_DES;
+          entryIdx = 0;
+        }
+        break;
 
-        case NO_VICON_TYPE:
-          for (int j = 0; j < 4; j++) {
-            q_des(j) = q_des_temp[j];
+      // Expecting q_des data structure, has 4 entries
+      case Q_DES:
+        if (DEBUG_readXbee) Serial.printf("q_des entry %i: %2.2f\n", entryIdx, u.f);
+        q_des_temp[entryIdx] = u.f;
+        entryIdx++;
+        if (entryIdx >= 4) {
+          entryIdx = 0;
+          expected_entry = W_DES;
+          if (DEBUG_readXbee) {
+            Serial.printf("from wireless comms q_des_vicon = [%2.2f,\t%2.2f,\t%2.2f,\t%2.2f]\n",
+                          q_des_temp[0], q_des_temp[1], q_des_temp[2], q_des_temp[3]);
           }
-          for (int j = 0; j < 3; j++) {
-            w_ff(j) = w_ff_temp[j];
-            f_des(j) = f_des_temp[j];
+        }
+        break;
+
+      // Expecting w_des data structure, has 3 entries
+      case W_DES:
+        if (DEBUG_readXbee) Serial.printf("w_des entry %i: %2.2f\n", entryIdx, u.f);
+        w_ff_temp[entryIdx] = u.f;
+        entryIdx++;
+        if (entryIdx >= 3) {
+          entryIdx = 0;
+          expected_entry = F_DES;
+          if (DEBUG_readXbee) {
+            Serial.printf("omega_des = [%2.2f,\t%2.2f,\t%2.2f]\n",
+                          w_ff_temp[0], w_ff_temp[1], w_ff_temp[2]);
           }
-          Serial.println("stored no_vicon packet");
-          expected_entry = PKT_START;
-          current_mode = NO_VICON_MODE;
-          break;
-        case MOTOR_FORCES_TYPE:
-          for (int j = 0; j < 6; j++) {
-            motor_forces(j) = motor_forces_temp[j];
+        }
+        break;
+
+      // Expecting f_des data structure, has 3 entries
+      case F_DES:
+        if (DEBUG_readXbee) Serial.printf("f_des entry %i: %2.2f\n", entryIdx, u.f);
+        f_des_temp[entryIdx] = u.f;
+        entryIdx++;
+        if (entryIdx >= 3) {
+          entryIdx = 0;
+          expected_entry = PKT_END;
+          if (DEBUG_readXbee) {
+            Serial.printf("forcelin_des = [%2.2f,\t%2.2f,\t%2.2f]\n",
+                          f_des_temp[0], f_des_temp[1], f_des_temp[2]);
           }
-          Serial.println("stored motor forces");
-          expected_entry = PKT_START;
-          current_mode = MOTOR_FORCES_MODE;
-          break;
-        case GAINS_TYPE:
-          tau_att = tau_att_temp;
-          tau_w = tau_w_temp;
-          Serial.println("stored gains");
-          expected_entry = PKT_START;
-          break;
-        default:
-          expected_entry = PKT_START;
-          break;
-      }
+        }
+        break;
+
+      // Expecting motor_forces data structure, has 6 entries
+      case MOTOR_FORCES:
+        if (DEBUG_readXbee) Serial.printf("motor_forces entry %i: %2.2f\n", entryIdx, u.f);
+        motor_forces_temp[entryIdx] = u.f;
+        entryIdx++;
+        if (entryIdx >= 6) {
+          entryIdx = 0;
+          expected_entry = PKT_END;
+          if (DEBUG_readXbee) {
+            Serial.printf("Motor speeds are = [%2.2f,\t%2.2f,\t%2.2f,\t%2.2f,\t%2.2f,\t%2.2f]\n",
+                          motor_forces(0), motor_forces(1), motor_forces(2), motor_forces(3), motor_forces(4), motor_forces(5));
+          }
+        }
+        break;
+
+      // Expecting tau_att data structure, has 1 entry
+      case TAU_ATT:
+        if (DEBUG_readXbee) Serial.printf("tau_att entry %2.2f\n", u.f);
+        tau_att_temp = u.f;
+        expected_entry = TAU_W;
+        break;
+
+      // Expecting tau_w data structure, has 1 entry
+      case TAU_W:
+        if (DEBUG_readXbee) Serial.printf("tau_w entry %2.2f\n", u.f);
+        tau_w_temp = u.f;
+        expected_entry = PKT_END;
+        break;
+
+      // Expecting end of packet, we store the variables here
+      case PKT_END:
+        if (u.f == PKT_END_ENTRY) {
+          if (DEBUG_readXbee) Serial.printf("pkt_end entry\n");
+
+          switch (current_pkt_type) {
+            case ALL_INPUTS_TYPE:
+              for (int j = 0; j < 4; j++) {
+                q_curr_vicon(j) = q_curr_vicon_temp[j];
+                q_des(j) = q_des_temp[j];
+              }
+              for (int j = 0; j < 3; j++) {
+                w_ff(j) = w_ff_temp[j];
+                f_des(j) = f_des_temp[j];
+              }
+              Serial.println("stored all_inputs packet");
+              expected_entry = PKT_START;
+              current_mode = FLIGHT_MODE;
+              break;
+
+            case NO_VICON_TYPE:
+              for (int j = 0; j < 4; j++) {
+                q_des(j) = q_des_temp[j];
+              }
+              for (int j = 0; j < 3; j++) {
+                w_ff(j) = w_ff_temp[j];
+                f_des(j) = f_des_temp[j];
+              }
+              Serial.println("stored no_vicon packet");
+              expected_entry = PKT_START;
+              current_mode = NO_VICON_MODE;
+              break;
+            case MOTOR_FORCES_TYPE:
+              for (int j = 0; j < 6; j++) {
+                motor_forces(j) = motor_forces_temp[j];
+              }
+              Serial.println("stored motor forces");
+              expected_entry = PKT_START;
+              current_mode = MOTOR_FORCES_MODE;
+              break;
+            case GAINS_TYPE:
+              tau_att = tau_att_temp;
+              tau_w = tau_w_temp;
+              Serial.println("stored gains");
+              expected_entry = PKT_START;
+              break;
+            default:
+              expected_entry = PKT_START;
+              break;
+          }
+        }
+        return 1;
+        break;
+
+      // Something is unexpected, so we go back to waiting for a new packet
+      default:
+        expected_entry = PKT_START;
+        break;
     }
-    return 1;
-    break;
-
-    // Something is unexpected, so we go back to waiting for a new packet
-  default:
-    expected_entry = PKT_START;
-    break;
   }
-}
-return 0;
+  return 0;
 }

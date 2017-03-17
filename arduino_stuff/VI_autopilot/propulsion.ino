@@ -22,10 +22,6 @@ ComplexMotorControlClient motor_client_3(3); //
 ComplexMotorControlClient motor_client_4(4); //
 ComplexMotorControlClient motor_client_5(5); //
 
-//void propulsion_init(void){
-//  Serial3.begin(115200);
-//}
-
 Vec6 motor_speeds;
 #define MAX_MOTOR_SPEED 400
 #define MOTORS_ENABLED 1
@@ -35,8 +31,6 @@ void spinMotors() {
 
   for (int j = 0; j < 6; j++) {
     motor_speeds(j) = sqrt(((1.0 / 0.000121) * abs(motor_forces(j)))) * sign(motor_forces(j));
-    // float ans = sqrt(((1.0/0.000121)*abs(motor_forces(j)))) * sign(motor_forces(j));
-    // Serial.println(ans);
 
     // Limit motor speed to not go crazy
     if (motor_speeds(j) > MAX_MOTOR_SPEED)

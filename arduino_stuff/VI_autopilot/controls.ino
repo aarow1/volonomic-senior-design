@@ -1,11 +1,8 @@
-//Quaternion q_curr;
 Quaternion q_curr_inv;
-//float id[4][1] = {1, 0, 0, 0};
-//Quaternion q_des(id);
 Quaternion q_err;
 
-float tau_att = .05;
-float tau_w = .01;
+Vec3 w_des;
+Vec3 t_des;
 
 float J_vi_arr[3][3] = {
   {  0.0106063129, 0.00030489483,  -0.00022202219},
@@ -24,12 +21,6 @@ float A_vi_arr[6][6] = {
 };
 Matrix<6, 6, float> A_vi(A_vi_arr);
 Matrix<6, 6, float> A_inv = A_vi.Inverse();
-
-//Matrix<3, 1, float> w_ff;
-Vec3 w_des;
-Vec3 t_des;
-//Matrix<3, 1, float> f_des;
-// Vec6 x;
 
 template <typename T> T sign(T& val);
 void qinverse(Quaternion& q, Quaternion& q_inv);
