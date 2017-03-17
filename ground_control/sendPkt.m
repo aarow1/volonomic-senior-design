@@ -1,35 +1,34 @@
-function [] = sendPkt(pkt_type, data)
-global xbee q_curr_vicon q_des w_ff f_des
-start_byte = 0; type_byte = 0; end_byte = 0;
-disp('sendPkt Data');
-disp(data);
+function [] = sendPkt(pkt_type)
+
+%% Including global variables
+global q_des w_ff f_des
+global motor_forces
+global tau_att tau_w
+global using_vicon
+
+%% Packet entry definitions
+PKT_START_ENTRY = 32;
+ALL_INPUTS_TYPE = 33;
+NO_VICON_TYPE = 34;
+MOTOR_FORCES_TYPE = 35;
+GAINS_TYPE = 36;
+PKT_END_ENTRY = 69;
+
+%% Compose and send packet
 switch (pkt_type)
-    case 'mot_spd'
-        start_byte = 32;
-        type_byte = 34;
-        end_byte = 69;
-    case 'vicon'
-        if data
-            start_byte = 32;
-            type_byte = 33;
-            end_byte = 69;
-            
-            data = [q_curr_vicon q_des w_ff f_des];
-        else
-            start_byte = 32;
-            type_byte = 22;
-            end_byte = 69;
-            data = [q_des w_ff f_des]
-            q_des
-        end
+    case 'motor_forces'
+        pkt = [PKT_START_ENTRY MOTOR_FORCES_TYPE motor_forces PKT_END_ENTRY];
+    case 'all_inputs'
+        pkt = [PKT_START_ENTRY ALL_INPUTS_TYPE q_curr_vicon q_des w_ff f_des PKT_END_ENTRY];
+    case 'no_vicon'
+        pkt = [PKT_START_ENTRY NO_VICON_TYPE q_des w_ff f_des PKT_END_ENTRY];
     case 'gains'
-        start_byte = 32;
-        type_byte = 15;
-        end_byte = 69;
+        pkt = [PKT_START_ENTRY GAINS_TYPE tau_att tau_w PKT_END_ENTRY];
     otherwise
+        disp('You fucked up');
+        return;
 end
-display(data)
-pkt = [start_byte type_byte data end_byte];
+display(pkt)
 fwrite(xbee,pkt,'float32');
 end
 
