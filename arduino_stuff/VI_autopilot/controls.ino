@@ -5,17 +5,18 @@ Quaternion q_curr_inv;
 Quaternion q_err;
 
 float J_vi_arr[3][3] = {
-      {  0.0106063129, 0.00030489483,  -0.00022202219}, 
-      { 0.00030489483, 0.01063727884,   0.00031613497},
-      {-0.00022202219, 0.00031613497,   0.01058215165} };
+  {  0.0106063129, 0.00030489483,  -0.00022202219},
+  { 0.00030489483, 0.01063727884,   0.00031613497},
+  { -0.00022202219, 0.00031613497,   0.01058215165}
+};
 Matrix<3, 3, float> J_vi(J_vi_arr);
 
 float A_vi_arr[6][6] = {
-  {0,   0,  -1,  -1,   0,   0}, 
-  {0,   0,   0,   0,   1,   1}, 
+  {0,   0,  -1,  -1,   0,   0},
+  {0,   0,   0,   0,   1,   1},
   {1,  -1,   0,   0,   0,   0},
-  {0,   0,   0,   0,  -1,   1}, 
-  {1,   1,   0,   0,   0,   0}, 
+  {0,   0,   0,   0,  -1,   1},
+  {1,   1,   0,   0,   0,   0},
   {0,   0,  -1,   1,   0,   0}
 };
 Matrix<6, 6, float> A_vi(A_vi_arr);
@@ -44,22 +45,33 @@ void readUM7() {
 
 }
 
+#define DEBUG_calculateMotorForces 0
+
 void calculateMotorForces() {
-  // Serial.print("q_curr"); q_toString(q_curr);
-  // Serial.print("q_des"); q_toString(q_des);
-  
+
   qinverse(q_curr, q_curr_inv);
-  // Serial.print("q_curr_inv"); q_toString(q_curr_inv);
-  
+
   qmultiply(q_curr_inv, q_des, q_err);
-    // Serial.print("q_err"); q_toString(q_err);
 
   w_des(0) = (2 / tau_att) * sign(q_err(0)) * q_err(1) + w_ff(0);
   w_des(1) = (2 / tau_att) * sign(q_err(0)) * q_err(2) + w_ff(1);
   w_des(2) = (2 / tau_att) * sign(q_err(0)) * q_err(3) + w_ff(2);
 
   t_des = scalar_multiply((1 / tau_w), J_vi * (w_des - w_curr)) + cross(w_curr, J_vi * w_curr);
+
   Multiply(A_inv, (f_des && t_des), motor_forces);
+
+  if (DEBUG_calculateMotorForces) {
+    Serial.print("q_curr"); q_toString(q_curr);
+    Serial.print("q_des"); q_toString(q_des);
+    Serial.print("q_curr_inv"); q_toString(q_curr_inv);
+    Serial.print("q_err"); q_toString(q_err);
+    Serial.printf("w_des =[%2.2f,\t%2.2f,\t%2.2f]\n", w_des(0), w_des(1), w_des(2));
+    Serial.printf("w_curr =[%2.2f,\t%2.2f,\t%2.2f]\n", w_curr(0), w_curr(1), w_curr(2));
+    Serial.printf("t_des =[%2.2f,\t%2.2f,\t%2.2f]\n", t_des(0), t_des(1), t_des(2));
+    Serial.printf("f_des =[%2.2f,\t%2.2f,\t%2.2f]\n", f_des(0), f_des(1), f_des(2));
+    Serial.printf("tau_w: %2.5f\n", tau_w);
+  }
 }
 
 

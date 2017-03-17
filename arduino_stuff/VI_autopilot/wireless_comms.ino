@@ -26,7 +26,7 @@ float motor_forces_temp[6];
 
 //temporary stored gain values
 float tau_att_temp;
-float tau_w_temp; 
+float tau_w_temp;
 
 bool readXbee() {
   if (Serial1.available() > 0) {
@@ -36,6 +36,7 @@ bool readXbee() {
     }
     pktIdx = 0;
     //   Serial.printf("u.f = [%2.2f] i = %d\n", u.f, i);
+
     switch (state) {
       case PKT_START:
         Serial.println("pkt_start");
@@ -60,7 +61,7 @@ bool readXbee() {
           state = TAU_ATT;
           current_pkt_type = GAINS_MODE;
         }
-          else {
+        else {
           state = PKT_START;
         }
         i = 0;
@@ -73,11 +74,11 @@ bool readXbee() {
         if (i >= 6) {
           i = 0;
           state = PKT_END;
-//          Serial.printf("Motor speeds are = [%2.2f,\t%2.2f,\t%2.2f,\t%2.2f,\t%2.2f,\t%2.2f]\n",
-//                        motor_forces(0), motor_forces(1), motor_forces(2), motor_forces(3), motor_forces(4), motor_forces(5));
+          //          Serial.printf("Motor speeds are = [%2.2f,\t%2.2f,\t%2.2f,\t%2.2f,\t%2.2f,\t%2.2f]\n",
+          //                        motor_forces(0), motor_forces(1), motor_forces(2), motor_forces(3), motor_forces(4), motor_forces(5));
         }
         break;
-      case Q_CURR:  
+      case Q_CURR:
         Serial.println("att_curr");
         q_curr_vicon_temp[i] = u.f;
         i++;
@@ -90,7 +91,7 @@ bool readXbee() {
         break;
 
       case Q_DES:
-        Serial.println("att_des");
+        Serial.printf("q_des %i: %2.2f\n", i, u.f);
         q_des_temp[i] = u.f;
         i++;
         if (i >= 4) {
@@ -108,8 +109,8 @@ bool readXbee() {
         if (i >= 3) {
           i = 0;
           state = F_DES;
-//          Serial.printf("omega_des = [%2.2f,\t%2.2f,\t%2.2f]\n",
-//                        w_ff_temp[0], w_ff_temp[1], w_ff_temp[2]);
+          //          Serial.printf("omega_des = [%2.2f,\t%2.2f,\t%2.2f]\n",
+          //                        w_ff_temp[0], w_ff_temp[1], w_ff_temp[2]);
         }
         break;
 
@@ -121,20 +122,22 @@ bool readXbee() {
           i = 0;
           state = PKT_END;
           //        fin = 1;
-//          Serial.printf("forcelin_des = [%2.2f,\t%2.2f,\t%2.2f]\n",
-//                        f_des_temp[0], f_des_temp[1], f_des_temp[2]);
+          //          Serial.printf("forcelin_des = [%2.2f,\t%2.2f,\t%2.2f]\n",
+          //                        f_des_temp[0], f_des_temp[1], f_des_temp[2]);
         }
         break;
+
       case TAU_ATT:
         Serial.println("tau_att");
         tau_att_temp = u.f;
         state = TAU_W;
-      break;
+        break;
+
       case TAU_W:
         Serial.println("tau_w");
         tau_w_temp = u.f;
         state = PKT_END;
-      break;
+        break;
 
       case PKT_END:
         if (u.f == END_NUM) {
@@ -152,23 +155,37 @@ bool readXbee() {
             Serial.println("stored normal stuff");
             state = PKT_START;
           }
-          else if (current_pkt_type == MOT_SPDS_MODE){
-            for(int j=0; j<6; j++){
-              motor_forces(j)=motor_forces_temp[j];
+          else if (current_pkt_type == NO_VICON_MODE) {
+            for (int j = 0; j < 4; j++) {
+              q_des(j) = q_des_temp[j];
+            }
+            for (int j = 0; j < 3; j++) {
+              w_ff(j) = w_ff_temp[j];
+              f_des(j) = f_des_temp[j];
+            }
+            Serial.println("stored normal stuff");
+            state = PKT_START;
+          }
+          else if (current_pkt_type == MOT_SPDS_MODE) {
+            for (int j = 0; j < 6; j++) {
+              motor_forces(j) = motor_forces_temp[j];
             }
             Serial.println("stored motor forces");
             state = PKT_START;
           }
-          else if (current_pkt_type == GAINS_MODE)
+          else if (current_pkt_type == GAINS_MODE) {
             tau_att = tau_att_temp;
             tau_w = tau_w_temp;
+            Serial.printf("Gains Mode set tau_w = %2.5f", tau_w);
+          }
         }
         current_mode = current_pkt_type;
+        Serial.printf("current_mode: %i\n", current_mode);
         return 1;
         break;
 
       default:
-//        Serial.println("default");
+        //        Serial.println("default");
         state = PKT_START;
         break;
     }

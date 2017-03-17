@@ -14,21 +14,21 @@
 #define Vec3 Matrix<3,1,float>
 #define Vec6 Matrix<6,1,float>
 
-float quat_id[4][1] = {1,0,0,0};
+float quat_id[4][1] = {1, 0, 0, 0};
 
 float quat_1[4][1] = {0, -0.7071, 0, 0.7071};
 
 Quaternion q_des(quat_id);
 Quaternion q_curr_vicon(quat_1); // Attitude from vicon, read from xbee
 Quaternion q_curr_imu(quat_id); // Attitude from imu, at time of reading xbee
-Quaternion q_curr_imu_inv(quat_id); 
+Quaternion q_curr_imu_inv(quat_id);
 Quaternion q_curr_shift(quat_id);
 Quaternion q_curr(quat_id); // Attitude merged from imu and vicon
 
 Vec3 w_ff;
 Vec3 f_des;
 Vec3 w_curr;
-float six_zeros[6][1] = {0,0,0,0,0,0};
+float six_zeros[6][1] = {0, 0, 0, 0, 0, 0};
 Vec6 motor_forces(six_zeros);
 float tau_att = .05;
 float tau_w = .01;
@@ -81,20 +81,22 @@ void setup() {
   delay(500);
   digitalWrite(ledPin, LOW);
   Serial.println("teensy ready");
+  Serial.printf("tau_w: %2.5f\n", tau_w);
 }
 
 void loop() {
   readUM7();
 
-  if (readXbee() && (current_mode == NORMAL_MODE)){
+  if (readXbee() && (current_mode == NORMAL_MODE)) {
     // Correct imu drift
     q_curr_imu = imu.q_curr;
     qinverse(q_curr_imu, q_curr_imu_inv);
-    qmultiply(q_curr_vicon,q_curr_imu_inv,q_curr_shift);
+    qmultiply(q_curr_vicon, q_curr_imu_inv, q_curr_shift);
   }
-  
+
   //State machine
   switch (current_mode) {
+
     case NORMAL_MODE:
       // Adjust imu reading, comment if not flying with real vicon data
       // qmultiply(q_curr_shift,(Quaternion&)imu.q_curr,q_curr);
@@ -103,21 +105,33 @@ void loop() {
       // Calculate necessary motor forces
       calculateMotorForces();
       break;
+
     case MOT_SPDS_MODE:
       // Don't need to calculate motor forces, just use what is currently set
       break;
-    case NO_VICON_MODE:
-    break;
-    default:
-    case GAINS_MODE:
-    break;
-      break;
-    }
 
-    // Always spin motors
-    spinMotors();
-    // Serial.printf("motor forces: [%2.2f, %2.2f, %2.2f, %2.2f, %2.2f, %2.2f]\n",
-                  // motor_forces(0), motor_forces(1), motor_forces(2), motor_forces(3), motor_forces(4), motor_forces(5));
+    case NO_VICON_MODE:
+      q_curr = imu.q_curr;
+      //      Serial.print("q_curr"); q_toString(q_curr);
+      //Serial.print("no_vicon");
+
+      // Calculate necessary motor forces
+      calculateMotorForces();
+      //      Serial.printf("motor forces: [%2.2f, %2.2f, %2.2f, %2.2f, %2.2f, %2.2f]\n",
+      //                    motor_forces(0), motor_forces(1), motor_forces(2), motor_forces(3), motor_forces(4), motor_forces(5));
+      break;
+
+    default:
+      break;
+
+    case GAINS_MODE:
+      break;
+  }
+
+  // Always spin motors
+  spinMotors();
+  //    Serial.printf("motor forces: [%2.2f, %2.2f, %2.2f, %2.2f, %2.2f, %2.2f]\n",
+  //                  motor_forces(0), motor_forces(1), motor_forces(2), motor_forces(3), motor_forces(4), motor_forces(5));
 }
 
 

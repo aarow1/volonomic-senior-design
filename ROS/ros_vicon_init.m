@@ -1,7 +1,7 @@
 %% SET UP XBEE
-% xbee = serial('/dev/tty.usbserial-DN02MM5K') %MAC
+xbee = serial('/dev/tty.usbserial-DN02MM5K') %MAC
 global xbee
-xbee = serial('/dev/ttyUSB2') %LINUX
+% xbee = serial('/dev/ttyUSB2') %LINUX
 set(xbee,'DataBits',8)
 set(xbee,'StopBits',1)
 set(xbee,'Parity','none')
