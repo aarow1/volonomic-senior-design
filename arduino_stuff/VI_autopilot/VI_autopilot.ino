@@ -43,11 +43,9 @@ UM7 imu;
 
 const int ledPin = 13;
 
-#define NORMAL_MODE 33
-#define MOT_SPDS_MODE 34
-#define NO_VICON_MODE 22
-#define GAINS_MODE 15
-byte current_mode = MOT_SPDS_MODE;
+int current_mode = STOP_MODE;
+
+enum {STOP_MODE, FLIGHT_MODE, NO_VICON_MODE, MOTOR_FORCES_MODE};
 
 ///////////////////////////////////////////////////////////////////////////
 // Declare functions from other files
