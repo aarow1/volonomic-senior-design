@@ -4,6 +4,9 @@ Quaternion q_curr_inv;
 //Quaternion q_des(id);
 Quaternion q_err;
 
+float tau_att = .05;
+float tau_w = .01;
+
 float J_vi_arr[3][3] = {
   {  0.0106063129, 0.00030489483,  -0.00022202219},
   { 0.00030489483, 0.01063727884,   0.00031613497},

@@ -14,12 +14,10 @@
 #define Vec3 Matrix<3,1,float>
 #define Vec6 Matrix<6,1,float>
 
-float quat_id[4][1] = {1, 0, 0, 0};
-
-float quat_1[4][1] = {0, -0.7071, 0, 0.7071};
+float quat_id[4][1] = {1, 0, 0, 0}; // Identity quaternion
 
 Quaternion q_des(quat_id);
-Quaternion q_curr_vicon(quat_1); // Attitude from vicon, read from xbee
+Quaternion q_curr_vicon(quat_id); // Attitude from vicon, read from xbee
 Quaternion q_curr_imu(quat_id); // Attitude from imu, at time of reading xbee
 Quaternion q_curr_imu_inv(quat_id);
 Quaternion q_curr_shift(quat_id);
@@ -30,25 +28,20 @@ Vec3 f_des;
 Vec3 w_curr;
 float six_zeros[6][1] = {0, 0, 0, 0, 0, 0};
 Vec6 motor_forces(six_zeros);
-float tau_att = .05;
-float tau_w = .01;
 
 #define SerialXbee Serial1
-XBee xbee = XBee();
-
 #define SerialUM7 Serial2
-UM7 imu;
-
 #define SerialMotors Serial3
+XBee xbee = XBee();
+UM7 imu;
 
 const int ledPin = 13;
 
+enum {STOP_MODE, FLIGHT_MODE, NO_VICON_MODE, MOTOR_FORCES_MODE};
 int current_mode = STOP_MODE;
 
-enum {STOP_MODE, FLIGHT_MODE, NO_VICON_MODE, MOTOR_FORCES_MODE};
-
 ///////////////////////////////////////////////////////////////////////////
-// Declare functions from other files
+// Declare functions from other files, like header file
 ///////////////////////////////////////////////////////////////////////////
 
 // Functions for wireless communications
@@ -85,7 +78,7 @@ void setup() {
 void loop() {
   readUM7();
 
-  if (readXbee() && (current_mode == NORMAL_MODE)) {
+  if (readXbee() && (current_mode == FLIGHT_MODE)) {
     // Correct imu drift
     q_curr_imu = imu.q_curr;
     qinverse(q_curr_imu, q_curr_imu_inv);
@@ -95,41 +88,35 @@ void loop() {
   //State machine
   switch (current_mode) {
 
-    case NORMAL_MODE:
-      // Adjust imu reading, comment if not flying with real vicon data
-      // qmultiply(q_curr_shift,(Quaternion&)imu.q_curr,q_curr);
-      q_curr = imu.q_curr;
-      // Serial.print("q_curr"); q_toString(q_curr);
-      // Calculate necessary motor forces
-      calculateMotorForces();
+    case STOP_MODE:
+      // TODO decide what this is/what to do here
       break;
 
-    case MOT_SPDS_MODE:
+    case FLIGHT_MODE:
+      // Adjust imu reading, comment if not flying with real vicon data
+      qmultiply(q_curr_shift,(Quaternion&)imu.q_curr,q_curr);
+
+      // Calculate necessary motor forces
+      calculateMotorForces();
+      spinMotors();
+      break;
+
+    case MOTOR_FORCES_MODE:
       // Don't need to calculate motor forces, just use what is currently set
+    spinMotors();
       break;
 
     case NO_VICON_MODE:
       q_curr = imu.q_curr;
-      //      Serial.print("q_curr"); q_toString(q_curr);
-      //Serial.print("no_vicon");
 
       // Calculate necessary motor forces
       calculateMotorForces();
-      //      Serial.printf("motor forces: [%2.2f, %2.2f, %2.2f, %2.2f, %2.2f, %2.2f]\n",
-      //                    motor_forces(0), motor_forces(1), motor_forces(2), motor_forces(3), motor_forces(4), motor_forces(5));
+      spinMotors();
       break;
 
     default:
       break;
-
-    case GAINS_MODE:
-      break;
   }
-
-  // Always spin motors
-  spinMotors();
-  //    Serial.printf("motor forces: [%2.2f, %2.2f, %2.2f, %2.2f, %2.2f, %2.2f]\n",
-  //                  motor_forces(0), motor_forces(1), motor_forces(2), motor_forces(3), motor_forces(4), motor_forces(5));
 }
 
 
