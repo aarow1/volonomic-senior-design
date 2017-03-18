@@ -219,7 +219,6 @@ bool readXbee() {
                 f_des(j) = f_des_temp[j];
               }
               Serial.println("stored all_inputs packet");
-              expected_entry = PKT_START;
               current_mode = FLIGHT_MODE;
               break;
 
@@ -232,7 +231,6 @@ bool readXbee() {
                 f_des(j) = f_des_temp[j];
               }
               Serial.println("stored no_vicon packet");
-              expected_entry = PKT_START;
               current_mode = NO_VICON_MODE;
               break;
             case MOTOR_FORCES_TYPE:
@@ -240,7 +238,6 @@ bool readXbee() {
                 motor_forces(j) = motor_forces_temp[j];
               }
               Serial.println("stored motor forces");
-              expected_entry = PKT_START;
               current_mode = MOTOR_FORCES_MODE;
               break;
             case MOTOR_SPEEDS_TYPE:
@@ -248,22 +245,20 @@ bool readXbee() {
                 motor_speeds(j) = motor_speeds_temp[j];
               }
               Serial.println("stored motor speeds");
-              expected_entry = PKT_START;
               current_mode = MOTOR_SPEEDS_MODE;
               break;
             case GAINS_TYPE:
               tau_att = tau_att_temp;
               tau_w = tau_w_temp;
               Serial.println("stored gains");
-              expected_entry = PKT_START;
               break;
             case STOP_TYPE:
               current_mode = STOP_MODE;
               break;
             default:
-              expected_entry = PKT_START;
               break;
           }
+          expected_entry = PKT_START;
         }
         return 1;
         break;
