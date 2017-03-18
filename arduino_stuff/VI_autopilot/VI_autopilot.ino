@@ -94,7 +94,6 @@ void loop() {
   switch (current_mode) {
 
     case STOP_MODE:
-      // TODO decide what this is/what to do here
       break;
 
     case FLIGHT_MODE:
