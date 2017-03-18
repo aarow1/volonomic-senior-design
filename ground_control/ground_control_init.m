@@ -16,17 +16,17 @@ tau_att = .05;
 tau_w = .01;
 
 global using_vicon
-using_vicon;
-
+using_vicon = 0;
 global using_xbee
 using_xbee = 1;
 
+
 %% SET UP XBEE
+global xbee
 if using_xbee
-    global xbee
     xbee = serial('/dev/tty.usbserial-DN02MM5K') %MAC
     % xbee = serial('/dev/ttyUSB2') %LINUX
-
+    
     set(xbee,'DataBits',8)
     set(xbee,'StopBits',1)
     set(xbee,'Parity','none')
@@ -35,7 +35,7 @@ if using_xbee
 end
 
 %% SET UP ROS
-if (using_vicon)
+if using_vicon
     global q_curr_vicon pos_vicon pos_gains pos_des pos_control_on gains
     pos_control_on = 0;
     pos_des = [0 0 1];

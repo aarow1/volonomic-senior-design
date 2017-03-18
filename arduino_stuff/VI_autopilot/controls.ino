@@ -16,9 +16,9 @@ float r = .15; // m
 float A_vi_arr[6][6] = {
   {0,   0,  -1,  -1,   0,   0},
   {0,   0,   0,   0,   1,   1},
-  {1,  -1,   0,   0,   0,   0},
+  {-1,  -1,   0,   0,   0,   0},
   {0,   0,   0,   0,  -r,   r},
-  {r,   r,   0,   0,   0,   0},
+  {-r,   r,   0,   0,   0,   0},
   {0,   0,  -r,   r,   0,   0}
 };
 Matrix<6, 6, float> A_vi(A_vi_arr);
@@ -40,6 +40,7 @@ void readUM7() {
     while (Serial2.available()) {
       imu.encode(Serial2.read());
     }
+    //NED -> NWU
     q_curr_imu = qMultiply(x,(Quaternion)imu.q_curr);
   }
 
