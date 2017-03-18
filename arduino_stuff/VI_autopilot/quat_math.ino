@@ -32,15 +32,19 @@ Vec3 qRotate(Vec3 vec, Quaternion rot){
   vec_quat(2) = vec(1);
   vec_quat(3) = vec(2);
 
-  static Quaternion rot_inv(quat_id);
-  static Quaternion temp;
-  static Quaternion ans_quat;
+  Quaternion rot_inv(quat_id);
+  Quaternion ans_quat;
   rot_inv = qInverse(rot);
-  ans_quat = qMultiply(qMultiply(rot,vec_quat), rot_inv);
+  ans_quat = qMultiply(qMultiply(rot_inv,vec_quat), rot);
 
   ans(0) = ans_quat(1);
   ans(1) = ans_quat(2);
   ans(2) = ans_quat(3);
+  // Serial.printf("vec =[%2.2f,\t%2.2f,\t%2.2f]\n", vec(0), vec(1), vec(2));
+  // Serial.print("vec_quat"); q_toString(vec_quat);
+  // Serial.print("rot"); q_toString(rot);
+  // Serial.print("ans_quat"); q_toString(ans_quat);
+  // Serial.printf("ans =[%2.2f,\t%2.2f,\t%2.2f]\n", ans(0), ans(1), ans(2));
   return ans;
 }
 
