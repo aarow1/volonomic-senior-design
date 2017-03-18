@@ -16,6 +16,28 @@ void qinverse(Quaternion& q, Quaternion& q_inv) {
   q_inv(3) = -q(3);
 };
 
+// Rotates vec by rotation rot. Vec is a Quaternion with the first element set to 0
+void qRotate(Vec3& vec, Quaternion& rot, Vec3& ans){
+  //p' = qpq-1
+
+  Quaternion vec_quat;
+  vec_quat(0) = 0;
+  vec_quat(1) = vec(0);
+  vec_quat(2) = vec(1);
+  vec_quat(3) = vec(2);
+
+  static Quaternion rot_inv(quat_id);
+  static Quaternion temp;
+  static Quaternion ans_quat;
+  qinverse(rot, rot_inv);
+  qmultiply(rot, vec_quat, temp);
+  qmultiply(temp, rot_inv, ans_quat);
+
+  ans(0) = ans_quat(1);
+  ans(1) = ans_quat(2);
+  ans(2) = ans_quat(3);
+}
+
 Vec3 cross(Vec3 a, Vec3 b) {
   Vec3 c;
   c(0) = a(1) * b(2) - a(2) * b(1);

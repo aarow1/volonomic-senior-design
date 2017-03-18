@@ -49,13 +49,20 @@ void calculateMotorForces() {
 
   qmultiply(q_curr_inv, q_des, q_err);
 
+  static Vec3 w_ff_body;
+  qRotate(w_ff, q_curr, w_ff_body);
+
   w_des(0) = (2 / tau_att) * sign(q_err(0)) * q_err(1) + w_ff(0);
   w_des(1) = (2 / tau_att) * sign(q_err(0)) * q_err(2) + w_ff(1);
   w_des(2) = (2 / tau_att) * sign(q_err(0)) * q_err(3) + w_ff(2);
 
   t_des = scalar_multiply((1 / tau_w), J_vi * (w_des - w_curr)) + cross(w_curr, J_vi * w_curr);
 
-  Multiply(A_inv, (f_des && t_des), motor_forces);
+  // Rotate f_des into body frame
+  static Vec3 f_des_body;
+  qRotate(f_des, q_curr, f_des_body);
+
+  Multiply(A_inv, (f_des_body && t_des), motor_forces);
 //  Serial.print("q_curr"); q_toString(q_curr);
 
   if (DEBUG_calculateMotorForces) {
