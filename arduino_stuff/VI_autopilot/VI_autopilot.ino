@@ -23,8 +23,8 @@ Quaternion q_curr_imu_inv(quat_id);
 Quaternion q_curr_shift(quat_id);
 Quaternion q_curr(quat_id); // Attitude merged from imu and vicon
 
-float tau_att = .05;
-float tau_w = .01;
+float tau_att = 10;
+float tau_w = .1;
 
 Vec3 w_ff;
 Vec3 f_des;
@@ -94,6 +94,8 @@ void loop() {
   switch (current_mode) {
 
     case STOP_MODE:
+      q_curr = imu.q_curr;
+      Serial.print("q = "); q_toString(q_curr);
       break;
 
     case FLIGHT_MODE:
