@@ -16,7 +16,7 @@ tau_att = .05;
 tau_w = .01;
 
 global using_vicon
-using_vicon;
+using_vicon = 0;
 
 global using_xbee
 using_xbee = 1;
@@ -25,7 +25,7 @@ using_xbee = 1;
 if using_xbee
     global xbee
     xbee = serial('/dev/tty.usbserial-DN02MM5K') %MAC
-    % xbee = serial('/dev/ttyUSB2') %LINUX
+%     xbee = serial('/dev/ttyUSB2') %LINUX
 
     set(xbee,'DataBits',8)
     set(xbee,'StopBits',1)
