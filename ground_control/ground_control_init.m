@@ -18,7 +18,7 @@ global using_vicon
 using_vicon = 0;
 
 global using_xbee
-using_xbee = 0;
+using_xbee = 1;
 
 %% SET UP XBEE
 if using_xbee

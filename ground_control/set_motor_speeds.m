@@ -11,11 +11,11 @@ global motor_speeds
 if cmd == 'u'
     motor_speeds = motor_speeds+(10*ones(1,6));
 elseif cmd == 'd'
-    motor_speeds = motor_speeds-.1*ones(1,6);
+    motor_speeds = motor_speeds-(10*ones(1,6));
 elseif cmd == 'z'
     motor_speeds = zeros(1,6);    
 end   
 sendPkt('motor_speeds')
-disp(currSpeed);
+disp(motor_speeds);
 end
 
