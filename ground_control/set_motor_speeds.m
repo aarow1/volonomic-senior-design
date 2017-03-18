@@ -6,12 +6,12 @@ function [] = set_motor_speeds(cmd)
 
 %% Including global variables
 global motor_speeds
-
+incr = 27;
 %% 
 if cmd == 'u'
-    motor_speeds = motor_speeds+(10*ones(1,6));
+    motor_speeds = motor_speeds+(incr*ones(1,6));
 elseif cmd == 'd'
-    motor_speeds = motor_speeds-(10*ones(1,6));
+    motor_speeds = motor_speeds-(incr*ones(1,6));
 elseif cmd == 'z'
     motor_speeds = zeros(1,6);    
 end   
