@@ -11,13 +11,15 @@ float J_vi_arr[3][3] = {
 };
 Matrix<3, 3, float> J_vi(J_vi_arr);
 
+float r = .15; // m
+
 float A_vi_arr[6][6] = {
   {0,   0,  -1,  -1,   0,   0},
   {0,   0,   0,   0,   1,   1},
   {1,  -1,   0,   0,   0,   0},
-  {0,   0,   0,   0,  -1,   1},
-  {1,   1,   0,   0,   0,   0},
-  {0,   0,  -1,   1,   0,   0}
+  {0,   0,   0,   0,  -r,   r},
+  {r,   r,   0,   0,   0,   0},
+  {0,   0,  -r,   r,   0,   0}
 };
 Matrix<6, 6, float> A_vi(A_vi_arr);
 Matrix<6, 6, float> A_inv = A_vi.Inverse();
@@ -39,7 +41,7 @@ void readUM7() {
 
 }
 
-#define DEBUG_calculateMotorForces 0
+#define DEBUG_calculateMotorForces 1
 
 void calculateMotorForces() {
 
@@ -54,6 +56,7 @@ void calculateMotorForces() {
   t_des = scalar_multiply((1 / tau_w), J_vi * (w_des - w_curr)) + cross(w_curr, J_vi * w_curr);
 
   Multiply(A_inv, (f_des && t_des), motor_forces);
+//  Serial.print("q_curr"); q_toString(q_curr);
 
   if (DEBUG_calculateMotorForces) {
     Serial.print("q_curr"); q_toString(q_curr);
