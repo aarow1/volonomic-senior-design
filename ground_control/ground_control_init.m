@@ -6,9 +6,10 @@ q_des = [1 0 0 0];
 w_ff = [0 0 0];
 f_des = [0 0 0];
 
-global motor_forces motor_speeds
+global motor_forces motor_speeds incr
 motor_forces = zeros(1,6);
 motor_speeds = zeros(1,6);
+incr = 10;
 
 global tau_att tau_w
 tau_att = .05;
@@ -18,7 +19,7 @@ global using_vicon
 using_vicon = 0;
 
 global using_xbee
-using_xbee = 1;
+using_xbee = 0;
 
 %% SET UP XBEE
 if using_xbee
@@ -35,7 +36,7 @@ end
 
 %% SET UP ROS
 if (using_vicon)
-    global q_curr_vicon pos_vicon pos_gains pos_des pos_control_on
+    global q_curr_vicon pos_vicon pos_gains pos_des pos_control_on gains
     pos_control_on = 0;
     pos_des = [0 0 1];
     q_curr_vicon = [1 0 0 0];

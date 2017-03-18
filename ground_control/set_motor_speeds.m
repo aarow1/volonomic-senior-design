@@ -5,8 +5,7 @@ function [] = set_motor_speeds(cmd)
 %        'z' -- zero
 
 %% Including global variables
-global motor_speeds
-incr = 27;
+global motor_speeds incr
 %% 
 if cmd == 'u'
     motor_speeds = motor_speeds+(incr*ones(1,6));
