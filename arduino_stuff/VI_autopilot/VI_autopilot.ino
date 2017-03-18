@@ -55,8 +55,8 @@ void readUM7();
 void calculateMotorForces();  // Set motor forces based on attitude control and stuff
 void spinMotors();
 
-void qinverse(Quaternion& q, Quaternion& q_inv);
-void qmultiply(Quaternion& a, Quaternion& b, Quaternion& c);
+Quaternion qInverse(Quaternion q);
+Quaternion qMultiply(Quaternion a, Quaternion b);
 void q_toString(Quaternion q);
 
 ///////////////////////////////////////////////////////////////////////////
@@ -85,22 +85,23 @@ void loop() {
 
   if (readXbee() && (current_mode == FLIGHT_MODE)) {
     // Correct imu drift
-    q_curr_imu = imu.q_curr;
-    qinverse(q_curr_imu, q_curr_imu_inv);
-    qmultiply(q_curr_vicon, q_curr_imu_inv, q_curr_shift);
+    // q_curr_imu = imu.q_curr;
+    // qinverse(q_curr_imu, q_curr_imu_inv);
+    q_curr_shift = qMultiply(q_curr_vicon, qInverse(q_curr_imu));
   }
 
   //State machine
   switch (current_mode) {
 
     case STOP_MODE:
-      q_curr = imu.q_curr;
-      Serial.print("q = "); q_toString(q_curr);
+      q_curr = q_curr_imu;
+      // Serial.print("q = "); q_toString(q_curr);
       break;
 
     case FLIGHT_MODE:
       // Adjust imu reading, comment if not flying with real vicon data
-      qmultiply(q_curr_shift,(Quaternion&)imu.q_curr,q_curr);
+      q_curr = qMultiply(q_curr_shift,q_curr_imu);
+      // qmultiply(q_curr_shift,q_curr_imu,q_curr);
 
       // Calculate necessary motor forces
       calculateMotorForces();
@@ -116,7 +117,7 @@ void loop() {
       spinMotors_speeds();
       break;
     case NO_VICON_MODE:
-      q_curr = imu.q_curr;
+      q_curr = q_curr_imu;
 
       // Calculate necessary motor forces
       calculateMotorForces();

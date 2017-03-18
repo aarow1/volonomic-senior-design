@@ -23,20 +23,26 @@ float A_vi_arr[6][6] = {
 };
 Matrix<6, 6, float> A_vi(A_vi_arr);
 Matrix<6, 6, float> A_inv = A_vi.Inverse();
+float x_arr[4][1] = {0.0,1.0,0.0,0.0};
+Quaternion x(x_arr);
 
 template <typename T> T sign(T& val);
-void qinverse(Quaternion& q, Quaternion& q_inv);
-void qmultiply(Quaternion& a, Quaternion& b, Quaternion& c);
+Quaternion qInverse(Quaternion q);
+Quaternion qMultiply(Quaternion a, Quaternion b);
 Vec3 cross(Vec3 a, Vec3 b);
 Vec3 scalar_multiply(float a, Vec3 b);
 void q_toString(Quaternion q);
-
+Vec3 qRotate(Vec3 vec, Quaternion rot);
+Quaternion qmultiply_test(Quaternion a, Quaternion b);
 void readUM7() {
 
   if (Serial2.available()) {
     while (Serial2.available()) {
       imu.encode(Serial2.read());
     }
+    q_curr_imu = qMultiply(x,(Quaternion)imu.q_curr);
+    Serial.print("q_curr w/o rot"); q_toString((Quaternion)(imu.q_curr));
+    Serial.print("q_curr_imu"); q_toString(q_curr_imu);
   }
 
 }
@@ -45,12 +51,11 @@ void readUM7() {
 
 void calculateMotorForces() {
 
-  qinverse(q_curr, q_curr_inv);
-
-  qmultiply(q_curr_inv, q_des, q_err);
+  q_curr_inv = qInverse(q_curr);
+  q_err = qMultiply(q_curr_inv, q_des);
 
   static Vec3 w_ff_body;
-  qRotate(w_ff, q_curr, w_ff_body);
+  w_ff_body = qRotate(w_ff, q_curr);
 
   w_des(0) = (2 / tau_att) * sign(q_err(0)) * q_err(1) + w_ff(0);
   w_des(1) = (2 / tau_att) * sign(q_err(0)) * q_err(2) + w_ff(1);
@@ -64,8 +69,7 @@ void calculateMotorForces() {
 
   // Rotate f_des into body frame
   static Vec3 f_des_body;
-  qRotate(f_des, q_curr, f_des_body);
-
+  f_des_body = qRotate(f_des, q_curr);
   Multiply(A_inv, (f_des_body && t_des), motor_forces);
  
 
