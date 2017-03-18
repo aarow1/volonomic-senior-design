@@ -12,6 +12,7 @@ float q_des_temp[4];
 float w_ff_temp[3];
 float f_des_temp[3];
 float motor_forces_temp[6];
+float motor_speeds_temp[6];
 
 //temporary stored gain values
 float tau_att_temp;
@@ -29,12 +30,13 @@ float tau_w_temp;
 #define ALL_INPUTS_TYPE 33
 #define NO_VICON_TYPE 34
 #define MOTOR_FORCES_TYPE 35
-#define GAINS_TYPE 36
+#define MOTOR_SPEEDS_TYPE 36
+#define GAINS_TYPE 37
 #define PKT_END_ENTRY 69
 
 // Enumeration of next expected entry types
 enum {PKT_START, PKT_TYPE_ENTRY, PKT_END,
-      Q_CURR_VICON, Q_DES, W_DES, F_DES, MOTOR_FORCES, TAU_ATT, TAU_W
+      Q_CURR_VICON, Q_DES, W_DES, F_DES, MOTOR_FORCES, MOTOR_SPEEDS, TAU_ATT, TAU_W
      };
 
 #define DEBUG_readXbee 1
@@ -78,6 +80,9 @@ bool readXbee() {
             break;
           case MOTOR_FORCES_TYPE: // {Motor_forces[6]}
             expected_entry = MOTOR_FORCES;
+            break;
+          case MOTOR_SPEEDS_TYPE: //{Motor_speeds[6]}
+            expected_entry = MOTOR_SPEEDS;
             break;
           case GAINS_TYPE:        // {Tau_att[1], Tau_w[1]}
             expected_entry = TAU_ATT;
@@ -158,12 +163,25 @@ bool readXbee() {
           entryIdx = 0;
           expected_entry = PKT_END;
           if (DEBUG_readXbee) {
+            Serial.printf("Motor forces are = [%2.2f,\t%2.2f,\t%2.2f,\t%2.2f,\t%2.2f,\t%2.2f]\n",
+                          motor_forces(0), motor_forces(1), motor_forces(2), motor_forces(3), motor_forces(4), motor_forces(5));
+          }
+        }
+        break;
+      // Expecting motor_speeds data structure, has 6 entries
+      case MOTOR_SPEEDS:
+        if (DEBUG_readXbee) Serial.printf("motor_speeds entry %i: %2.2f\n", entryIdx, u.f);
+        motor_speeds_temp[entryIdx] = u.f;
+        entryIdx++;
+        if (entryIdx >= 6) {
+          entryIdx = 0;
+          expected_entry = PKT_END;
+          if (DEBUG_readXbee) {
             Serial.printf("Motor speeds are = [%2.2f,\t%2.2f,\t%2.2f,\t%2.2f,\t%2.2f,\t%2.2f]\n",
                           motor_forces(0), motor_forces(1), motor_forces(2), motor_forces(3), motor_forces(4), motor_forces(5));
           }
         }
         break;
-
       // Expecting tau_att data structure, has 1 entry
       case TAU_ATT:
         if (DEBUG_readXbee) Serial.printf("tau_att entry %2.2f\n", u.f);
@@ -217,6 +235,14 @@ bool readXbee() {
               Serial.println("stored motor forces");
               expected_entry = PKT_START;
               current_mode = MOTOR_FORCES_MODE;
+              break;
+            case MOTOR_SPEEDS_TYPE:
+              for (int j = 0; j < 6; j++) {
+                motor_speeds(j) = motor_speeds_temp[j];
+              }
+              Serial.println("stored motor speeds");
+              expected_entry = PKT_START;
+              current_mode = MOTOR_SPEEDS_MODE;
               break;
             case GAINS_TYPE:
               tau_att = tau_att_temp;

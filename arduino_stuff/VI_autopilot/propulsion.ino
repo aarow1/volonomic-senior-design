@@ -27,7 +27,7 @@ Vec6 motor_speeds;
 #define MOTORS_ENABLED 1
 #define PRINT_SPEEDS 1
 
-void setMotorForces() {
+void spinMotors_forces() {
 
   for (int j = 0; j < 6; j++) {
     motor_speeds(j) = sqrt(((1.0 / 0.000121) * abs(motor_forces(j)))) * sign(motor_forces(j));
@@ -38,10 +38,10 @@ void setMotorForces() {
     else if (motor_speeds(j) < -1 * MAX_MOTOR_SPEED)
       motor_speeds(j) = -1 * MAX_MOTOR_SPEED;
   }
-  setMotorSpeeds();
+  spinMotors_speeds();
 }
 
-void setMotorSpeeds() {
+void spinMotors_speeds() {
   if (MOTORS_ENABLED) {
     motor_client_0.cmd_velocity_.set(com, (int)motor_speeds(0));
     motor_client_1.cmd_velocity_.set(com, (int)motor_speeds(1));

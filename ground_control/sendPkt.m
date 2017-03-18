@@ -2,7 +2,7 @@ function [] = sendPkt(pkt_type)
 
 %% Including global variables
 global q_des w_ff f_des
-global motor_forces
+global motor_forces motor_speeds
 global tau_att tau_w
 global using_vicon
 
@@ -11,13 +11,16 @@ PKT_START_ENTRY = 32;
 ALL_INPUTS_TYPE = 33;
 NO_VICON_TYPE = 34;
 MOTOR_FORCES_TYPE = 35;
-GAINS_TYPE = 36;
+MOTOR_SPEEDS_TYPE = 36;
+GAINS_TYPE = 37;
 PKT_END_ENTRY = 69;
 
 %% Compose and send packet
 switch (pkt_type)
     case 'motor_forces'
         pkt = [PKT_START_ENTRY MOTOR_FORCES_TYPE motor_forces PKT_END_ENTRY];
+    case 'motor speeds'
+        pkt = [PKT_START_ENTRY MOTOR_SPEEDS_TYPE motor_speeds PKT_END_ENTRY];
     case 'all_inputs'
         pkt = [PKT_START_ENTRY ALL_INPUTS_TYPE q_curr_vicon q_des w_ff f_des PKT_END_ENTRY];
     case 'no_vicon'

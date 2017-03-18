@@ -6,8 +6,9 @@ q_des = [1 0 0 0];
 w_ff = [0 0 0];
 f_des = [0 0 0];
 
-global motor_forces
+global motor_forces motor_speeds
 motor_forces = zeros(1,6);
+motor_speeds = zeros(1,6);
 
 global tau_att tau_w
 tau_att = .05;

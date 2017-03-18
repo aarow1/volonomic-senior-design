@@ -5,28 +5,17 @@ function [] = set_motor_speeds(cmd)
 %        'z' -- zero
 
 %% Including global variables
-global motor_forces
+global motor_speeds
 
 %% 
-motor_speeds = .000121 * motor_forces.^2;
-
 if cmd == 'u'
     motor_speeds = motor_speeds+(10*ones(1,6));
-    disp('motor_speeds');
-    disp(motor_speeds);
-    
-    sendPkt('mot_spd',motor_speeds);
-    currSpeed = motor_speeds;
 elseif cmd == 'd'
     motor_speeds = motor_speeds-.1*ones(1,6);
-    disp(motor_speeds);
-    sendPkt('mot_spd',motor_speeds);
-    currSpeed = motor_speeds;
 elseif cmd == 'z'
-    sendPkt('mot_spd',zeros(1,6));
-    currSpeed = zeros(1,6);
+    motor_speeds = zeros(1,6);    
 end   
+sendPkt('motor_speeds')
 disp(currSpeed);
-motor_forces = 
 end
 

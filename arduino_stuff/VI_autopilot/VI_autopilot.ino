@@ -40,7 +40,7 @@ UM7 imu;
 
 const int ledPin = 13;
 
-enum {STOP_MODE, FLIGHT_MODE, NO_VICON_MODE, MOTOR_FORCES_MODE};
+enum {STOP_MODE, FLIGHT_MODE, NO_VICON_MODE, MOTOR_FORCES_MODE, MOTOR_SPEEDS_MODE};
 int current_mode = STOP_MODE;
 
 ///////////////////////////////////////////////////////////////////////////
@@ -101,20 +101,23 @@ void loop() {
 
       // Calculate necessary motor forces
       calculateMotorForces();
-      spinMotors();
+      spinMotors_forces();
       break;
 
     case MOTOR_FORCES_MODE:
-      // Don't need to calculate motor forces, just use what is currently set
-    spinMotors();
+      // Don't need to calculate motor forces, just use what is currently set in forces
+      spinMotors_forces();
       break;
-
+    case MOTOR_SPEEDS_MODE:
+      //Don't need to calculate anything, just use what is currently set in speeds
+      spinMotors_speeds();
+      break;
     case NO_VICON_MODE:
       q_curr = imu.q_curr;
 
       // Calculate necessary motor forces
       calculateMotorForces();
-      spinMotors();
+      spinMotors_forces();
       break;
 
     default:
