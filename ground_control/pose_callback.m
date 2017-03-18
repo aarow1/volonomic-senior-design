@@ -1,27 +1,34 @@
-function [] = pose_callback(src,msg)
-global q_curr_vicon pos_vicon pos_gains vicon_on
-persistent pos_vicon_prev err_prev int
+function [] = pose_callback(~,msg)
+global q_curr_vicon pos_vicon pos_gains f_des
+
+global pos_des
+global pos_control_on
+persistent err_prev int
+
 T = toc;
 q_curr_vicon(1) = msg.Pose.Orientation.X;
 q_curr_vicon(2) = msg.Pose.Orientation.Y;
 q_curr_vicon(3) = msg.Pose.Orientation.Z;
 q_curr_vicon(4) = msg.Pose.Orientation.W;
-q_curr_vicon
 
 pos_vicon(1) = msg.Pose.Position.X;
 pos_vicon(2) = msg.Pose.Position.Y;
 pos_vicon(3) = msg.Pose.Position.Z;
 
-err = pos_vicon-pos_vicon_prev;
-err_prev = err;
-der = (err-err_prev)/T;
-int = int + err*T;
-
-vi_mass = .750;
-g = 9.8;
-
-f_des = sum(pos_gains.*[err' der' int'],2)' + [0 0 vi_mass * g];
-pos_vicon_prev = pos_vicon;
+if pos_control_on
+    err = pos_des - pos_vicon;
+    der = (err-err_prev)/T;
+    int = int + err*T;
+    
+    err_prev = err;
+    
+    vi_mass = .750;
+    g = 9.8;
+    
+    f_des = sum(pos_gains.*[err' der' int'],2)' + [0, 0, (vi_mass*g)];
+else
+    f_des = [0 0 0];
+end
 
 sendPkt('all_inputs');
 

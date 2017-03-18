@@ -35,7 +35,13 @@ end
 
 %% SET UP ROS
 if (using_vicon)
-    global q_curr_vicon pos_vicon pos_gains
+    global q_curr_vicon pos_vicon pos_gains pos_des pos_control_on
+    pos_control_on = 0;
+    pos_des = [0 0 1];
+    q_curr_vicon = [1 0 0 0];
+    pos_vicon = [0 0 0];
+    gains = [1 1 0]; %Kp Kd Ki
+    pos_gains = [gains; gains; gains];
     rosinit;
     odom_sub = rossubscriber('/vicon/VI/pose', @pose_callback);
 end
