@@ -30,7 +30,8 @@ Vec6 motor_speeds;
 void spinMotors_forces() {
 
   for (int j = 0; j < 6; j++) {
-    motor_speeds(j) = sqrt(((1.0 / 0.000121) * abs(motor_forces(j)))) * sign(motor_forces(j));
+    const float prop_const =  0.0000011858;
+    motor_speeds(j) = sqrt(((1.0 / prop_const) * abs(motor_forces(j)))) * sign(motor_forces(j));
 
     // Limit motor speed to not go crazy
     if (motor_speeds(j) > MAX_MOTOR_SPEED)
