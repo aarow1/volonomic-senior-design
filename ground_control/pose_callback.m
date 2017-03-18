@@ -17,10 +17,13 @@ err_prev = err;
 der = (err-err_prev)/T;
 int = int + err*T;
 
-pos_vicon = sum(pos_gains.*[err' der' int'],2)';
+vi_mass = .750;
+g = 9.8;
+
+f_des = sum(pos_gains.*[err' der' int'],2)' + [0 0 vi_mass * g];
 pos_vicon_prev = pos_vicon;
 
-sendPkt('vicon',vicon_on);
+sendPkt('all_inputs');
 
 tic;
 end
