@@ -41,8 +41,6 @@ void readUM7() {
       imu.encode(Serial2.read());
     }
     q_curr_imu = qMultiply(x,(Quaternion)imu.q_curr);
-    Serial.print("q_curr w/o rot"); q_toString((Quaternion)(imu.q_curr));
-    Serial.print("q_curr_imu"); q_toString(q_curr_imu);
   }
 
 }

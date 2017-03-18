@@ -2,12 +2,6 @@ template <typename T> T sign(T& val) {
   return (T(0) <= val) - (val < T(0));
 }
 
-// void qmultiply(Quaternion& a, Quaternion& b, Quaternion& c) {
-//   c(0) = b(0) * a(0) - b(1) * a(1) - b(2) * a(2) - b(3) * a(3);
-//   c(1) = b(0) * a(1) + b(1) * a(0) - b(2) * a(3) + b(3) * a(2);
-//   c(2) = b(0) * a(2) + b(1) * a(3) + b(2) * a(0) - b(3) * a(1);
-//   c(3) = b(0) * a(3) - b(1) * a(2) + b(2) * a(1) + b(3) * a(0);
-// };
 
 Quaternion qMultiply(Quaternion a, Quaternion b) {
   static Quaternion c; 

@@ -16,10 +16,10 @@ tau_att = .05;
 tau_w = .01;
 
 global using_vicon
-using_vicon = 0;
+using_vicon;
 
 global using_xbee
-using_xbee = 0;
+using_xbee = 1;
 
 %% SET UP XBEE
 if using_xbee
