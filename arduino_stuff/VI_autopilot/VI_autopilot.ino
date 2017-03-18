@@ -71,7 +71,9 @@ void setup() {
   xbee.setSerial(SerialXbee);
 
   pinMode(ledPin, OUTPUT);
-  for(int led_blink = 0; led_blink < 3; led_blink++){
+  digitalWrite(ledPin, HIGH);
+  delay(1000);
+  for(int led_blink = 0; led_blink < 4; led_blink++){
     digitalWrite(ledPin, HIGH);
     delay(100);
     digitalWrite(ledPin, LOW);

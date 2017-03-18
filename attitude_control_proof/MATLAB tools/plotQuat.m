@@ -25,6 +25,10 @@ b = q; a = rot;
 % grid on;
 % axis([-2 2 -2 2 -2 2]);
 
+%%
+
+q = [-0.53,	-0.56,	-0.45,	-0.45];
+
 figure();
 plotCoordinateFrame(quat2rotm(q), 0, [0 0 1]);
 title('raw');

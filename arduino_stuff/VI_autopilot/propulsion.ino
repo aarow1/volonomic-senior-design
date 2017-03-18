@@ -25,7 +25,7 @@ ComplexMotorControlClient motor_client_5(5); //
 Vec6 motor_speeds;
 #define MAX_MOTOR_SPEED 100
 #define MOTORS_ENABLED 1
-#define PRINT_SPEEDS 0
+#define PRINT_SPEEDS 1
 
 void spinMotors_forces() {
 
