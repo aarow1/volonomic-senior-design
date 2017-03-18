@@ -71,11 +71,11 @@ void setup() {
   xbee.setSerial(SerialXbee);
 
   pinMode(ledPin, OUTPUT);
+  // for(int led_blink)
   digitalWrite(ledPin, HIGH);
   delay(500);
   digitalWrite(ledPin, LOW);
   Serial.println("teensy ready");
-  Serial.printf("tau_w: %2.5f\n", tau_w);
 }
 
 void loop() {

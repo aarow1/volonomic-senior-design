@@ -32,6 +32,7 @@ float tau_w_temp;
 #define MOTOR_FORCES_TYPE 35
 #define MOTOR_SPEEDS_TYPE 36
 #define GAINS_TYPE 37
+#define STOP_TYPE 38
 #define PKT_END_ENTRY 69
 
 // Enumeration of next expected entry types
@@ -39,7 +40,7 @@ enum {PKT_START, PKT_TYPE_ENTRY, PKT_END,
       Q_CURR_VICON, Q_DES, W_DES, F_DES, MOTOR_FORCES, MOTOR_SPEEDS, TAU_ATT, TAU_W
      };
 
-#define DEBUG_readXbee 1
+#define DEBUG_readXbee 0
 
 bool readXbee() {
   if (Serial1.available() > 0) {
@@ -51,7 +52,7 @@ bool readXbee() {
       byteIdx++;
     }
     byteIdx = 0;
-    if (DEBUG_readXbee) Serial.printf("u.f = [%2.2f] byteIdx = %d\n", u.f, byteIdx);
+    if (DEBUG_readXbee) Serial.printf("u.f = [%2.2f]\n", u.f);
 
     // Do the right thing with read entry
     static int expected_entry = PKT_START; // Next expected entry to be read
@@ -68,8 +69,9 @@ bool readXbee() {
 
       // Expecting packet type entry
       case PKT_TYPE_ENTRY:
-        if (DEBUG_readXbee) Serial.printf("pkt_type: %i\n", u.f);
-        static int current_pkt_type = u.f;
+        if (DEBUG_readXbee) Serial.printf("pkt_type: %2.2f\n", u.f);
+        static int current_pkt_type;
+        current_pkt_type = u.f;
 
         switch (current_pkt_type) {
           case ALL_INPUTS_TYPE:   // {Q_curr_vicon[4], Q_des[4], w_ff[3], f_des[3]}
@@ -86,6 +88,9 @@ bool readXbee() {
             break;
           case GAINS_TYPE:        // {Tau_att[1], Tau_w[1]}
             expected_entry = TAU_ATT;
+            break;
+          case STOP_TYPE:
+            expected_entry = PKT_END;  // No data, just stop doing things
             break;
           default:
             expected_entry = PKT_START;
@@ -164,7 +169,8 @@ bool readXbee() {
           expected_entry = PKT_END;
           if (DEBUG_readXbee) {
             Serial.printf("Motor forces are = [%2.2f,\t%2.2f,\t%2.2f,\t%2.2f,\t%2.2f,\t%2.2f]\n",
-                          motor_forces(0), motor_forces(1), motor_forces(2), motor_forces(3), motor_forces(4), motor_forces(5));
+                          motor_forces_temp[0], motor_forces_temp[1], motor_forces_temp[2], 
+                          motor_forces_temp[3], motor_forces_temp[4], motor_forces_temp[5]);
           }
         }
         break;
@@ -178,20 +184,21 @@ bool readXbee() {
           expected_entry = PKT_END;
           if (DEBUG_readXbee) {
             Serial.printf("Motor speeds are = [%2.2f,\t%2.2f,\t%2.2f,\t%2.2f,\t%2.2f,\t%2.2f]\n",
-                          motor_forces(0), motor_forces(1), motor_forces(2), motor_forces(3), motor_forces(4), motor_forces(5));
+                          motor_speeds_temp[0], motor_speeds_temp[1], motor_speeds_temp[2], 
+                          motor_speeds_temp[3], motor_speeds_temp[4], motor_speeds_temp[5]);
           }
         }
         break;
       // Expecting tau_att data structure, has 1 entry
       case TAU_ATT:
-        if (DEBUG_readXbee) Serial.printf("tau_att entry %2.2f\n", u.f);
+        if (DEBUG_readXbee) Serial.printf("tau_att = %2.2f\n", u.f);
         tau_att_temp = u.f;
         expected_entry = TAU_W;
         break;
 
       // Expecting tau_w data structure, has 1 entry
       case TAU_W:
-        if (DEBUG_readXbee) Serial.printf("tau_w entry %2.2f\n", u.f);
+        if (DEBUG_readXbee) Serial.printf("tau_w = %2.2f\n", u.f);
         tau_w_temp = u.f;
         expected_entry = PKT_END;
         break;
@@ -249,6 +256,9 @@ bool readXbee() {
               tau_w = tau_w_temp;
               Serial.println("stored gains");
               expected_entry = PKT_START;
+              break;
+            case STOP_TYPE:
+              current_mode = STOP_MODE;
               break;
             default:
               expected_entry = PKT_START;
