@@ -1,11 +1,14 @@
 function [] = pose_callback(~,msg)
-global q_curr_vicon pos_vicon =f_des gains
+global q_curr_vicon pos_vicon f_des gains
 
 global pos_des
 global pos_control_on
-persistent err_prev int
-
-T = toc;
+persistent err_prev
+if isempty(err_prev)
+    err_prev = 0;
+end
+T = toc
+display('here')
 q_curr_vicon = [msg.Pose.Pose.Orientation.W;
     msg.Pose.Pose.Orientation.X;
     msg.Pose.Pose.Orientation.Y;
