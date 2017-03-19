@@ -218,7 +218,7 @@ bool readXbee() {
                 w_ff(j) = w_ff_temp[j];
                 f_des(j) = f_des_temp[j];
               }
-              Serial.println("stored all_inputs packet");
+              if (DEBUG_readXbee) Serial.println("stored all_inputs packet");
               current_mode = FLIGHT_MODE;
               break;
 
@@ -230,27 +230,27 @@ bool readXbee() {
                 w_ff(j) = w_ff_temp[j];
                 f_des(j) = f_des_temp[j];
               }
-              Serial.println("stored no_vicon packet");
+              if (DEBUG_readXbee) Serial.println("stored no_vicon packet");
               current_mode = NO_VICON_MODE;
               break;
             case MOTOR_FORCES_TYPE:
               for (int j = 0; j < 6; j++) {
                 motor_forces(j) = motor_forces_temp[j];
               }
-              Serial.println("stored motor forces");
+              if (DEBUG_readXbee) Serial.println("stored motor forces");
               current_mode = MOTOR_FORCES_MODE;
               break;
             case MOTOR_SPEEDS_TYPE:
               for (int j = 0; j < 6; j++) {
                 motor_speeds(j) = motor_speeds_temp[j];
               }
-              Serial.println("stored motor speeds");
+              if (DEBUG_readXbee) Serial.println("stored motor speeds");
               current_mode = MOTOR_SPEEDS_MODE;
               break;
             case GAINS_TYPE:
               tau_att = tau_att_temp;
               tau_w = tau_w_temp;
-              Serial.println("stored gains");
+              if (DEBUG_readXbee) Serial.println("stored gains");
               break;
             case STOP_TYPE:
               current_mode = STOP_MODE;

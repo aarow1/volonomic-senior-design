@@ -34,6 +34,7 @@ Vec3 scalar_multiply(float a, Vec3 b);
 void q_toString(Quaternion q);
 Vec3 qRotate(Vec3 vec, Quaternion rot);
 Quaternion qmultiply_test(Quaternion a, Quaternion b);
+
 void readUM7() {
 
   if (Serial2.available()) {
@@ -50,8 +51,7 @@ void readUM7() {
 
 void calculateMotorForces() {
 
-  q_curr_inv = qInverse(q_curr);
-  q_err = qMultiply(q_curr_inv, q_des);
+  q_err = qMultiply(qInverse(q_curr), q_des);
 
   static Vec3 w_ff_body;
   w_ff_body = qRotate(w_ff, q_curr);

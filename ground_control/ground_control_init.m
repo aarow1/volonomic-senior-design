@@ -2,22 +2,15 @@ clear all
 
 %% SET UP GLOBAL VARIABLES
 global q_des w_ff f_des
-q_des = [1 0 0 0];
-w_ff = [0 0 0];
-f_des = [0 0 0];
-
 global motor_forces motor_speeds incr
-motor_forces = zeros(1,6);
-motor_speeds = zeros(1,6);
-incr = 10;
-
 global tau_att tau_w
-tau_att = .05;
-tau_w = .01;
+
+q_des = [1 0 0 0]; w_ff = zeros(1,3); f_des = zeros(1,3);
+motor_forces = zeros(1,6); motor_speeds = zeros(1,6); incr = 0;
+tau_att = .01; tau_w = 1;
 
 global using_vicon send_vicon
 using_vicon = 1;
-send_vicon = 0;
 global using_xbee
 using_xbee = 1;
 
@@ -33,19 +26,20 @@ if using_xbee
     set(xbee,'Parity','none')
     set(xbee,'BaudRate',9600)
     fopen(xbee);
-    tic;
 end
 
 %% SET UP ROS
 if using_vicon
     global q_curr_vicon pos_vicon pos_gains pos_des pos_control_on gains
-    pos_control_on = 0;
-    pos_des = [0 0 1];
-    q_curr_vicon = [1 0 0 0];
-    pos_vicon = [0 0 0];
-    gains = [1 1 0]; %Kp Kd Ki
+    q_curr_vicon = [1 0 0 0]; 
+    pos_control_on = 0; pos_vicon = zeros(3,1); 
+    
+    rosshutdown;
+    gains = [1 1 0];
     pos_gains = [gains; gains; gains];
-    rosinit;
-    odom_sub = 
+    rosinit('http://demo-nuc:11311');
+%     rosinit;
+    tic;
+    odom_sub = rossubscriber('/odom','nav_msgs/Odometry',@pose_callback);
 %     odom_sub = rossubscriber('/vicon/VI/pose', @pose_callback);
 end

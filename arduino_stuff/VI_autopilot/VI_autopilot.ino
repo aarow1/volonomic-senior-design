@@ -84,7 +84,7 @@ void setup() {
 
 void loop() {
   readUM7();
-
+  q_curr = q_curr_imu;
   if (readXbee() && (current_mode == FLIGHT_MODE)) {
     // Correct imu drift
     // q_curr_imu = imu.q_curr;
@@ -96,7 +96,6 @@ void loop() {
   switch (current_mode) {
 
     case STOP_MODE:
-      q_curr = q_curr_imu;
       // Serial.print("q = "); q_toString(q_curr);
       break;
 
@@ -106,7 +105,6 @@ void loop() {
       // qmultiply(q_curr_shift,q_curr_imu,q_curr);
 
       // Calculate necessary motor forces
-      q_curr = q_curr_imu;
       calculateMotorForces();
       spinMotors_forces();
       break;
@@ -120,8 +118,6 @@ void loop() {
       spinMotors_speeds();
       break;
     case NO_VICON_MODE:
-      q_curr = q_curr_imu;
-
       // Calculate necessary motor forces
       calculateMotorForces();
       spinMotors_forces();

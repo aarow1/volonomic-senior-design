@@ -60,7 +60,7 @@ void spinMotors_speeds() {
 
   if (com.GetTxBytes(communication_buffer, communication_length))
   {
-    // Use Arduino serial hardware to send messages
+
     SerialMotors.write(communication_buffer, communication_length);
   }
 
