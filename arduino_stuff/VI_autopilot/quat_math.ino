@@ -1,5 +1,5 @@
 template <typename T> T sign(T& val) {
-  return (T(0) <= val) - (val < T(0));
+return (T(0) <= val) - (val < T(0));
 }
 
 

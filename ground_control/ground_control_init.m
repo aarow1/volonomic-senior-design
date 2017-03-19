@@ -30,13 +30,12 @@ end
 
 %% SET UP ROS
 if using_vicon
-    global q_curr_vicon pos_vicon pos_gains pos_des pos_control_on gains
+    global q_curr_vicon pos_vicon pos_des pos_control_on gains
     q_curr_vicon = [1 0 0 0]; 
     pos_control_on = 0; pos_vicon = zeros(3,1); 
     
     rosshutdown;
     gains = [1 1 0];
-    pos_gains = [gains; gains; gains];
     rosinit('http://demo-nuc:11311');
 %     rosinit;
     tic;

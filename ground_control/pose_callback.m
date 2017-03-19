@@ -1,5 +1,5 @@
 function [] = pose_callback(~,msg)
-global q_curr_vicon pos_vicon pos_gains f_des
+global q_curr_vicon pos_vicon =f_des gains
 
 global pos_des
 global pos_control_on
@@ -16,6 +16,7 @@ pos_vicon = [ msg.Pose.Pose.Position.X;
     msg.Pose.Pose.Position.Z]';
 
 if pos_control_on
+    pos_gains = [gains; gains; gains];
     err = pos_des - pos_vicon;
     der = (err-err_prev)/T;
     int = int + err*T;
