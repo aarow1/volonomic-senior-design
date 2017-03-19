@@ -13,6 +13,7 @@
 {"type_idn":5, "param":"build_day",          "param_idn":  10, "format":"B", "unit": "day"  },
 {"type_idn":5, "param":"build_hour",         "param_idn":  11, "format":"B", "unit": "hour" },
 {"type_idn":5, "param":"build_minute",       "param_idn":  12, "format":"B", "unit": "min"  },
-{"type_idn":5, "param":"build_second",       "param_idn":  13, "format":"B", "unit": "s"    }
+{"type_idn":5, "param":"build_second",       "param_idn":  13, "format":"B", "unit": "s"    },
+{"type_idn":5, "param":"module_id",          "param_idn":  14, "format":"B", "unit": "id"    }
 
 ]
