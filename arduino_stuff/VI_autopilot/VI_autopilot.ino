@@ -102,10 +102,11 @@ void loop() {
 
     case FLIGHT_MODE:
       // Adjust imu reading, comment if not flying with real vicon data
-      q_curr = qMultiply(q_curr_shift,q_curr_imu);
+//      q_curr = qMultiply(q_curr_shift,q_curr_imu);
       // qmultiply(q_curr_shift,q_curr_imu,q_curr);
 
       // Calculate necessary motor forces
+      q_curr = q_curr_imu;
       calculateMotorForces();
       spinMotors_forces();
       break;

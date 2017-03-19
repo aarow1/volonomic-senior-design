@@ -1,4 +1,4 @@
-function [] = pose_callback(~,msg)
+function [] = pose_callback(src,msg)
 global q_curr_vicon pos_vicon pos_gains f_des
 
 global pos_des
@@ -23,14 +23,20 @@ if pos_control_on
     err_prev = err;
     
     vi_mass = .750;
-    g = 9.8;
+    g = 9.8
+    display('here')
     
     f_des = sum(pos_gains.*[err' der' int'],2)' + [0, 0, (vi_mass*g)];
 else
     f_des = [0 0 0];
 end
 
-sendPkt('all_inputs');
+global send_vicon
+
+if send_vicon
+    sendPkt('all_inputs')
+    disp('sending vicon')
+end
 
 tic;
 end

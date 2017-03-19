@@ -15,8 +15,9 @@ global tau_att tau_w
 tau_att = .05;
 tau_w = .01;
 
-global using_vicon
-using_vicon = 0;
+global using_vicon send_vicon
+using_vicon = 1;
+send_vicon = 0;
 global using_xbee
 using_xbee = 1;
 
@@ -24,14 +25,15 @@ using_xbee = 1;
 %% SET UP XBEE
 global xbee
 if using_xbee
-    xbee = serial('/dev/tty.usbserial-DN02MM5K') %MAC
-    % xbee = serial('/dev/ttyUSB2') %LINUX
-    
+%     xbee = serial('/dev/tty.usbserial-DN02MM5K') %MAC
+    xbee = serial('/dev/ttyUSB5') %LINUX
+
     set(xbee,'DataBits',8)
     set(xbee,'StopBits',1)
     set(xbee,'Parity','none')
     set(xbee,'BaudRate',9600)
     fopen(xbee);
+    tic;
 end
 
 %% SET UP ROS
@@ -44,5 +46,6 @@ if using_vicon
     gains = [1 1 0]; %Kp Kd Ki
     pos_gains = [gains; gains; gains];
     rosinit;
-    odom_sub = rossubscriber('/vicon/VI/pose', @pose_callback);
+    odom_sub = 
+%     odom_sub = rossubscriber('/vicon/VI/pose', @pose_callback);
 end
