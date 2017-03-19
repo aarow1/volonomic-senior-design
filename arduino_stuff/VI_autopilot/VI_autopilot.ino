@@ -90,6 +90,7 @@ void loop() {
     // q_curr_imu = imu.q_curr;
     // qinverse(q_curr_imu, q_curr_imu_inv);
     q_curr_shift = qMultiply(q_curr_vicon, qInverse(q_curr_imu));
+    // Serial.print("q_curr_shift"); q_toString(q_curr_shift);
   }
 
   //State machine
@@ -101,8 +102,8 @@ void loop() {
 
     case FLIGHT_MODE:
       // Adjust imu reading, comment if not flying with real vicon data
-//      q_curr = qMultiply(q_curr_shift,q_curr_imu);
-      // qmultiply(q_curr_shift,q_curr_imu,q_curr);
+     q_curr = qMultiply(q_curr_shift,q_curr_imu);
+     // Serial.print("q_curr"); q_toString(q_curr);
 
       // Calculate necessary motor forces
       calculateMotorForces();
@@ -118,7 +119,8 @@ void loop() {
       spinMotors_speeds();
       break;
     case NO_VICON_MODE:
-      // Calculate necessary motor forces
+      // Calculate necessary motor forces;
+      q_curr = q_curr_imu;
       calculateMotorForces();
       spinMotors_forces();
       break;
