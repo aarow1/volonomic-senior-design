@@ -6,14 +6,14 @@ global pos_control_on
 persistent err_prev int
 
 T = toc;
-q_curr_vicon(1) = msg.Pose.Orientation.X;
-q_curr_vicon(2) = msg.Pose.Orientation.Y;
-q_curr_vicon(3) = msg.Pose.Orientation.Z;
-q_curr_vicon(4) = msg.Pose.Orientation.W;
+q_curr_vicon = [msg.Pose.Pose.Orientation.X;
+    msg.Pose.Pose.Orientation.Y;
+    msg.Pose.Pose.Orientation.Z;
+    msg.Pose.Pose.Orientation.W]';
 
-pos_vicon(1) = msg.Pose.Position.X;
-pos_vicon(2) = msg.Pose.Position.Y;
-pos_vicon(3) = msg.Pose.Position.Z;
+pos_vicon = [ msg.Pose.Pose.Position.X;
+    msg.Pose.Pose.Position.Y;
+    msg.Pose.Pose.Position.Z]';
 
 if pos_control_on
     err = pos_des - pos_vicon;
