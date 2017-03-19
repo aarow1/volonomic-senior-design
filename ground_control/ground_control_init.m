@@ -36,9 +36,6 @@ if using_vicon
     
     rosshutdown;
     gains = [1 1 0];
-    rosinit('http://demo-nuc:11311');
-%     rosinit;
-    tic;
-    odom_sub = rossubscriber('/odom','nav_msgs/Odometry',@pose_callback);
-%     odom_sub = rossubscriber('/vicon/VI/pose', @pose_callback);
+    rosinit();
+    odom_sub = rossubscriber('/vicon/VI/odom','nav_msgs/Odometry',@pose_callback);
 end

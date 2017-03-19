@@ -5,7 +5,6 @@ global motor_forces motor_speeds
 global tau_att tau_w
 global using_vicon
 global xbee
-
 %% Packet entry definitions
 PKT_START_ENTRY = 32;
 ALL_INPUTS_TYPE = 33;
@@ -23,7 +22,7 @@ switch (pkt_type)
     case 'motor_speeds'
         pkt = [PKT_START_ENTRY MOTOR_SPEEDS_TYPE motor_speeds PKT_END_ENTRY];
     case 'all_inputs'
-        pkt = [PKT_START_ENTRY ALL_INPUTS_TYPE q_curr_vicon q_des w_ff f_des PKT_END_ENTRY]
+        pkt = [PKT_START_ENTRY ALL_INPUTS_TYPE q_curr_vicon q_des w_ff f_des PKT_END_ENTRY];
     case 'no_vicon'
         pkt = [PKT_START_ENTRY NO_VICON_TYPE q_des w_ff f_des PKT_END_ENTRY];
     case 'gains'

@@ -7,8 +7,7 @@ persistent err_prev
 if isempty(err_prev)
     err_prev = 0;
 end
-T = toc
-display('here')
+T = toc;
 q_curr_vicon = [msg.Pose.Pose.Orientation.W;
     msg.Pose.Pose.Orientation.X;
     msg.Pose.Pose.Orientation.Y;
