@@ -23,8 +23,8 @@ Quaternion q_curr_imu_inv(quat_id);
 Quaternion q_curr_shift(quat_id);
 Quaternion q_curr(quat_id); // Attitude merged from imu and vicon
 
-float tau_att = 10;
-float tau_w = .1;
+float tau_att = .05;
+float tau_w = 1.8;
 
 Vec3 w_ff;
 Vec3 f_des;

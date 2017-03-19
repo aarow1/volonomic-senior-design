@@ -61,6 +61,9 @@ void calculateMotorForces() {
   w_des(2) = (2 / tau_att) * sign(q_err(0)) * q_err(3) + w_ff(2);
 
   t_des = scalar_multiply((1 / tau_w), J_vi * (w_des - w_curr)) + cross(w_curr, J_vi * w_curr);
+//  t_des(0) = 0;
+//  t_des(1) = 0;
+//  t_des(2) = 0;
 
   // Rotate f_des into body frame
   static Vec3 f_des_body;
