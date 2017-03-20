@@ -59,6 +59,7 @@ switch (pkt_type)
         fprintf('You fucked up\n');
         return;
 end
+
 tic;
 fwrite(xbee,pkt,'int16');
 toc;
