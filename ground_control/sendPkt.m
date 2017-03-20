@@ -29,7 +29,7 @@ switch (pkt_type)
     case 'stop'
         pkt = [PKT_START_ENTRY STOP_TYPE PKT_END_ENTRY];
     otherwise
-        disp('You fucked up');
+        fprintf('You fucked up\n');
         return;
 end
 fwrite(xbee,pkt,'float32');

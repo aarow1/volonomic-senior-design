@@ -16,8 +16,10 @@ end
 if isempty(ctr)
     ctr = 0;
 end
+
 T = toc - time;
 time = toc; 
+
 q_curr_vicon = [msg.Pose.Pose.Orientation.W;
     msg.Pose.Pose.Orientation.X;
     msg.Pose.Pose.Orientation.Y;
@@ -50,6 +52,5 @@ if send_vicon
         ctr = 0;
     end
 end
-tic;
 end
 
