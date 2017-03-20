@@ -3,7 +3,7 @@ global q_curr_vicon pos_vicon f_des gains
 
 global pos_des
 global pos_control_on
-persistent err_prev time int ctr
+persistent err_prev time int 
 if isempty(err_prev)
     err_prev = [0 0 0];
 end
@@ -12,9 +12,6 @@ if isempty(int)
 end
 if isempty(time)
     time = 0;
-end
-if isempty(ctr)
-    ctr = 0;
 end
 
 T = toc - time;
@@ -45,12 +42,7 @@ end
 
 global send_vicon
 if send_vicon
-    ctr = ctr+1;
     sendPkt('all_inputs')
-    if mod(ctr, 15) == 0
-        fprintf('sending vicon...\t pos_control: %i',pos_control_on);
-        ctr = 0;
-    end
 end
 end
 

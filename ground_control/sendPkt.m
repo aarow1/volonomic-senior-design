@@ -3,7 +3,7 @@ function [] = sendPkt(pkt_type)
 global q_des w_ff f_des q_curr_vicon
 global motor_forces motor_speeds
 global tau_att tau_w
-global xbee
+global xbee send_vicon
 %% Packet entry definitions
 PKT_START_ENTRY = 32;
 ALL_INPUTS_TYPE = 33;
@@ -32,6 +32,23 @@ switch (pkt_type)
         fprintf('You fucked up\n');
         return;
 end
+tic;
 fwrite(xbee,pkt,'float32');
+toc;
+
+persistent ctr
+if isempty(ctr)
+    ctr = 0;
+end
+
+if send_vicon
+    ctr = ctr+1;
+    if mod(ctr, 15) == 0
+        fprintf('sending vicon...\t pos_control: %i',pos_control_on);
+        ctr = 0;
+    end
+else
+    fprintf('sending %s pkt',pkt_type);
+end
 end
 
