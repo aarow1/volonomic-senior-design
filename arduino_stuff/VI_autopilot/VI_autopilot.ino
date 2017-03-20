@@ -64,8 +64,8 @@ void q_toString(Quaternion q);
 ///////////////////////////////////////////////////////////////////////////
 
 void setup() {
-  Serial.begin(9600); //USB
-  SerialXbee.begin(9600); //XBee
+  Serial.begin(115200); //USB
+  SerialXbee.begin(57600); //XBee
   SerialUM7.begin(115200); //imu
   SerialMotors.begin(115200);
   xbee.setSerial(SerialXbee);
@@ -83,13 +83,18 @@ void setup() {
 }
 
 void loop() {
+//  static long loop_time;
+//  float loop_freq = 1000000.0 / (micros() - loop_time);
+//  loop_time = micros();
+//  Serial.printf("loop_freq: %2.2f\n", loop_freq);
+  
   readUM7();
   q_curr = q_curr_imu;
+  
   if (readXbee() && (current_mode == FLIGHT_MODE)) {
     // Correct imu drift
-    // q_curr_imu = imu.q_curr;
-    // qinverse(q_curr_imu, q_curr_imu_inv);
     q_curr_shift = qMultiply(q_curr_vicon, qInverse(q_curr_imu));
+    
     // Serial.print("q_curr_shift"); q_toString(q_curr_shift);
   }
 
@@ -103,7 +108,6 @@ void loop() {
     case FLIGHT_MODE:
       // Adjust imu reading, comment if not flying with real vicon data
      q_curr = qMultiply(q_curr_shift,q_curr_imu);
-     // Serial.print("q_curr"); q_toString(q_curr);
 
       // Calculate necessary motor forces
       calculateMotorForces();
