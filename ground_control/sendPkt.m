@@ -32,9 +32,9 @@ switch (pkt_type)
         fprintf('You fucked up\n');
         return;
 end
-tic;
+
 fwrite(xbee,pkt,'float32');
-toc;
+
 
 persistent ctr
 if isempty(ctr)

@@ -23,9 +23,9 @@ send_vicon = 0;
 tic;
 %% SET UP XBEE
 global xbee
-if using_xbee && isempty(xbee)
-        xbee = serial('/dev/tty.usbserial-DN02MM5K') %MAC
-%     xbee = serial('/dev/ttyUSB5') %LINUX
+if using_xbee
+%         xbee = serial('/dev/tty.usbserial-DN02MM5K') %MAC
+    xbee = serial('/dev/ttyUSB11') %LINUX
     
     set(xbee,'DataBits',8)
     set(xbee,'StopBits',1)
