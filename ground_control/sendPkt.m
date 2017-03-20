@@ -3,7 +3,6 @@ function [] = sendPkt(pkt_type)
 global q_des w_ff f_des q_curr_vicon
 global motor_forces motor_speeds
 global tau_att tau_w
-global using_vicon
 global xbee
 %% Packet entry definitions
 PKT_START_ENTRY = 32;
@@ -33,7 +32,6 @@ switch (pkt_type)
         disp('You fucked up');
         return;
 end
-display(pkt)
 fwrite(xbee,pkt,'float32');
 end
 
