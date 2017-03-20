@@ -39,8 +39,6 @@ if pos_control_on
     g = 9.8;
     
     f_des = sum(pos_gains.*[err' der' int'],2)' + [0, 0, (VI_mass*g)];
-else
-    f_des = [0 0 0];
 end
 
 global send_vicon
@@ -52,7 +50,6 @@ if send_vicon
         ctr = 0;
     end
 end
-
 tic;
 end
 

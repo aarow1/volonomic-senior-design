@@ -385,8 +385,6 @@ function pushbutton9_Callback(hObject, eventdata, handles)
 global send_vicon
 send_vicon = 1;
 
-
-
 function edit12_Callback(hObject, eventdata, handles)
 % hObject    handle to edit12 (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
