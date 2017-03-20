@@ -2,7 +2,7 @@ clear all
 
 %% SET UP GLOBAL VARIABLES
 global using_vicon send_vicon
-using_vicon = 1;
+using_vicon = 0;
 global using_xbee
 using_xbee = 1;
 
@@ -24,7 +24,7 @@ tic;
 %% SET UP XBEE
 global xbee
 if using_xbee && isempty(xbee)
-        xbee = serial('/dev/tty.usbserial-DN02MM5K') %MAC
+        xbee = serial('/dev/tty.usbserial-DN02MM5K'); %MAC
 %     xbee = serial('/dev/ttyUSB5') %LINUX
     
     set(xbee,'DataBits',8)
@@ -32,6 +32,7 @@ if using_xbee && isempty(xbee)
     set(xbee,'Parity','none')
     set(xbee,'BaudRate',57600)
     fopen(xbee);
+    xbee
 end
 
 %% SET UP ROS
