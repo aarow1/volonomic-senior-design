@@ -19,7 +19,7 @@ com = MessageInterface('/dev/tty.usbserial-AFYJJVYG',115200);
 % get information about the motor control part of the motor driver
 % Note how you have to pass in the com object with a string value pair so 
 % that this mot object knows how to talk to its motor driver
-mot = ComplexMotorControlClient('com',com);
+mot = ComplexMotorControlClient('com',com, 'obj_id', 3);
 
 % Find out what the motor control object can communicate and units
 mot.list
