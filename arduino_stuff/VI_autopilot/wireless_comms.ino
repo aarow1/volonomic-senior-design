@@ -42,7 +42,7 @@ enum {PKT_START, PKT_TYPE_ENTRY, PKT_END,
   Q_CURR_VICON, Q_DES, W_DES, F_DES, MOTOR_FORCES, MOTOR_SPEEDS, TAU_ATT, TAU_W
 };
 
-#define DEBUG_readXbee 0
+#define DEBUG_readXbee 1
 
 bool readXbee() {
   if (Serial1.available() > 0) {
