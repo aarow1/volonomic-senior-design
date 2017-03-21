@@ -62,7 +62,7 @@ end
 
 tic;
 fwrite(xbee,pkt,'int16');
-toc;
+toc
 
 persistent ctr
 if isempty(ctr)

@@ -1,3 +1,4 @@
+close all 
 clear all
 
 %% SET UP GLOBAL VARIABLES
@@ -24,9 +25,9 @@ tic;
 %% SET UP XBEE
 global xbee
 
-if using_xbee
+if using_xbee 
 %         xbee = serial('/dev/tty.usbserial-DN02MM5K') %MAC
-    xbee = serial('/dev/ttyUSB11') %LINUX    
+    xbee = serial('/dev/ttyUSB3'); %LINUX    
     set(xbee,'DataBits',8)
     set(xbee,'StopBits',1)
     set(xbee,'Parity','none')
