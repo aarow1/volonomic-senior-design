@@ -1,6 +1,7 @@
 function [] = sendPkt(pkt_type)
 %% Including global variables
 global q_des w_ff f_des q_curr_vicon w_vicon
+global pos_control_on
 global motor_forces motor_speeds
 global tau_att tau_w
 global xbee send_vicon
@@ -42,7 +43,7 @@ switch (pkt_type)
             scaleToInt(w_vicon, W_MAX)...
             scaleToInt(w_ff, W_FF_MAX) ...
             scaleToInt(f_des, F_DES_MAX) ...
-            PKT_END_ENTRY]
+            PKT_END_ENTRY];
         
     case 'no_vicon'
         pkt = [PKT_START_ENTRY NO_VICON_TYPE ...
@@ -62,9 +63,7 @@ switch (pkt_type)
         return;
 end
 
-tic;
-fwrite(xbee,pkt,'int16');su
-toc
+fwrite(xbee,pkt,'int16');
 
 persistent ctr
 if isempty(ctr)
@@ -74,7 +73,7 @@ end
 if send_vicon
     ctr = ctr+1;
     if mod(ctr, 15) == 0
-        fprintf('sending vicon...\t pos_control: %i',pos_control_on);
+        fprintf('sending vicon...\t pos_control: %i\n',pos_control_on);
         ctr = 0;
     end
 else
