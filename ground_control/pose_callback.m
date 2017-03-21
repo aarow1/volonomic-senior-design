@@ -1,5 +1,5 @@
 function [] = pose_callback(~,msg)
-global q_curr_vicon pos_vicon f_des gains
+global q_curr_vicon pos_vicon f_des gains w_vicon
 
 global pos_des
 global pos_control_on
@@ -25,6 +25,10 @@ q_curr_vicon = [msg.Pose.Pose.Orientation.W;
 pos_vicon = [ msg.Pose.Pose.Position.X;
     msg.Pose.Pose.Position.Y;
     msg.Pose.Pose.Position.Z]';
+
+w_vicon = [msg.Twist.Twist.Angular.X;
+    msg.Twist.Twist.Angular.Y;
+    msg.Twist.Twist.Angular.Z]';
 
 if pos_control_on
     pos_gains = [gains; gains; gains];

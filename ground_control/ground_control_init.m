@@ -26,8 +26,8 @@ tic;
 global xbee
 
 if using_xbee 
-%         xbee = serial('/dev/tty.usbserial-DN02MM5K') %MAC
-    xbee = serial('/dev/ttyUSB3'); %LINUX    
+        xbee = serial('/dev/tty.usbserial-DN02MM5K') %MAC
+%     xbee = serial('/dev/ttyUSB3'); %LINUX    
     set(xbee,'DataBits',8)
     set(xbee,'StopBits',1)
     set(xbee,'Parity','none')
@@ -39,9 +39,9 @@ end
 %% SET UP ROS
 if using_vicon
     rosshutdown;
-    global q_curr_vicon pos_vicon pos_des pos_control_on gains
+    global q_curr_vicon pos_vicon pos_des pos_control_on gains w_vicon
     send_vicon = 0; pos_control_on = 0;
-    q_curr_vicon = [1 0 0 0]; pos_vicon = zeros(1,3);
+    q_curr_vicon = [1 0 0 0]; pos_vicon = zeros(1,3); w_vicon = zeros(1,6);
     if isempty(pos_des)
         pos_des = zeros(1,3);
     end

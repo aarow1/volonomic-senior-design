@@ -3,6 +3,7 @@ byte current_pkt_type;
 //temporary stored attitude(4), des att(4), des angular rates(3), des linear force (3)
 float q_curr_vicon_temp[4];
 float q_des_temp[4];
+float w_curr_vicon_temp[3];
 float w_ff_temp[3];
 float f_des_temp[3];
 float motor_forces_temp[6];
@@ -34,12 +35,14 @@ float tau_w_temp;
 #define MOTOR_FORCES_MAX 10.0
 #define GAINS_MAX 10.0
 #define QUATERNION_MAX 1.0
+#define W_VICON_MAX 10.0
 #define W_FF_MAX 10.0
 #define F_DES_MAX 10.0
 
+
 // Enumeration of next expected entry types
 enum {PKT_START, PKT_TYPE_ENTRY, PKT_END,
-  Q_CURR_VICON, Q_DES, W_DES, F_DES, MOTOR_FORCES, MOTOR_SPEEDS, TAU_ATT, TAU_W
+  Q_CURR_VICON, Q_DES, W_CURR_VICON, W_DES, F_DES, MOTOR_FORCES, MOTOR_SPEEDS, TAU_ATT, TAU_W
 };
 
 #define DEBUG_readXbee 1
@@ -124,14 +127,28 @@ bool readXbee() {
           entryIdx++;
           if (entryIdx >= 4) {
             entryIdx = 0;
-            expected_entry = W_DES;
+            expected_entry = W_CURR_VICON;
             if (DEBUG_readXbee) {
               Serial.printf("from wireless comms q_des_vicon = [%2.2f,\t%2.2f,\t%2.2f,\t%2.2f]\n",
                 q_des_temp[0], q_des_temp[1], q_des_temp[2], q_des_temp[3]);
             }
           }
           break;
-
+        //Expecting w_vicon data structure, has 3 entries
+          case W_CURR_VICON:
+          if (DEBUG_readXbee) Serial.printf("w_curr_vicon entry %2.2f: %2.2f\n", entryIdx, entry_in);
+          
+          w_curr_vicon_temp[entryIdx] = entry_in * (W_VICON_MAX/INT_16_MAX);
+          entryIdx++;
+          if (entryIdx >= 3) {
+            entryIdx = 0;
+            expected_entry = W_DES;
+             if (DEBUG_readXbee) {
+              Serial.printf("from wireless comms w_curr_vicon = [%2.2f,\t%2.2f,\t%2.2f,\t%2.2f]\n",
+                w_curr_vicon_temp[0], w_curr_vicon_temp[1], w_curr_vicon_temp[2]);
+            }
+          }
+          break;
         // Expecting w_des data structure, has 3 entries
           case W_DES:
           if (DEBUG_readXbee) Serial.printf("w_ff entry %2.2f: %2.2f\n", entryIdx, entry_in);
@@ -219,6 +236,7 @@ bool readXbee() {
                 q_des(j) = q_des_temp[j];
               }
               for (int j = 0; j < 3; j++) {
+                w_curr_vicon(j) = w_curr_vicon_temp[j];
                 w_ff(j) = w_ff_temp[j];
                 f_des(j) = f_des_temp[j];
               }

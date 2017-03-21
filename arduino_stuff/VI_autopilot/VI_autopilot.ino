@@ -26,9 +26,13 @@ Quaternion q_curr(quat_id); // Attitude merged from imu and vicon
 float tau_att = .05;
 float tau_w = 1.8;
 
+Vec3 w_curr_vicon;
+Vec3 w_curr_imu;
+Vec3 w_curr_shift;
+Vec3 w_curr;
 Vec3 w_ff;
 Vec3 f_des;
-Vec3 w_curr;
+
 float six_zeros[6][1] = {0, 0, 0, 0, 0, 0};
 Vec6 motor_forces(six_zeros);
 
@@ -90,11 +94,11 @@ void loop() {
   
   readUM7();
   q_curr = q_curr_imu;
-  
+  w_curr = w_curr_imu;
   if (readXbee() && (current_mode == FLIGHT_MODE)) {
     // Correct imu drift
     q_curr_shift = qMultiply(q_curr_vicon, qInverse(q_curr_imu));
-    
+    w_curr_shift = w_curr_imu - w_curr_vicon;
     // Serial.print("q_curr_shift"); q_toString(q_curr_shift);
   }
 
@@ -102,13 +106,13 @@ void loop() {
   switch (current_mode) {
 
     case STOP_MODE:
-      // Serial.print("q = "); q_toString(q_curr);
+      Serial.print("q = "); q_toString(q_curr);
       break;
 
     case FLIGHT_MODE:
       // Adjust imu reading, comment if not flying with real vicon data
      q_curr = qMultiply(q_curr_shift,q_curr_imu);
-
+     w_curr = w_curr_imu - w_curr_shift;
       // Calculate necessary motor forces
       calculateMotorForces();
       spinMotors_forces();
@@ -124,7 +128,6 @@ void loop() {
       break;
     case NO_VICON_MODE:
       // Calculate necessary motor forces;
-      q_curr = q_curr_imu;
       calculateMotorForces();
       spinMotors_forces();
       break;

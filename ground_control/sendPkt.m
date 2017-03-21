@@ -1,6 +1,6 @@
 function [] = sendPkt(pkt_type)
 %% Including global variables
-global q_des w_ff f_des q_curr_vicon
+global q_des w_ff f_des q_curr_vicon w_vicon
 global motor_forces motor_speeds
 global tau_att tau_w
 global xbee send_vicon
@@ -19,6 +19,7 @@ MOTOR_SPEEDS_MAX = 32767.0;
 MOTOR_FORCES_MAX = 10.0;
 GAINS_MAX = 10.0;
 QUATERNION_MAX = 1.0;
+W_MAX = 10.0;
 W_FF_MAX = 10.0;
 F_DES_MAX = 10.0;
 
@@ -38,6 +39,7 @@ switch (pkt_type)
         pkt = [PKT_START_ENTRY ALL_INPUTS_TYPE ...
             scaleToInt(q_curr_vicon, QUATERNION_MAX) ....
             scaleToInt(q_des, QUATERNION_MAX) ...
+            scaleToInt(w_vicon, W_MAX)...
             scaleToInt(w_ff, W_FF_MAX) ...
             scaleToInt(f_des, F_DES_MAX) ...
             PKT_END_ENTRY]
@@ -61,7 +63,7 @@ switch (pkt_type)
 end
 
 tic;
-fwrite(xbee,pkt,'int16');
+fwrite(xbee,pkt,'int16');su
 toc
 
 persistent ctr

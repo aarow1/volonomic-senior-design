@@ -43,7 +43,7 @@ void readUM7() {
     }
     //NED -> NWU
     q_curr_imu = qMultiply(x,(Quaternion)imu.q_curr);
-    w_curr = imu.w_curr;
+    w_curr_imu = imu.w_curr;
   }
 
 }
