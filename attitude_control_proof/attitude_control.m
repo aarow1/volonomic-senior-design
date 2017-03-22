@@ -1,10 +1,10 @@
 clear all
 close all
 clc
-
+addpath 'MATLAB tools'
 %% System parameters
-tau_attitude = 1;
-tau_w = .01; 
+tau_attitude =  1;
+tau_w = .005; 
 
 J = [0.0106063129,	0.00030489483,	-0.00022202219;
 0.00030489483,	0.01063727884,	0.00031613497;
@@ -89,7 +89,7 @@ theta_err = 100;
 
 %% Controls
 % while abs(theta_err(end) - theta_err(end-1)) > .01
-for n = 1:100;
+for n = 1:300;
     w_in = [0, 0, 0];
     q_des_dot = qmultiply((1/2) * q_des, [0, w_in]);
     
