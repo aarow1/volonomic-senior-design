@@ -106,7 +106,7 @@ void loop() {
   switch (current_mode) {
 
     case STOP_MODE:
-      Serial.print("q = "); q_toString(q_curr);
+      // Serial.print("q = "); q_toString(q_curr);
       break;
 
     case FLIGHT_MODE:

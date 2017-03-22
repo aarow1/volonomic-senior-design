@@ -65,7 +65,8 @@ void calculateMotorForces() {
 //  t_des(0) = 0;
 //  t_des(1) = 0;
 //  t_des(2) = 0;
-
+//  Serial.printf("w_curr =[%2.2f,\t%2.2f,\t%2.2f]\n", w_curr(0), w_curr(1), w_curr(2));
+    
   // Rotate f_des into body frame
   static Vec3 f_des_body;
   f_des_body = qRotate(f_des, q_curr);

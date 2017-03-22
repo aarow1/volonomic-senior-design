@@ -45,7 +45,7 @@ enum {PKT_START, PKT_TYPE_ENTRY, PKT_END,
   Q_CURR_VICON, Q_DES, W_CURR_VICON, W_DES, F_DES, MOTOR_FORCES, MOTOR_SPEEDS, TAU_ATT, TAU_W
 };
 
-#define DEBUG_readXbee 1
+#define DEBUG_readXbee 0
 
 bool readXbee() {
   if (Serial1.available() > 0) {
@@ -129,7 +129,7 @@ bool readXbee() {
             entryIdx = 0;
             expected_entry = W_CURR_VICON;
             if (DEBUG_readXbee) {
-              Serial.printf("from wireless comms q_des_vicon = [%2.2f,\t%2.2f,\t%2.2f,\t%2.2f]\n",
+              Serial.printf("from wireless comms q_des_vicon = [%2.2f,\t%2.2f,\t%2.2f]\n",
                 q_des_temp[0], q_des_temp[1], q_des_temp[2], q_des_temp[3]);
             }
           }
@@ -144,7 +144,7 @@ bool readXbee() {
             entryIdx = 0;
             expected_entry = W_DES;
              if (DEBUG_readXbee) {
-              Serial.printf("from wireless comms w_curr_vicon = [%2.2f,\t%2.2f,\t%2.2f,\t%2.2f]\n",
+              Serial.printf("from wireless comms w_curr_vicon = [%2.2f,\t%2.2f,\t%2.2f]\n",
                 w_curr_vicon_temp[0], w_curr_vicon_temp[1], w_curr_vicon_temp[2]);
             }
           }
@@ -240,6 +240,10 @@ bool readXbee() {
                 w_ff(j) = w_ff_temp[j];
                 f_des(j) = f_des_temp[j];
               }
+
+              //shift w_curr_vicon into body frame
+              w_curr_vicon = qRotate(w_curr_vicon,q_curr_vicon);
+              if (DEBUG_readXbee) Serial.printf("w_curr_vicon rot = [%2.2f, \t%2.2f, \t%2.2f]\n",w_curr_vicon(1),w_curr_vicon(2),w_curr_vicon(3));
               if (DEBUG_readXbee) Serial.println("stored all_inputs packet");
               current_mode = FLIGHT_MODE;
               break;
