@@ -10,7 +10,7 @@ using_xbee = 1;
 % ------ shouldn't need to change anything below here ------ %
 global q_des w_ff f_des
 global motor_forces motor_speeds incr
-global tau_att tau_w
+global tau_att tau_w ki_torque
 
 q_des = [1 0 0 0]; w_ff = zeros(1,3); f_des = zeros(1,3);
 motor_forces = zeros(1,6); motor_speeds = zeros(1,6); incr = 10;
@@ -20,6 +20,9 @@ end
 if isempty(tau_w)
     tau_w = 0;
 end
+if isempty(ki_torque)
+    ki_torque = 0;
+end
 send_vicon = 1;
 tic;
 %% SET UP XBEE
@@ -27,7 +30,7 @@ global xbee
 
 if using_xbee 
 %         xbee = serial('/dev/tty.usbserial-DN02MM5K') %MAC
-    xbee = serial('/dev/ttyUSB1'); %LINUX    
+    xbee = serial('/dev/ttyUSB0'); %LINUX    
     set(xbee,'DataBits',8)
     set(xbee,'StopBits',1)
     set(xbee,'Parity','none')

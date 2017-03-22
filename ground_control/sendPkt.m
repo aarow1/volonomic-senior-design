@@ -3,8 +3,13 @@ function [] = sendPkt(pkt_type)
 global q_des w_ff f_des q_curr_vicon w_vicon
 global pos_control_on
 global motor_forces motor_speeds
-global tau_att tau_w
+global tau_att tau_w ki_torque
 global xbee send_vicon
+persistent time
+
+if isempty(time)
+    time = 0;
+end
 %% Packet entry definitions
 PKT_START_ENTRY = 32;
 ALL_INPUTS_TYPE = 33;
@@ -55,6 +60,7 @@ switch (pkt_type)
         pkt = [PKT_START_ENTRY GAINS_TYPE ...
             scaleToInt(tau_att,GAINS_MAX) ...
             scaleToInt(tau_w,GAINS_MAX) ...
+            scaleToInt(ki_torque,GAINS_MAX) ...
             PKT_END_ENTRY];
     case 'stop'
         pkt = [PKT_START_ENTRY STOP_TYPE PKT_END_ENTRY];
@@ -62,8 +68,9 @@ switch (pkt_type)
         fprintf('You fucked up\n');
         return;
 end
-
+% tic;
 fwrite(xbee,pkt,'int16');
+% fprintf('fwrite freq = %2.2f\n', 1/toc);
 
 persistent ctr
 if isempty(ctr)
@@ -72,9 +79,11 @@ end
 
 if send_vicon
     ctr = ctr+1;
-    if mod(ctr, 15) == 0
-        fprintf('sending vicon...\t pos_control: %i\n',pos_control_on);
+    if mod(ctr, 20) == 0 
+        fprintf('sending vicon...\t pos_control: %i \t frequency: %3.2f \n',...
+            pos_control_on, 1/((toc-time)/20));
         ctr = 0;
+        time = toc;
     end
 else
     fprintf('sending %s pkt\n',pkt_type);

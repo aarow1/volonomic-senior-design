@@ -15,7 +15,7 @@ elseif cmd == 'z'
     motor_speeds = zeros(1,6);    
 end   
 sendPkt('motor_speeds');
-fprintf('motor speeds = [%i \t%i \t%i \t%i \t%i \t%i]\n', motor_speeds(1),motor_speeds(2),...
+fprintf('motor speeds = \t[%i \t%i \t%i \t%i \t%i \t%i]\n', motor_speeds(1),motor_speeds(2),...
     motor_speeds(3),motor_speeds(4),motor_speeds(5),motor_speeds(6));
 end
 
