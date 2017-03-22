@@ -23,8 +23,9 @@ Quaternion q_curr_imu_inv(quat_id);
 Quaternion q_curr_shift(quat_id);
 Quaternion q_curr(quat_id); // Attitude merged from imu and vicon
 
-float tau_att = .05;
-float tau_w = 1.8;
+float tau_att = 0.17;
+float tau_w = 0.13;
+float ki_torque = .1;
 
 Vec3 w_curr_vicon;
 Vec3 w_curr_imu;
@@ -68,6 +69,7 @@ void q_toString(Quaternion q);
 ///////////////////////////////////////////////////////////////////////////
 
 void setup() {
+  delay(2000);
   Serial.begin(115200); //USB
   SerialXbee.begin(57600); //XBee
   SerialUM7.begin(115200); //imu
@@ -76,8 +78,7 @@ void setup() {
 
   pinMode(ledPin, OUTPUT);
   digitalWrite(ledPin, HIGH);
-  delay(1000);
-  for(int led_blink = 0; led_blink < 4; led_blink++){
+  for (int led_blink = 0; led_blink < 4; led_blink++) {
     digitalWrite(ledPin, HIGH);
     delay(100);
     digitalWrite(ledPin, LOW);
@@ -87,11 +88,11 @@ void setup() {
 }
 
 void loop() {
-//  static long loop_time;
-//  float loop_freq = 1000000.0 / (micros() - loop_time);
-//  loop_time = micros();
-//  Serial.printf("loop_freq: %2.2f\n", loop_freq);
-  
+  //  static long loop_time;
+  //  float loop_freq = 1000000.0 / (micros() - loop_time);
+  //  loop_time = micros();
+  //  Serial.printf("loop_freq: %2.2f\n", loop_freq);
+
   readUM7();
   q_curr = q_curr_imu;
   w_curr = w_curr_imu;
@@ -102,38 +103,43 @@ void loop() {
     // Serial.print("q_curr_shift"); q_toString(q_curr_shift);
   }
 
-  //State machine
-  switch (current_mode) {
+  static long last_loop;
+  const float loop_hz = 150;
+  if ((millis() - last_loop) > (1000.0 / loop_hz)) {
+    last_loop = millis();
+    //State machine
+    switch (current_mode) {
 
-    case STOP_MODE:
-      // Serial.print("q = "); q_toString(q_curr);
-      break;
+      case STOP_MODE:
+        // Serial.print("q = "); q_toString(q_curr);
+        break;
 
-    case FLIGHT_MODE:
-      // Adjust imu reading, comment if not flying with real vicon data
-     q_curr = qMultiply(q_curr_shift,q_curr_imu);
-     w_curr = w_curr_imu - w_curr_shift;
-      // Calculate necessary motor forces
-      calculateMotorForces();
-      spinMotors_forces();
-      break;
+      case FLIGHT_MODE:
+        // Adjust imu reading, comment if not flying with real vicon data
+        q_curr = qMultiply(q_curr_shift, q_curr_imu);
+        w_curr = w_curr_imu - w_curr_shift;
+        // Calculate necessary motor forces
+        calculateMotorForces();
+        spinMotors_forces();
+        break;
 
-    case MOTOR_FORCES_MODE:
-      // Don't need to calculate motor forces, just use what is currently set in forces
-      spinMotors_forces();
-      break;
-    case MOTOR_SPEEDS_MODE:
-      //Don't need to calculate anything, just use what is currently set in speeds
-      spinMotors_speeds();
-      break;
-    case NO_VICON_MODE:
-      // Calculate necessary motor forces;
-      calculateMotorForces();
-      spinMotors_forces();
-      break;
+      case MOTOR_FORCES_MODE:
+        // Don't need to calculate motor forces, just use what is currently set in forces
+        spinMotors_forces();
+        break;
+      case MOTOR_SPEEDS_MODE:
+        //Don't need to calculate anything, just use what is currently set in speeds
+        spinMotors_speeds();
+        break;
+      case NO_VICON_MODE:
+        // Calculate necessary motor forces;
+        calculateMotorForces();
+        spinMotors_forces();
+        break;
 
-    default:
-      break;
+      default:
+        break;
+    }
   }
 }
 
