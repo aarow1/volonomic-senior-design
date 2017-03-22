@@ -3,8 +3,8 @@ close all
 clc
 
 %% System parameters
-tau_attitude = .5;
-tau_w = .5;
+tau_attitude = 1;
+tau_w = .01; 
 
 J = [0.0106063129,	0.00030489483,	-0.00022202219;
 0.00030489483,	0.01063727884,	0.00031613497;
@@ -108,7 +108,10 @@ for n = 1:100;
     torque = (1 / tau_w) * J * (w_des - w_curr) + cross(w_curr, J*w_curr);
     force = zeros(3,1);
     
-    f_props = M_inv * [force; torque]
+    f_props = M_inv * [force; torque];
+    if any(f_props > 3.5*ones(6,1))
+        f_props
+    end
     
     w_curr = w_curr + torque * dt;
     

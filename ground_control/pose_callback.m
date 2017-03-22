@@ -15,7 +15,7 @@ if isempty(time)
 end
 
 T = toc - time;
-time = toc; 
+time = toc;
 
 q_curr_vicon = [msg.Pose.Pose.Orientation.W;
     msg.Pose.Pose.Orientation.X;
@@ -46,7 +46,7 @@ end
 
 global send_vicon
 if send_vicon
-    sendPkt('all_inputs')
+    sendPkt('all_inputs');
 end
 end
 
