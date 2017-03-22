@@ -48,7 +48,7 @@ void readUM7() {
 
 }
 
-#define DEBUG_calculateMotorForces 0
+#define DEBUG_calculateMotorForces 1
 
 void calculateMotorForces() {
 
