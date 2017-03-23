@@ -62,7 +62,7 @@ void calculateMotorForces() {
   w_des(1) = (2 / tau_att) * sign(q_err(0)) * q_err(2) + w_ff(1);
   w_des(2) = (2 / tau_att) * sign(q_err(0)) * q_err(3) + w_ff(2);
 
-  const float w_des_max = 2;
+  const float w_des_max = 3;
   w_des(0) = constrain(w_des(0), -w_des_max, w_des_max);
   w_des(1) = constrain(w_des(1), -w_des_max, w_des_max);
   w_des(2) = constrain(w_des(2), -w_des_max, w_des_max);
