@@ -23,22 +23,30 @@ ComplexMotorControlClient motor_client_4(4); //
 ComplexMotorControlClient motor_client_5(5); //
 
 Vec6 motor_speeds;
-#define MAX_MOTOR_SPEED 1500
+#define MAX_MOTOR_SPEED 1700
 #define MOTORS_ENABLED 1
 #define PRINT_SPEEDS 1
 
 void spinMotors_forces() {
 
+  bool saturated = 0;
+  saturated = 0;
   for (int j = 0; j < 6; j++) {
     const float prop_const =  0.0000011858;
     motor_speeds(j) = sqrt(((1.0 / prop_const) * abs(motor_forces(j)))) * sign(motor_forces(j));
 
     // Limit motor speed to not go crazy
-    if (motor_speeds(j) > MAX_MOTOR_SPEED)
+    if (motor_speeds(j) > MAX_MOTOR_SPEED) {
       motor_speeds(j) = MAX_MOTOR_SPEED;
-    else if (motor_speeds(j) < -1 * MAX_MOTOR_SPEED)
+      saturated = 1;
+    }
+    else if (motor_speeds(j) < -1 * MAX_MOTOR_SPEED) {
       motor_speeds(j) = -1 * MAX_MOTOR_SPEED;
+      saturated = 1;
+    }
   }
+  Serial.println(saturated);
+  digitalWrite(ledPin, saturated);
   spinMotors_speeds();
 }
 
