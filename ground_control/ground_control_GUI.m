@@ -22,7 +22,7 @@ function varargout = ground_control_GUI(varargin)
 
 % Edit the above text to modify the response to help ground_control_GUI
 
-% Last Modified by GUIDE v2.5 22-Mar-2017 11:22:39
+% Last Modified by GUIDE v2.5 22-Mar-2017 13:24:35
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -373,9 +373,9 @@ function checkbox3_Callback(hObject, eventdata, handles)
 % handles    structure with handles and user data (see GUIDATA)
 
 % Hint: get(hObject,'Value') returns toggle state of checkbox3
-global pos_control
-pos_control = get(hObject,'Value');
-fprintf('pos_control = %i\n',pos_control);
+global pos_control_on
+pos_control_on = get(hObject,'Value');
+fprintf('pos_control = %i\n',pos_control_on);
 
 
 % --- Executes on button press in pushbutton9.
@@ -453,3 +453,31 @@ function edit13_CreateFcn(hObject, eventdata, handles)
 if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
     set(hObject,'BackgroundColor','white');
 end
+
+
+% --- Executes on button press in pushbutton14.
+function pushbutton14_Callback(hObject, eventdata, handles)
+% hObject    handle to pushbutton14 (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+
+% --- Executes on button press in radiobutton1.
+function radiobutton1_Callback(hObject, eventdata, handles)
+% hObject    handle to radiobutton1 (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hint: get(hObject,'Value') returns toggle state of radiobutton1
+global send_vicon 
+T = round(toc*10);
+if send_vicon
+    color = 'g'
+else 
+    color = 'r'
+end
+if mod(5,T) == 0
+    color = 'b'
+end
+set(hObject,'Backgroundcolor',color);
+drawnow();

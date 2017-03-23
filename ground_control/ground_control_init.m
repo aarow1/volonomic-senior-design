@@ -10,8 +10,8 @@ using_xbee = 1;
 % ------ shouldn't need to change anything below here ------ %
 global q_des w_ff f_des
 global motor_forces motor_speeds incr
-global tau_att tau_w ki_torque
-
+global tau_att tau_w ki_torque gains_store
+gains_store = [0 0 0];
 q_des = [1 0 0 0]; w_ff = zeros(1,3); f_des = zeros(1,3);
 motor_forces = zeros(1,6); motor_speeds = zeros(1,6); incr = 10;
 if isempty(tau_att)
@@ -23,7 +23,7 @@ end
 if isempty(ki_torque)
     ki_torque = 0;
 end
-send_vicon = 1;
+send_vicon = 0;
 tic;
 %% SET UP XBEE
 global xbee
