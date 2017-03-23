@@ -23,8 +23,8 @@ Quaternion q_curr_imu_inv(quat_id);
 Quaternion q_curr_shift(quat_id);
 Quaternion q_curr(quat_id); // Attitude merged from imu and vicon
 
-float tau_att = 0.17;
-float tau_w = 0.13;
+float tau_att = 0.2;
+float tau_w = 0.2;
 float ki_torque = .1;
 
 Vec3 w_curr_vicon;
@@ -69,15 +69,14 @@ void q_toString(Quaternion q);
 ///////////////////////////////////////////////////////////////////////////
 
 void setup() {
+  pinMode(ledPin, OUTPUT);
+  digitalWrite(ledPin, HIGH);
   delay(2000);
   Serial.begin(115200); //USB
   SerialXbee.begin(57600); //XBee
   SerialUM7.begin(115200); //imu
   SerialMotors.begin(115200);
   xbee.setSerial(SerialXbee);
-
-  pinMode(ledPin, OUTPUT);
-  digitalWrite(ledPin, HIGH);
   for (int led_blink = 0; led_blink < 4; led_blink++) {
     digitalWrite(ledPin, HIGH);
     delay(100);
@@ -112,6 +111,7 @@ void loop() {
 
       case STOP_MODE:
         // Serial.print("q = "); q_toString(q_curr);
+        digitalWrite(ledPin, 0);
         break;
 
       case FLIGHT_MODE:
