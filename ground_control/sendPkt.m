@@ -17,7 +17,8 @@ NO_VICON_TYPE = 34;
 MOTOR_FORCES_TYPE = 35;
 MOTOR_SPEEDS_TYPE = 36;
 GAINS_TYPE = 37;
-STOP_TYPE = 38;
+PING_TYPE = 38;
+STOP_TYPE = 39;
 PKT_END_ENTRY = 69;
 
 INT_16_MAX  = 32767.0;
@@ -69,6 +70,8 @@ switch (pkt_type)
             scaleToInt(tau_w,GAINS_MAX) ...
             scaleToInt(ki_torque,GAINS_MAX) ...
             PKT_END_ENTRY];
+    case 'ping' 
+        pkt = [PKT_START_ENTRY PING_TYPE PKT_END_ENTRY];
     case 'stop'
         pkt = [PKT_START_ENTRY STOP_TYPE PKT_END_ENTRY];
     otherwise

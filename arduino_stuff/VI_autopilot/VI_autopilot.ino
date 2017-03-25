@@ -26,6 +26,7 @@ Quaternion q_curr(quat_id); // Attitude merged from imu and vicon
 float tau_att = 0.2;
 float tau_w = 0.2;
 float ki_torque = .1;
+long time_delay = 0; //in micros
 
 Vec3 w_curr_vicon;
 Vec3 w_curr_imu;
@@ -111,34 +112,36 @@ void loop() {
 
       case STOP_MODE:
         // Serial.print("q = "); q_toString(q_curr);
-        digitalWrite(ledPin, 0);
-        break;
-
+      digitalWrite(ledPin, 0);
+      t_des_integral(0) = 0;
+      t_des_integral(1) = 0;
+      t_des_integral(2) = 0;
+      break;
       case FLIGHT_MODE:
         // Adjust imu reading, comment if not flying with real vicon data
-        q_curr = qMultiply(q_curr_shift, q_curr_imu);
-        w_curr = w_curr_imu - w_curr_shift;
+      q_curr = qMultiply(q_curr_shift, q_curr_imu);
+      w_curr = w_curr_imu - w_curr_shift;
         // Calculate necessary motor forces
-        calculateMotorForces();
-        spinMotors_forces();
-        break;
+      calculateMotorForces();
+      spinMotors_forces();
+      break;
 
       case MOTOR_FORCES_MODE:
         // Don't need to calculate motor forces, just use what is currently set in forces
-        spinMotors_forces();
-        break;
+      spinMotors_forces();
+      break;
       case MOTOR_SPEEDS_MODE:
         //Don't need to calculate anything, just use what is currently set in speeds
-        spinMotors_speeds();
-        break;
+      spinMotors_speeds();
+      break;
       case NO_VICON_MODE:
         // Calculate necessary motor forces;
-        calculateMotorForces();
-        spinMotors_forces();
-        break;
+      calculateMotorForces();
+      spinMotors_forces();
+      break;
 
       default:
-        break;
+      break;
     }
   }
 }

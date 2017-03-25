@@ -207,7 +207,7 @@ m_prop_sum_8 = sum(abs(m_props_8));
 
 
 %% Plotting
-us_color= [255 153 0]/255;
+us_color= [244 126 54]/255;
 them_color = [153 153 153]/255;
 
 % Surface of our T/W for 6 rotor
@@ -217,8 +217,10 @@ axis ([-.5 .5 -.5 .5 -.5 .5 ]);
 axis square;
 grid off; 
 % set(gca,'xtick',[],'ytick',[], 'ztick',[]);
-set(gcf, 'Color', 'none');
-saveas(gcf, 'Max Attainable Thrust to Weight Ratio-6 rotor.png');
+set(gcf, 'color', 'none',...
+         'inverthardcopy', 'off');
+% saveas(gcf, 'Max Attainable Thrust to Weight Ratio-6 rotor.eps');
+print( 'Max Attainable Thrust to Weight Ratio-6 rotor','-depsc');
 % title('Max Attainable Thrust to Weight Ratio, 6 rotor');
 
 % Surface of our T/W for 8 rotor
@@ -229,7 +231,10 @@ axis square;
 grid off; 
 set(gcf, 'Color', 'none');
 % set(gca,'xtick',[],'ytick',[], 'ztick',[]);
-saveas(gcf, 'Max Attainable Thrust to Weight Ratio-8 rotor.png');
+set(gcf, 'color', 'none',...
+         'inverthardcopy', 'off');
+% saveas(gcf, 'Max Attainable Thrust to Weight Ratio-8 rotor.eps');
+print( 'Max Attainable Thrust to Weight Ratio-8 rotor','-depsc');
 % title('Max Attainable Thrust to Weight Ratio, 8 rotor');
 
 % Surface of our T/W for both vehicles
@@ -242,7 +247,10 @@ axis square;
 grid off; 
 set(gcf, 'Color', 'none');
 % set(gca,'xtick',[],'ytick',[], 'ztick',[]);
-saveas(gcf, 'Max Attainable Thrust to Weight Ratio-6 and 8 rotor.png');
+set(gcf, 'color', 'none',...
+         'inverthardcopy', 'off');
+% saveas(gcf, 'Max Attainable Thrust to Weight Ratio-6 and 8 rotor.eps');
+print( 'Max Attainable Thrust to Weight Ratio-6 and 8 rotor rotor','-depsc');
 % legend('6 rotor', '8 rotor');
 % title('Max Attainable Thrust to Weight Ratio, 8 rotor');
 
@@ -257,7 +265,11 @@ title('Max Thrust to Weight Ratio distributions, 6 and 8 rotor');
 xlabel('Thrust to Weight Ratio [g]');
 ylabel('Occurences out of 2048');
 set(gcf, 'Color', 'none');
-saveas(gcf, 'Max Thrust to Weight Ratio distributions-6 and 8 rotor.png');
+set(gcf, 'color', 'none',...
+         'inverthardcopy', 'off');
+% saveas(gcf, 'Max Thrust to Weight Ratio distributions-6 and 8 rotor.eps');
+print( 'Max Thrust to Weight Ratio distributions-6 and 8 rotor','-depsc');
+
 
 % Histogram of force efficiencies
 figure(5)
@@ -270,7 +282,11 @@ grid off;
 set(gcf, 'Color', 'none');
 xlabel('Force Efficiency [1]');
 ylabel('Occurences out of 2048');
-saveas(gcf, 'Force efficiency distributions-6 and 8 rotor.png');
+set(gcf, 'color', 'none',...
+         'inverthardcopy', 'off');
+% saveas(gcf, 'Force efficiency distributions-6 and 8 rotor.eps');
+print('Force efficiency distributions-6 and 8 rotor','-depsc');
+
 
 % Surface of our efficiency for 6 rotor
 figure(6);
@@ -280,7 +296,10 @@ axis square;
 grid off;
 % set(gca,'xtick',[],'ytick',[], 'ztick',[]);
 set(gcf, 'Color', 'none');
-saveas(gcf, 'Force Efficiency-6 rotor.png');
+set(gcf, 'color', 'none',...
+         'inverthardcopy', 'off');
+% saveas(gcf, 'Force Efficiency-6 rotor.eps');
+print('Force Efficiency-6 rotor','-depsc');
 % title('Force Efficiency, 6 rotor');
 
 % Surface of our T/W for 8 rotor
@@ -292,7 +311,10 @@ axis square;
 
 % set(gca,'xtick',[],'ytick',[], 'ztick',[]);
 set(gcf, 'Color', 'none');
-saveas(gcf, 'Force Efficiency-8 rotor.png');
+set(gcf, 'color', 'none',...
+         'inverthardcopy', 'off');
+print('Force Efficiency-8 rotor','-depsc');
+% saveas(gcf, 'Force Efficiency-8 rotor.eps');
 % title('Force Efficiency, 8 rotor');
 
 % Surface of our T/W for both vehicles
@@ -305,6 +327,9 @@ axis square;
 grid off;
 % set(gca,'xtick',[],'ytick',[], 'ztick',[]);
 set(gcf, 'Color', 'none');
-saveas(gcf, 'Force Efficiency-6 and 8 rotor.png');
+set(gcf, 'color', 'none',...
+         'inverthardcopy', 'off');
+print('Force Efficiency-6 and 8 rotor','-depsc');
+% saveas(gcf, 'Force Efficiency-6 and 8 rotor.eps');
 % legend('6 rotor', '8 rotor');
 % title('Force Efficiency, 8 rotor');

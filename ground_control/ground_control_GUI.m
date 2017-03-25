@@ -22,7 +22,7 @@ function varargout = ground_control_GUI(varargin)
 
 % Edit the above text to modify the response to help ground_control_GUI
 
-% Last Modified by GUIDE v2.5 22-Mar-2017 13:24:35
+% Last Modified by GUIDE v2.5 25-Mar-2017 06:25:53
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -481,3 +481,11 @@ if mod(5,T) == 0
 end
 set(hObject,'Backgroundcolor',color);
 drawnow();
+
+
+% --- Executes on button press in pushbutton15.
+function pushbutton15_Callback(hObject, eventdata, handles)
+% hObject    handle to pushbutton15 (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+ping();
