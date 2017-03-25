@@ -1,6 +1,7 @@
 #include <XBee.h>
 #include <BasicLinearAlgebra.h>
 #include <UM7.h>
+#include <Vector.h>
 
 
 ////////////////////////////////////////////////////////////////////////////
@@ -26,7 +27,12 @@ Quaternion q_curr(quat_id); // Attitude merged from imu and vicon
 float tau_att = 0.2;
 float tau_w = 0.2;
 float ki_torque = .1;
+
+
 long time_delay = 0; //in micros
+Vector<int> time_buffer;
+Vector<Quaternion> q_curr_buffer;  
+Vector<Vec3> w_curr_buffer;   
 
 Vec3 w_curr_vicon;
 Vec3 w_curr_imu;
@@ -97,6 +103,23 @@ void loop() {
   q_curr = q_curr_imu;
   w_curr = w_curr_imu;
   if (readXbee() && (current_mode == FLIGHT_MODE)) {
+    static bool match_delay = 0;
+    while (!match_delay) {
+      if (time_buffer.Front() > time_delay) {
+        q_curr = q_curr_buffer.Front();
+        w_curr = w_curr_buffer.Front();
+        q_curr_buffer.Clear();
+        w_curr_buffer.Clear();
+        time_buffer.Clear(); 
+        match_delay = 1;
+        Serial.printf("time_buffer val: %i\n", time_buffer.Front());
+      }
+      else {
+        q_curr_buffer.PopBack();
+        w_curr_buffer.PopBack();
+        time_buffer.PopBack();
+      }
+    }
     // Correct imu drift
     q_curr_shift = qMultiply(q_curr_vicon, qInverse(q_curr_imu));
     w_curr_shift = w_curr_imu - w_curr_vicon;
@@ -113,9 +136,6 @@ void loop() {
       case STOP_MODE:
         // Serial.print("q = "); q_toString(q_curr);
       digitalWrite(ledPin, 0);
-      t_des_integral(0) = 0;
-      t_des_integral(1) = 0;
-      t_des_integral(2) = 0;
       break;
       case FLIGHT_MODE:
         // Adjust imu reading, comment if not flying with real vicon data

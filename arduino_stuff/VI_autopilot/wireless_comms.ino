@@ -97,16 +97,16 @@ bool readXbee() {
             case GAINS_TYPE:        // {Tau_att[1], Tau_w[1], ki_torque[1]}
             expected_entry = TAU_ATT;
             break;
+            case STOP_TYPE:
+            expected_entry = PKT_END;  // No data, just stop doing things
+            break;
             case PING_TYPE:
             expected_entry = PKT_END;
             break;
-            case STOP_TYPE:
-              expected_entry = PKT_END;  // No data, just stop doing things
-              break;
-              default:
-              expected_entry = PKT_START;
-              break;
-            }
+            default:
+            expected_entry = PKT_START;
+            break;
+          }
           static int entryIdx;  // Tracks which entry in a data structure you're on
           entryIdx = 0; // Start at 0 for every new piece of data
           break;
@@ -296,10 +296,13 @@ bool readXbee() {
               break;
               case PING_TYPE:
               ping();
-              current_mode = PING_MODE;
+              current_mode = STOP_MODE;
               break;
               case STOP_TYPE:
               current_mode = STOP_MODE;
+              t_des_integral(0) = 0;
+              t_des_integral(1) = 0;
+              t_des_integral(2) = 0;
               break;
               default:
               break;
@@ -320,17 +323,18 @@ bool readXbee() {
   }
 
 // ping function to determine time delay from vicon
-  int ping_length = 20;
+  const int ping_length = 20;
   int nPings = 0;
-  long ping_times[ping_legnth];
+  long ping_times[ping_length];
 
   void ping() {
     if (nPings == ping_length) {
       nPings = 0;
-      for (int i = 1, i < ping_legnth-1, i++) {
+      for (int i = 1; i < (ping_length-1); i++) {
         time_delay = time_delay + (ping_times[i]-ping_times[i-1]);
       }
       time_delay = time_delay/(ping_length-1);
+      Serial.printf("time_delay: %i\n", );
     }
     else {
       ping_times[nPings] = micros();
@@ -338,3 +342,5 @@ bool readXbee() {
       nPings++;
     }
   }
+
+

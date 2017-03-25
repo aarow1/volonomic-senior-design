@@ -45,6 +45,11 @@ void readUM7() {
     //NED -> NWU
     q_curr_imu = qMultiply(x,(Quaternion)imu.q_curr);
     w_curr_imu = imu.w_curr;
+
+    q_curr_buffer.PushBack(q_curr_imu);
+    w_curr_buffer.PushBack(w_curr_imu);
+    time_buffer.PushBack(micros());
+
   }
 
 }
@@ -78,7 +83,7 @@ void calculateMotorForces() {
 //    + cross(w_curr, J_vi * w_curr);
 
   // Calculate integral from unintegrated calculated t
-  const float t_des_integral_lim = 1;
+  // const float t_des_integral_lim = 1;
   for(int i = 0; i<3; i++){
 //    t_des_integral(i) = constrain(t_des_integral(i) + t_des(i)*dt, 
 //      -1*t_des_integral_lim, t_des_integral_lim);
