@@ -45,16 +45,16 @@ void readUM7() {
     //NED -> NWU
     q_curr_imu = qMultiply(x,(Quaternion)imu.q_curr);
     w_curr_imu = imu.w_curr;
-
-    q_curr_buffer.PushBack(q_curr_imu);
-    w_curr_buffer.PushBack(w_curr_imu);
-    time_buffer.PushBack(micros());
-
+    q_curr_buffer[(buffer_idx % buffer_length)] = q_curr_imu;
+    w_curr_buffer[(buffer_idx % buffer_length)] = w_curr_imu;
+    time_buffer[(buffer_idx % buffer_length)] = millis();
+    buffer_idx++;
+    // Serial.printf("idx: %i ", buffer_idx); q_toString(q_curr_buffer[(buffer_idx % buffer_idx)]);
   }
 
 }
 
-#define DEBUG_calculateMotorForces 1
+#define DEBUG_calculateMotorForces 0
 
 void calculateMotorForces() {
 
@@ -104,14 +104,14 @@ void calculateMotorForces() {
   Multiply(A_inv, (f_des_body && t_des), motor_forces);
 
   if (DEBUG_calculateMotorForces) {
-//    Serial.print("q_curr"); q_toString(q_curr);
+   // Serial.print("q_curr:"); q_toString(q_curr);
 //    Serial.print("q_des"); q_toString(q_des);
 //    Serial.print("q_err"); q_toString(q_err);
 //    Serial.printf("w_des =[%2.8f,\t%2.8f,\t%2.8f]\t", w_des(0), w_des(1), w_des(2));
-//    Serial.printf("w_curr =[%2.2f,\t%2.2f,\t%2.2f]\n", w_curr(0), w_curr(1), w_curr(2));
+   // Serial.printf("w_curr =[%2.2f,\t%2.2f,\t%2.2f]\n", w_curr(0), w_curr(1), w_curr(2));
 //    Serial.printf("dt = %2.5f\t", dt);
-    Serial.printf("t_des =[%2.2f,\t%2.2f,\t%2.2f]\t", t_des(0), t_des(1), t_des(2));
-    Serial.printf("f_des =[%2.2f,\t%2.2f,\t%2.2f]\t", f_des(0), f_des(1), f_des(2));
+    // Serial.printf("t_des =[%2.2f,\t%2.2f,\t%2.2f]\t", t_des(0), t_des(1), t_des(2));
+    // Serial.printf("f_des =[%2.2f,\t%2.2f,\t%2.2f]\t", f_des(0), f_des(1), f_des(2));
 //    Serial.printf("f_des_body =[%2.2f,\t%2.2f,\t%2.2f]\n", f_des_body(0), f_des_body(1), f_des_body(2));
 //    Serial.printf("tau_w: %2.5f\n", tau_w);
 //    Serial.printf("tau_att: %2.5f\n", tau_att);
