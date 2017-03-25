@@ -15,18 +15,19 @@ PING_TYPE = 38;
 RETURN_TYPE = 39;
 % STOP_TYPE = 40;
 PKT_END_ENTRY = 69;
-
-while (nPings < ping_legnth)
+while (nPings <= ping_length)
+    tic;
     sendPkt('ping');
     nPings = nPings + 1;
     reading = 1;
     while reading
-        if isequal(fread(xbee), ...
-                [RETURN_TYPE])
+        if (xbee.BytesAvailable)
             reading = 0;
         end
     end
+    pause(.1);
 end
+nPings
 sendPkt('stop');
 disp('finished pinging');
 end
