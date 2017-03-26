@@ -1,7 +1,6 @@
 #include <XBee.h>
 #include <BasicLinearAlgebra.h>
 #include <UM7.h>
-#include <Vector.h>
 
 
 ////////////////////////////////////////////////////////////////////////////
@@ -21,21 +20,27 @@ Quaternion q_des(quat_id);
 Quaternion q_curr_vicon(quat_id); // Attitude from vicon, read from xbee
 Quaternion q_curr_imu(quat_id); // Attitude from imu, at time of reading xbee
 Quaternion q_curr_imu_inv(quat_id);
+Quaternion q_curr_imu_last(quat_id);
 Quaternion q_curr_shift(quat_id);
 Quaternion q_curr(quat_id); // Attitude merged from imu and vicon
 
-float tau_att = 0.2;
-float tau_w = 0.2;
-float ki_torque = .1;
+float tau_att = 0.25;
+float tau_w = 0.17;
+float ki_torque = .15;
 
 
-long time_delay = 0; //in micros
-Vector<int> time_buffer;
-Vector<Quaternion> q_curr_buffer;  
-Vector<Vec3> w_curr_buffer;   
+int time_delay = 50000; //in micros
+bool match_delay = 0;
+int idx = 0;
+const int buffer_length = 100;
+int buffer_idx = 0;
+int time_buffer[buffer_length];
+Quaternion q_curr_buffer[buffer_length];
+Vec3 w_curr_buffer[buffer_length];
 
 Vec3 w_curr_vicon;
 Vec3 w_curr_imu;
+Vec3 w_curr_imu_last;
 Vec3 w_curr_shift;
 Vec3 w_curr;
 Vec3 w_ff;
@@ -98,32 +103,28 @@ void loop() {
   //  float loop_freq = 1000000.0 / (micros() - loop_time);
   //  loop_time = micros();
   //  Serial.printf("loop_freq: %2.2f\n", loop_freq);
-
   readUM7();
   q_curr = q_curr_imu;
   w_curr = w_curr_imu;
   if (readXbee() && (current_mode == FLIGHT_MODE)) {
-    static bool match_delay = 0;
+    match_delay = 0;
+    idx = (buffer_idx % buffer_length);
     while (!match_delay) {
-      if (time_buffer.Front() > time_delay) {
-        q_curr = q_curr_buffer.Front();
-        w_curr = w_curr_buffer.Front();
-        q_curr_buffer.Clear();
-        w_curr_buffer.Clear();
-        time_buffer.Clear(); 
+      static long curr_time = millis();
+      if ((curr_time - time_buffer[idx]) <= time_delay) {
+        q_curr_shift = qMultiply(q_curr_vicon, qInverse(q_curr_buffer[idx]));
+        // Serial.print("q_curr_shift with buffer: "); q_toString(q_curr_buffer[idx]);
+        // Serial.print("q_curr_shift: "); q_toString(qMultiply(q_curr_vicon, qInverse(q_curr_imu)));
+        w_curr_shift = w_curr_buffer[idx] - w_curr_vicon;
         match_delay = 1;
-        Serial.printf("time_buffer val: %i\n", time_buffer.Front());
       }
       else {
-        q_curr_buffer.PopBack();
-        w_curr_buffer.PopBack();
-        time_buffer.PopBack();
+        idx--;
+        if(idx < 0) {
+          idx = buffer_length;
+        }
       }
     }
-    // Correct imu drift
-    q_curr_shift = qMultiply(q_curr_vicon, qInverse(q_curr_imu));
-    w_curr_shift = w_curr_imu - w_curr_vicon;
-    // Serial.print("q_curr_shift"); q_toString(q_curr_shift);
   }
 
   static long last_loop;
@@ -140,6 +141,8 @@ void loop() {
       case FLIGHT_MODE:
         // Adjust imu reading, comment if not flying with real vicon data
       q_curr = qMultiply(q_curr_shift, q_curr_imu);
+      // Serial.print("q_curr"); q_toString(q_curr);
+      // Serial.print("q_curr_vicon"); q_toString(q_curr_vicon);
       w_curr = w_curr_imu - w_curr_shift;
         // Calculate necessary motor forces
       calculateMotorForces();

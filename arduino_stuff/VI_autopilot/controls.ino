@@ -17,14 +17,14 @@ float r = .15; // m
 float A_vi_arr[6][6] = {
   {0,   0,  -1,  -1,   0,   0},
   {0,   0,   0,   0,   1,   1},
-  {-1,  -1,   0,   0,   0,   0},
+  { -1,  -1,   0,   0,   0,   0},
   {0,   0,   0,   0,  -r,   r},
-  {-r,   r,   0,   0,   0,   0},
+  { -r,   r,   0,   0,   0,   0},
   {0,   0,  -r,   r,   0,   0}
 };
 Matrix<6, 6, float> A_vi(A_vi_arr);
 Matrix<6, 6, float> A_inv = A_vi.Inverse();
-float x_arr[4][1] = {0.0,1.0,0.0,0.0};
+float x_arr[4][1] = {0.0, 1.0, 0.0, 0.0};
 Quaternion x(x_arr);
 
 template <typename T> T sign(T& val);
@@ -43,18 +43,20 @@ void readUM7() {
       imu.encode(Serial2.read());
     }
     //NED -> NWU
-    q_curr_imu = qMultiply(x,(Quaternion)imu.q_curr);
+    q_curr_imu = qMultiply(x, (Quaternion)imu.q_curr);
     w_curr_imu = imu.w_curr;
-
-    q_curr_buffer.PushBack(q_curr_imu);
-    w_curr_buffer.PushBack(w_curr_imu);
-    time_buffer.PushBack(micros());
-
+    q_curr_buffer[(buffer_idx % buffer_length)] = q_curr_imu;
+    w_curr_buffer[(buffer_idx % buffer_length)] = w_curr_imu;
+    time_buffer[(buffer_idx % buffer_length)] = millis();
+    buffer_idx++;
+    // Serial.printf("idx: %i ", buffer_idx); q_toString(q_curr_buffer[(buffer_idx % buffer_idx)]);
   }
 
 }
 
-#define DEBUG_calculateMotorForces 1
+#define DEBUG_calculateMotorForces 0
+
+boolean first_control = 1;
 
 void calculateMotorForces() {
 
@@ -67,13 +69,18 @@ void calculateMotorForces() {
   w_des(1) = (2 / tau_att) * sign(q_err(0)) * q_err(2) + w_ff(1);
   w_des(2) = (2 / tau_att) * sign(q_err(0)) * q_err(3) + w_ff(2);
 
-  const float w_des_max = 3;
+  const float w_des_max = 2;
   w_des(0) = constrain(w_des(0), -w_des_max, w_des_max);
   w_des(1) = constrain(w_des(1), -w_des_max, w_des_max);
   w_des(2) = constrain(w_des(2), -w_des_max, w_des_max);
 
   static long last_control;
   static float dt;
+
+  if (first_control) {
+    first_control = 0;
+    last_control = millis();
+
   dt = (millis() - last_control) / 1000.0;
 
   // Torque calculation with Integral feedback ////////////////////////////////////////////
@@ -89,33 +96,48 @@ void calculateMotorForces() {
 //      -1*t_des_integral_lim, t_des_integral_lim);
     t_des_integral(i) = t_des_integral(i) + t_des(i)*dt;
   }
-  
-  last_control = millis();
+  else {
+    dt = (millis() - last_control) / 1000.0;
 
-  // Add in integral control
-  t_des = t_des + scalar_multiply(ki_torque, t_des_integral);
-//  t_des(0) = 0;
-//  t_des(1) = 0;
-//  t_des(2) = 0;
-    
+    // Torque calculation with Integral feedback ////////////////////////////////////////////
+
+    // Calculate torque without integral
+    t_des = scalar_multiply((1 / tau_w), J_vi * (w_des - w_curr));
+    //    + cross(w_curr, J_vi * w_curr);
+
+    // Calculate integral from unintegrated calculated t
+    const float t_des_integral_lim = 1;
+    for (int i = 0; i < 3; i++) {
+      //    t_des_integral(i) = constrain(t_des_integral(i) + t_des(i)*dt,
+      //      -1*t_des_integral_lim, t_des_integral_lim);
+      t_des_integral(i) = t_des_integral(i) + t_des(i) * dt;
+    }
+    Serial.printf("t_des_integral =[%2.2f,\t%2.2f,\t%2.2f]\t", t_des_integral(0), t_des_integral(1), t_des_integral(2));
+
+    last_control = millis();
+
+    // Add in integral control
+    t_des = t_des + scalar_multiply(ki_torque, t_des_integral);
+  }
+
   // Rotate f_des into body frame
   static Vec3 f_des_body;
   f_des_body = qRotate(f_des, q_curr);
   Multiply(A_inv, (f_des_body && t_des), motor_forces);
 
   if (DEBUG_calculateMotorForces) {
-//    Serial.print("q_curr"); q_toString(q_curr);
-//    Serial.print("q_des"); q_toString(q_des);
-//    Serial.print("q_err"); q_toString(q_err);
-//    Serial.printf("w_des =[%2.8f,\t%2.8f,\t%2.8f]\t", w_des(0), w_des(1), w_des(2));
-//    Serial.printf("w_curr =[%2.2f,\t%2.2f,\t%2.2f]\n", w_curr(0), w_curr(1), w_curr(2));
-//    Serial.printf("dt = %2.5f\t", dt);
+        Serial.print("q_curr"); q_toString(q_curr);
+        Serial.print("q_des"); q_toString(q_des);
+        Serial.print("q_err"); q_toString(q_err);
+        Serial.printf("w_des =[%2.8f,\t%2.8f,\t%2.8f]\t", w_des(0), w_des(1), w_des(2));
+    //    Serial.printf("w_curr =[%2.2f,\t%2.2f,\t%2.2f]\n", w_curr(0), w_curr(1), w_curr(2));
+    //    Serial.printf("dt = %2.5f\t", dt);
     Serial.printf("t_des =[%2.2f,\t%2.2f,\t%2.2f]\t", t_des(0), t_des(1), t_des(2));
     Serial.printf("f_des =[%2.2f,\t%2.2f,\t%2.2f]\t", f_des(0), f_des(1), f_des(2));
-//    Serial.printf("f_des_body =[%2.2f,\t%2.2f,\t%2.2f]\n", f_des_body(0), f_des_body(1), f_des_body(2));
-//    Serial.printf("tau_w: %2.5f\n", tau_w);
-//    Serial.printf("tau_att: %2.5f\n", tau_att);
-//    Serial.printf("ki_torque: %2.5f\n", ki_torque);
+    //    Serial.printf("f_des_body =[%2.2f,\t%2.2f,\t%2.2f]\n", f_des_body(0), f_des_body(1), f_des_body(2));
+    //    Serial.printf("tau_w: %2.5f\n", tau_w);
+    //    Serial.printf("tau_att: %2.5f\n", tau_att);
+    //    Serial.printf("ki_torque: %2.5f\n", ki_torque);
   }
 }
 

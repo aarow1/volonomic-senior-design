@@ -23,9 +23,9 @@ ComplexMotorControlClient motor_client_4(4); //
 ComplexMotorControlClient motor_client_5(5); //
 
 Vec6 motor_speeds;
-#define MAX_MOTOR_SPEED 1700
+#define MAX_MOTOR_SPEED 1850
 #define MOTORS_ENABLED 1
-#define PRINT_SPEEDS 1
+#define PRINT_SPEEDS 0
 
 void spinMotors_forces() {
 
@@ -45,7 +45,8 @@ void spinMotors_forces() {
       saturated = 1;
     }
   }
-  Serial.println(saturated);
+
+  // Serial.println(saturated);
   digitalWrite(ledPin, saturated);
   spinMotors_speeds();
 }
