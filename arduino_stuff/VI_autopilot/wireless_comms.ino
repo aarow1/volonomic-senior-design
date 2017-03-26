@@ -48,7 +48,7 @@ enum {PKT_START, PKT_TYPE_ENTRY, PKT_END,
       Q_CURR_VICON, Q_DES, W_CURR_VICON, W_DES, F_DES, MOTOR_FORCES, MOTOR_SPEEDS, TAU_ATT, TAU_W, KI_TORQUE
      };
 
-#define DEBUG_readXbee 0
+#define DEBUG_readXbee 1
 // ping function to determine time delay from vicon
 const int ping_length = 20;
 int nPings = 0;
@@ -331,6 +331,7 @@ bool readXbee() {
                 t_des_integral(1) = 0;
                 t_des_integral(2) = 0;
                 nPings = 0;
+                buffer_idx = buffer_idx % buffer_length;
                 break;
               default:
                 break;

@@ -29,7 +29,7 @@ float tau_w = 0.2;
 float ki_torque = .1;
 
 
-int time_delay = 50; //in millis
+int time_delay = 50000; //in micros
 bool match_delay = 0;
 int idx = 0;
 const int buffer_length = 100;
@@ -37,8 +37,6 @@ int buffer_idx = 0;
 int time_buffer[buffer_length];
 Quaternion q_curr_buffer[buffer_length];
 Vec3 w_curr_buffer[buffer_length];
-// Vector<Quaternion> q_curr_buffer;  
-// Vector<Vec3> w_curr_buffer;   
 
 Vec3 w_curr_vicon;
 Vec3 w_curr_imu;
