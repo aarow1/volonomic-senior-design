@@ -17,7 +17,9 @@ NO_VICON_TYPE = 34;
 MOTOR_FORCES_TYPE = 35;
 MOTOR_SPEEDS_TYPE = 36;
 GAINS_TYPE = 37;
-STOP_TYPE = 38;
+PING_TYPE = 38;
+RETURN_TYPE = 39;
+STOP_TYPE = 40;
 PKT_END_ENTRY = 69;
 
 INT_16_MAX  = 32767.0;
@@ -28,6 +30,7 @@ QUATERNION_MAX = 1.0;
 W_MAX = 10.0;
 W_FF_MAX = 10.0;
 F_DES_MAX = 10.0;
+KI_TORQUE_MAX = 10.0;
 
 %% Compose and send packet
 switch (pkt_type)
@@ -43,12 +46,18 @@ switch (pkt_type)
         
     case 'all_inputs'
         pkt = [PKT_START_ENTRY ALL_INPUTS_TYPE ...
-            scaleToInt(q_curr_vicon, QUATERNION_MAX) ....
+            scaleToInt(q_curr_vicon, QUATERNION_MAX) ...
             scaleToInt(q_des, QUATERNION_MAX) ...
             scaleToInt(w_vicon, W_MAX)...
             scaleToInt(w_ff, W_FF_MAX) ...
             scaleToInt(f_des, F_DES_MAX) ...
             PKT_END_ENTRY];
+% 
+%         pkt = [PKT_START_ENTRY ALL_INPUTS_TYPE ...
+%             scaleToInt(q_curr_vicon, QUATERNION_MAX) ...
+%             scaleToInt(w_vicon, W_MAX)...
+%             scaleToInt(f_des, F_DES_MAX) ...
+%             PKT_END_ENTRY];
         
     case 'no_vicon'
         pkt = [PKT_START_ENTRY NO_VICON_TYPE ...
@@ -62,6 +71,8 @@ switch (pkt_type)
             scaleToInt(tau_w,GAINS_MAX) ...
             scaleToInt(ki_torque,GAINS_MAX) ...
             PKT_END_ENTRY];
+    case 'ping' 
+        pkt = [PKT_START_ENTRY PING_TYPE PKT_END_ENTRY];
     case 'stop'
         pkt = [PKT_START_ENTRY STOP_TYPE PKT_END_ENTRY];
     otherwise

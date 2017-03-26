@@ -28,7 +28,9 @@ float ki_torque_temp;
 #define MOTOR_FORCES_TYPE 35
 #define MOTOR_SPEEDS_TYPE 36
 #define GAINS_TYPE 37
-#define STOP_TYPE 38
+#define PING_TYPE 38
+#define RETURN_TYPE 39
+#define STOP_TYPE 40
 #define PKT_END_ENTRY 69
 
 #define INT_16_MAX 32767.0
@@ -46,7 +48,31 @@ enum {PKT_START, PKT_TYPE_ENTRY, PKT_END,
       Q_CURR_VICON, Q_DES, W_CURR_VICON, W_DES, F_DES, MOTOR_FORCES, MOTOR_SPEEDS, TAU_ATT, TAU_W, KI_TORQUE
      };
 
-#define DEBUG_readXbee 0
+#define DEBUG_readXbee 1
+// ping function to determine time delay from vicon
+const int ping_length = 20;
+int nPings = 0;
+long ping_times[ping_length];
+long ping_delay = .1/1000;
+
+void ping() {
+  if (nPings >= ping_length) {
+    nPings = 0;
+    for (int i = 1; i < (ping_length-1); i++) {
+      time_delay = time_delay + (ping_times[i]-ping_times[i-1]-ping_delay);
+    }
+    time_delay = (time_delay/(ping_length-1))/2;
+    if (DEBUG_readXbee) Serial.printf("time_delay: %i\n", time_delay);
+  }
+  else {
+    // Serial.println("ping");
+    ping_times[nPings] = millis();
+    SerialXbee.write(RETURN_TYPE);
+    nPings++;
+    // Serial.printf("nPings: %i", nPings);
+    // Serial.printf("ping time: %i, write time: %i\n", ping_times[nPings-1],micros()-ping_times[nPings-1]);
+  }
+}
 
 bool readXbee() {
   if (Serial1.available() > 0) {
@@ -94,6 +120,9 @@ bool readXbee() {
               break;
             case GAINS_TYPE:        // {Tau_att[1], Tau_w[1], ki_torque[1]}
               expected_entry = TAU_ATT;
+              break;
+            case PING_TYPE:
+              expected_entry = PKT_END;
               break;
             case STOP_TYPE:
               expected_entry = PKT_END;  // No data, just stop doing things
@@ -289,12 +318,21 @@ bool readXbee() {
                   Serial.printf("stored gains: tau_att = %2.2f\t taw_w = %2.2f\t ki_torque = %2.2f\n", tau_att, tau_w, ki_torque);
                 }
                 break;
+              case PING_TYPE:
+                ping();
+                current_mode = STOP_MODE;
+                if (DEBUG_readXbee) {
+                  Serial.printf("nPings: %i\n", nPings);
+                }
+                break;
               case STOP_TYPE:
                 current_mode = STOP_MODE;
                 t_des_integral(0) = 0;
                 t_des_integral(1) = 0;
                 t_des_integral(2) = 0;
                 first_control = 1;
+                nPings = 0;
+                buffer_idx = buffer_idx % buffer_length;
                 break;
               default:
                 break;
@@ -313,3 +351,4 @@ bool readXbee() {
   }
   return 0;
 }
+
