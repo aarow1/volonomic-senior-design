@@ -80,7 +80,7 @@ bool readXbee() {
           current_pkt_type = entry_in;
 
           switch (current_pkt_type) {
-            case ALL_INPUTS_TYPE:   // {Q_curr_vicon[4], Q_des[4], w_ff[3], f_des[3]}
+            case ALL_INPUTS_TYPE:   // {Q_curr_vicon[4], Q_des[4], w_curr_vicon[3], w_ff[3], f_des[3]}
               expected_entry = Q_CURR_VICON;
               break;
             case NO_VICON_TYPE:     // {Q_des[4], w_ff[3], f_des[3]}
@@ -294,6 +294,7 @@ bool readXbee() {
                 t_des_integral(0) = 0;
                 t_des_integral(1) = 0;
                 t_des_integral(2) = 0;
+                first_control = 1;
                 break;
               default:
                 break;
