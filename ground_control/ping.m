@@ -15,8 +15,8 @@ PING_TYPE = 38;
 RETURN_TYPE = 39;
 % STOP_TYPE = 40;
 PKT_END_ENTRY = 69;
+times = zeros(ping_length, 1);
 while (nPings <= ping_length)
-    tic;
     sendPkt('ping');
     nPings = nPings + 1;
     reading = 1;

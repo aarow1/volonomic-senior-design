@@ -17,6 +17,7 @@ end
 
 T = toc - time;
 time = toc;
+% disp('ppoooppopo');
 
     q_curr_vicon = [msg.Pose.Pose.Orientation.W;
         msg.Pose.Pose.Orientation.X;

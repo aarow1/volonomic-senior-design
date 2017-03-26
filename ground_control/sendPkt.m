@@ -81,6 +81,9 @@ switch (pkt_type)
 end
 % tic;
 fwrite(xbee,pkt,'int16');
+msg = rosmessage(packet_pub);
+msg.data = cast(pkt, 'int16');
+send(packet_pub, msg);
 % fprintf('fwrite freq = %2.2f\n', 1/toc);
 
 persistent ctr
@@ -90,7 +93,7 @@ end
 
 if send_vicon
     ctr = ctr+1;
-    if mod(ctr, 20) == 0 
+    if (ctr >= 20)
         fprintf('sending vicon...\t pos_control: %i \t frequency: %3.2f \n',...
             pos_control_on, 1/((toc-time)/20));
         ctr = 0;

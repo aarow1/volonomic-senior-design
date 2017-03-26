@@ -30,7 +30,7 @@ global xbee
 
 if using_xbee 
 %         xbee = serial('/dev/tty.usbserial-DN02MM5K') %MAC
-    xbee = serial('/dev/ttyUSB1'); %LINUX    
+    xbee = serial('/dev/ttyUSB2'); %LINUX    
     set(xbee,'DataBits',8)
     set(xbee,'StopBits',1)
     set(xbee,'Parity','none')
@@ -54,5 +54,6 @@ if using_vicon
     
     rosinit();
     odom_sub = rossubscriber('/vicon/VI/odom','nav_msgs/Odometry',@pose_callback);
+    packet_pub = rospublisher('/xbee_packets', 'std_msgs/ByteMultiArray');
     tic;
 end
