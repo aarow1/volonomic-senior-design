@@ -176,8 +176,8 @@ f_prop_max_6 = max(abs(f_props_6), [], 3);
 f_prop_max_8 = max(abs(f_props_8), [], 3);
 
 % % Max attainable force in direction
-% f_attainable_6 = 1 ./ f_prop_max_6;
-% f_attainable_8 = 1 ./ f_prop_max_8;
+f_attainable_6 = 1 ./ f_prop_max_6;
+f_attainable_8 = 1 ./ f_prop_max_8;
 % 
 % % Max attainable T/W in direction
 % tw_6 = f_attainable_6 / weight_6;
@@ -216,7 +216,7 @@ surf(tw_surf_6(:,:,1), tw_surf_6(:,:,2), tw_surf_6(:,:,3), 'faceColor', us_color
 axis ([-.5 .5 -.5 .5 -.5 .5 ]);
 axis square;
 grid off; 
-% set(gca,'xtick',[],'ytick',[], 'ztick',[]);
+set(gca,'xtick',[],'ytick',[], 'ztick',[]);
 set(gcf, 'color', 'none',...
          'inverthardcopy', 'off');
 % saveas(gcf, 'Max Attainable Thrust to Weight Ratio-6 rotor.eps');
@@ -230,7 +230,7 @@ axis ([-.5 .5 -.5 .5 -.5 .5 ]);
 axis square;
 grid off; 
 set(gcf, 'Color', 'none');
-% set(gca,'xtick',[],'ytick',[], 'ztick',[]);
+set(gca,'xtick',[],'ytick',[], 'ztick',[]);
 set(gcf, 'color', 'none',...
          'inverthardcopy', 'off');
 % saveas(gcf, 'Max Attainable Thrust to Weight Ratio-8 rotor.eps');
@@ -246,7 +246,7 @@ axis ([-.5 .5 -.5 .5 -.5 .5 ]);
 axis square;
 grid off; 
 set(gcf, 'Color', 'none');
-% set(gca,'xtick',[],'ytick',[], 'ztick',[]);
+set(gca,'xtick',[],'ytick',[], 'ztick',[]);
 set(gcf, 'color', 'none',...
          'inverthardcopy', 'off');
 % saveas(gcf, 'Max Attainable Thrust to Weight Ratio-6 and 8 rotor.eps');
@@ -294,7 +294,7 @@ surf(eff_surf_6(:,:,1), eff_surf_6(:,:,2), eff_surf_6(:,:,3), 'faceColor', us_co
 axis ([-1 1 -1 1 -1 1 ]);
 axis square;
 grid off;
-% set(gca,'xtick',[],'ytick',[], 'ztick',[]);
+set(gca,'xtick',[],'ytick',[], 'ztick',[]);
 set(gcf, 'Color', 'none');
 set(gcf, 'color', 'none',...
          'inverthardcopy', 'off');
@@ -309,7 +309,7 @@ axis ([-1 1 -1 1 -1 1 ]);
 grid off;
 axis square;
 
-% set(gca,'xtick',[],'ytick',[], 'ztick',[]);
+set(gca,'xtick',[],'ytick',[], 'ztick',[]);
 set(gcf, 'Color', 'none');
 set(gcf, 'color', 'none',...
          'inverthardcopy', 'off');
@@ -325,7 +325,7 @@ surf(eff_surf_8(:,:,1), eff_surf_8(:,:,2), eff_surf_8(:,:,3), 'faceColor',them_c
 axis ([-1 1 -1 1 -1 1 ]);
 axis square;
 grid off;
-% set(gca,'xtick',[],'ytick',[], 'ztick',[]);
+set(gca,'xtick',[],'ytick',[], 'ztick',[]);
 set(gcf, 'Color', 'none');
 set(gcf, 'color', 'none',...
          'inverthardcopy', 'off');
