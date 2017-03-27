@@ -145,8 +145,8 @@ function pushbutton2_Callback(hObject, eventdata, handles)
 % hObject    handle to pushbutton2 (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
-global using_vicon
-if (~using_vicon)
+global send_vicon
+if (~send_vicon)
     sendPkt('no_vicon');
 else 
     sendPkt('all_inputs');

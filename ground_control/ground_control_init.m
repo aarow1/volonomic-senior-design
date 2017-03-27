@@ -11,7 +11,7 @@ using_xbee = 1;
 global q_des w_ff f_des
 global motor_forces motor_speeds incr
 global tau_att tau_w ki_torque gains_store
-gains_store = [0 0 0];
+gains_store.gains = [0 0 0]; gains_store.time = datetime('now');
 q_des = [1 0 0 0]; w_ff = zeros(1,3); f_des = zeros(1,3);
 motor_forces = zeros(1,6); motor_speeds = zeros(1,6); incr = 10;
 if isempty(tau_att)
@@ -30,7 +30,7 @@ global xbee
 
 if using_xbee 
 %         xbee = serial('/dev/tty.usbserial-DN02MM5K') %MAC
-    xbee = serial('/dev/ttyUSB2'); %LINUX    
+    xbee = serial('/dev/ttyUSB5'); %LINUX    
     set(xbee,'DataBits',8)
     set(xbee,'StopBits',1)
     set(xbee,'Parity','none')
@@ -42,7 +42,7 @@ end
 %% SET UP ROS
 if using_vicon
     rosshutdown;
-    global q_curr_vicon pos_vicon pos_des pos_store pos_control_on gains w_vicon
+    global q_curr_vicon pos_vicon pos_des pos_store pos_control_on gains w_vicon ping_time
     send_vicon = 0; pos_control_on = 0; pos_store = {};
     q_curr_vicon = [1 0 0 0]; pos_vicon = zeros(1,3); w_vicon = zeros(1,6);
     if isempty(pos_des)
@@ -54,6 +54,6 @@ if using_vicon
     
     rosinit();
     odom_sub = rossubscriber('/vicon/VI/odom','nav_msgs/Odometry',@pose_callback);
-    packet_pub = rospublisher('/xbee_packets', 'std_msgs/ByteMultiArray');
+%     packet_pub = rospublisher('/xbee_packets', 'std_msgs/ByteMultiArray');
     tic;
 end

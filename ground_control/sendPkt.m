@@ -5,6 +5,7 @@ global pos_control_on
 global motor_forces motor_speeds
 global tau_att tau_w ki_torque
 global xbee send_vicon
+global ping_time
 persistent time
 
 if isempty(time)
@@ -45,19 +46,17 @@ switch (pkt_type)
             PKT_END_ENTRY];
         
     case 'all_inputs'
+        time_data = toc*1000;
+        time_data_1 = floor(time_data/INT_16_MAX);
+        time_data_2 = (time_data) - (time_data_1*INT_16_MAX);
         pkt = [PKT_START_ENTRY ALL_INPUTS_TYPE ...
+            time_data_1 time_data_2 ...
             scaleToInt(q_curr_vicon, QUATERNION_MAX) ...
             scaleToInt(q_des, QUATERNION_MAX) ...
             scaleToInt(w_vicon, W_MAX)...
             scaleToInt(w_ff, W_FF_MAX) ...
             scaleToInt(f_des, F_DES_MAX) ...
             PKT_END_ENTRY];
-% 
-%         pkt = [PKT_START_ENTRY ALL_INPUTS_TYPE ...
-%             scaleToInt(q_curr_vicon, QUATERNION_MAX) ...
-%             scaleToInt(w_vicon, W_MAX)...
-%             scaleToInt(f_des, F_DES_MAX) ...
-%             PKT_END_ENTRY];
         
     case 'no_vicon'
         pkt = [PKT_START_ENTRY NO_VICON_TYPE ...
@@ -71,8 +70,14 @@ switch (pkt_type)
             scaleToInt(tau_w,GAINS_MAX) ...
             scaleToInt(ki_torque,GAINS_MAX) ...
             PKT_END_ENTRY];
-    case 'ping' 
-        pkt = [PKT_START_ENTRY PING_TYPE PKT_END_ENTRY];
+    case 'ping'
+        ping_time;
+        ping_data_1 = floor(ping_time/INT_16_MAX);
+        ping_data_2 = (ping_time) - (ping_data_1*INT_16_MAX);
+        pkt = [PKT_START_ENTRY PING_TYPE ...
+            ping_data_1 ...
+            ping_data_2 ...
+            PKT_END_ENTRY];
     case 'stop'
         pkt = [PKT_START_ENTRY STOP_TYPE PKT_END_ENTRY];
     otherwise
@@ -81,9 +86,9 @@ switch (pkt_type)
 end
 % tic;
 fwrite(xbee,pkt,'int16');
-msg = rosmessage(packet_pub);
-msg.data = cast(pkt, 'int16');
-send(packet_pub, msg);
+% msg = rosmessage(packet_pub);
+% msg.data = cast(pkt, 'int16');
+% send(packet_pub, msg);
 % fprintf('fwrite freq = %2.2f\n', 1/toc);
 
 persistent ctr
@@ -99,7 +104,7 @@ if send_vicon
         ctr = 0;
         time = toc;
     end
-else
+elseif ~isequal(pkt_type,'ping')
     fprintf('sending %s pkt\n',pkt_type);
 end
 end
