@@ -13,6 +13,8 @@ float motor_speeds_temp[6];
 float tau_att_temp;
 float tau_w_temp;
 float ki_torque_temp;
+long ground_ping_time_temp;
+long vicon_time_temp;
 
 ////////////////////////////////////////////////////////////////////////////////////////
 // Packet Structure
@@ -45,33 +47,51 @@ float ki_torque_temp;
 
 // Enumeration of next expected entry types
 enum {PKT_START, PKT_TYPE_ENTRY, PKT_END,
-      Q_CURR_VICON, Q_DES, W_CURR_VICON, W_DES, F_DES, MOTOR_FORCES, MOTOR_SPEEDS, TAU_ATT, TAU_W, KI_TORQUE
+      Q_CURR_VICON, Q_DES, W_CURR_VICON, W_DES, F_DES, MOTOR_FORCES, MOTOR_SPEEDS,
+      TAU_ATT, TAU_W, KI_TORQUE,
+      TIME_1, TIME_2, VICON_TIME_1, VICON_TIME_2
      };
 
-#define DEBUG_readXbee 1
+#define DEBUG_readXbee 0
 // ping function to determine time delay from vicon
 const int ping_length = 20;
 int nPings = 0;
 long ping_times[ping_length];
-long ping_delay = .1/1000;
+long ping_delay = .1 / 1000;
+
+long teensy_ping_times[ping_length];
+long ground_ping_times[ping_length];
+long transit_time;
+long offset_time;
 
 void ping() {
-  if (nPings >= ping_length) {
+
+//  Serial.printf("ping\t");
+  teensy_ping_times[nPings] = millis();
+  ground_ping_times[nPings] = ground_ping_time_temp;
+  SerialXbee.write(RETURN_TYPE);
+//  Serial.printf("nPings: %i\n", nPings);
+  nPings++;
+  
+  if (nPings == ping_length) {
+//    Serial.printf("done pinging\n");
     nPings = 0;
-    for (int i = 1; i < (ping_length-1); i++) {
-      time_delay = time_delay + (ping_times[i]-ping_times[i-1]-ping_delay);
+    transit_time = 0;
+    offset_time = 0;
+    for (int i = 1; i < ping_length; i++) {
+      transit_time += (teensy_ping_times[i] - teensy_ping_times[i - 1] - ping_delay) / 2;
     }
-    time_delay = (time_delay/(ping_length-1))/2;
-    if (DEBUG_readXbee) Serial.printf("time_delay: %i\n", time_delay);
+    transit_time = (transit_time / (ping_length - 1));
+    for (int i = 0; i < ping_length; i++) {
+      offset_time += teensy_ping_times[i] - ground_ping_times[i] - transit_time;
+//      Serial.printf("teensy_time[%i] = %i\t ground_time = %i\n",
+//                    i, teensy_ping_times[i], ground_ping_times[i]);
+    }
+    offset_time = offset_time / ping_length;
+    Serial.printf("transit_time: %i\n", transit_time);
+    Serial.printf("offset_time: %i\n", offset_time);
   }
-  else {
-    // Serial.println("ping");
-    ping_times[nPings] = millis();
-    SerialXbee.write(RETURN_TYPE);
-    nPings++;
-    // Serial.printf("nPings: %i", nPings);
-    // Serial.printf("ping time: %i, write time: %i\n", ping_times[nPings-1],micros()-ping_times[nPings-1]);
-  }
+
 }
 
 bool readXbee() {
@@ -106,8 +126,8 @@ bool readXbee() {
           current_pkt_type = entry_in;
 
           switch (current_pkt_type) {
-            case ALL_INPUTS_TYPE:   // {Q_curr_vicon[4], Q_des[4], w_curr_vicon[3], w_ff[3], f_des[3]}
-              expected_entry = Q_CURR_VICON;
+            case ALL_INPUTS_TYPE:   // {vicon_time[2], Q_curr_vicon[4], Q_des[4], w_curr_vicon[3], w_ff[3], f_des[3]}
+              expected_entry = VICON_TIME_1;
               break;
             case NO_VICON_TYPE:     // {Q_des[4], w_ff[3], f_des[3]}
               expected_entry = Q_DES;
@@ -122,7 +142,7 @@ bool readXbee() {
               expected_entry = TAU_ATT;
               break;
             case PING_TYPE:
-              expected_entry = PKT_END;
+              expected_entry = TIME_1;
               break;
             case STOP_TYPE:
               expected_entry = PKT_END;  // No data, just stop doing things
@@ -133,6 +153,24 @@ bool readXbee() {
           }
           static int entryIdx;  // Tracks which entry in a data structure you're on
           entryIdx = 0; // Start at 0 for every new piece of data
+          break;
+
+        case TIME_1:
+          ground_ping_time_temp = INT_16_MAX * entry_in;
+          expected_entry = TIME_2;
+          break;
+        case TIME_2:
+          ground_ping_time_temp += entry_in;
+          expected_entry = PKT_END;
+          break;
+
+        case  VICON_TIME_1:
+          vicon_time_temp = INT_16_MAX * entry_in;
+          expected_entry = VICON_TIME_2;
+          break;
+        case VICON_TIME_2:
+          vicon_time_temp += entry_in;
+          expected_entry = Q_CURR_VICON;
           break;
 
         // Expecting q_curr_vicon data structure, has 4 entries
@@ -283,6 +321,9 @@ bool readXbee() {
                 if (DEBUG_readXbee) Serial.printf("w_curr_vicon rot = [%2.2f, \t%2.2f, \t%2.2f]\n", w_curr_vicon(1), w_curr_vicon(2), w_curr_vicon(3));
                 if (DEBUG_readXbee) Serial.println("stored all_inputs packet");
                 current_mode = FLIGHT_MODE;
+
+                vicon_time = vicon_time_temp + offset_time;
+//                Serial.printf("teensy time now = %i \t vicon_time = %i\n", millis(), vicon_time);
                 break;
 
               case NO_VICON_TYPE:
@@ -320,6 +361,7 @@ bool readXbee() {
                 break;
               case PING_TYPE:
                 ping();
+
                 current_mode = STOP_MODE;
                 if (DEBUG_readXbee) {
                   Serial.printf("nPings: %i\n", nPings);

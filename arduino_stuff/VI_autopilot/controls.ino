@@ -45,10 +45,10 @@ void readUM7() {
     //NED -> NWU
     q_curr_imu = qMultiply(x, (Quaternion)imu.q_curr);
     w_curr_imu = imu.w_curr;
-    q_curr_buffer[(buffer_idx % buffer_length)] = q_curr_imu;
-    w_curr_buffer[(buffer_idx % buffer_length)] = w_curr_imu;
-    time_buffer[(buffer_idx % buffer_length)] = millis();
-    buffer_idx++;
+    q_curr_imu_buffer[buffer_idx] = q_curr_imu;
+    w_curr_imu_buffer[buffer_idx] = w_curr_imu;
+    time_buffer[buffer_idx] = millis();
+    buffer_idx = (buffer_idx + 1) % buffer_length;
     // Serial.printf("idx: %i ", buffer_idx); q_toString(q_curr_buffer[(buffer_idx % buffer_idx)]);
   }
 
@@ -80,21 +80,6 @@ void calculateMotorForces() {
   if (first_control) {
     first_control = 0;
     last_control = millis();
-
-  dt = (millis() - last_control) / 1000.0;
-
-  // Torque calculation with Integral feedback ////////////////////////////////////////////
-  
-  // Calculate torque without integral
-  t_des = scalar_multiply((1 / tau_w), J_vi * (w_des - w_curr));
-//    + cross(w_curr, J_vi * w_curr);
-
-  // Calculate integral from unintegrated calculated t
-  // const float t_des_integral_lim = 1;
-  for(int i = 0; i<3; i++){
-//    t_des_integral(i) = constrain(t_des_integral(i) + t_des(i)*dt, 
-//      -1*t_des_integral_lim, t_des_integral_lim);
-    t_des_integral(i) = t_des_integral(i) + t_des(i)*dt;
   }
   else {
     dt = (millis() - last_control) / 1000.0;
@@ -106,13 +91,13 @@ void calculateMotorForces() {
     //    + cross(w_curr, J_vi * w_curr);
 
     // Calculate integral from unintegrated calculated t
-    const float t_des_integral_lim = 1;
+//    const float t_des_integral_lim = 1;
     for (int i = 0; i < 3; i++) {
       //    t_des_integral(i) = constrain(t_des_integral(i) + t_des(i)*dt,
       //      -1*t_des_integral_lim, t_des_integral_lim);
       t_des_integral(i) = t_des_integral(i) + t_des(i) * dt;
     }
-    Serial.printf("t_des_integral =[%2.2f,\t%2.2f,\t%2.2f]\t", t_des_integral(0), t_des_integral(1), t_des_integral(2));
+//    Serial.printf("t_des_integral =[%2.2f,\t%2.2f,\t%2.2f]\t", t_des_integral(0), t_des_integral(1), t_des_integral(2));
 
     last_control = millis();
 
