@@ -28,15 +28,14 @@ float tau_att = 0.25;
 float tau_w = 0.17;
 float ki_torque = .15;
 
-
-int time_delay = 50000; //in micros
 bool match_delay = 0;
 int idx = 0;
-const int buffer_length = 100;
+const int buffer_length = 200;
 int buffer_idx = 0;
 int time_buffer[buffer_length];
-Quaternion q_curr_buffer[buffer_length];
-Vec3 w_curr_buffer[buffer_length];
+Quaternion q_curr_imu_buffer[buffer_length];
+Vec3 w_curr_imu_buffer[buffer_length];
+long vicon_time;
 
 Vec3 w_curr_vicon;
 Vec3 w_curr_imu;
@@ -108,63 +107,68 @@ void loop() {
   w_curr = w_curr_imu;
   if (readXbee() && (current_mode == FLIGHT_MODE)) {
     match_delay = 0;
-    idx = (buffer_idx % buffer_length);
+    idx = buffer_idx;
     while (!match_delay) {
-      static long curr_time = millis();
-      if ((curr_time - time_buffer[idx]) <= time_delay) {
-        q_curr_shift = qMultiply(q_curr_vicon, qInverse(q_curr_buffer[idx]));
-        // Serial.print("q_curr_shift with buffer: "); q_toString(q_curr_buffer[idx]);
-        // Serial.print("q_curr_shift: "); q_toString(qMultiply(q_curr_vicon, qInverse(q_curr_imu)));
-        w_curr_shift = w_curr_buffer[idx] - w_curr_vicon;
+      if (vicon_time == time_buffer[idx] || 
+        ((vicon_time > time_buffer[idx]) && (vicon_time < time_buffer[(idx+1) % buffer_length]))) {
+        q_curr_shift = qMultiply(q_curr_vicon, qInverse(q_curr_imu_buffer[idx]));
+        w_curr_shift = w_curr_imu_buffer[idx] - w_curr_vicon;
         match_delay = 1;
+        Serial.printf("I think vicon time (%i) \t == buffer time (%i)? idx = %i/200\n",
+                    vicon_time, time_buffer[idx], idx);
       }
       else {
         idx--;
-        if(idx < 0) {
-          idx = buffer_length;
+        if (idx < 0) {
+          idx = buffer_length - 1;
+          Serial.printf("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!fuck! buffer_idx = %i\n", buffer_idx);
         }
       }
+//      Serial.printf("\tis vicon time (%i) \t == buffer time (%i)? idx = %i/200\n",
+//                    vicon_time, time_buffer[idx], idx);
     }
   }
 
   static long last_loop;
-  const float loop_hz = 150;
+  const float loop_hz = 250;
   if ((millis() - last_loop) > (1000.0 / loop_hz)) {
     last_loop = millis();
+    //    Serial.printf("current mode: %i\n", current_mode);
     //State machine
     switch (current_mode) {
 
       case STOP_MODE:
         // Serial.print("q = "); q_toString(q_curr);
-      digitalWrite(ledPin, 0);
-      break;
+        digitalWrite(ledPin, 0);
+        break;
       case FLIGHT_MODE:
         // Adjust imu reading, comment if not flying with real vicon data
-      q_curr = qMultiply(q_curr_shift, q_curr_imu);
-      // Serial.print("q_curr"); q_toString(q_curr);
-      // Serial.print("q_curr_vicon"); q_toString(q_curr_vicon);
-      w_curr = w_curr_imu - w_curr_shift;
+        q_curr = qMultiply(q_curr_shift, q_curr_imu);
+        //         Serial.print("q_curr"); q_toString(q_curr);
+        // Serial.print("q_curr_vicon"); q_toString(q_curr_vicon);
+        w_curr = w_curr_imu - w_curr_shift;
         // Calculate necessary motor forces
-      calculateMotorForces();
-      spinMotors_forces();
-      break;
+        calculateMotorForces();
+        spinMotors_forces();
+        break;
 
       case MOTOR_FORCES_MODE:
         // Don't need to calculate motor forces, just use what is currently set in forces
-      spinMotors_forces();
-      break;
+        spinMotors_forces();
+        break;
       case MOTOR_SPEEDS_MODE:
         //Don't need to calculate anything, just use what is currently set in speeds
-      spinMotors_speeds();
-      break;
+        spinMotors_speeds();
+        break;
       case NO_VICON_MODE:
         // Calculate necessary motor forces;
-      calculateMotorForces();
-      spinMotors_forces();
-      break;
+        //        Serial.print("q_curr"); q_toString(q_curr);
+        calculateMotorForces();
+        spinMotors_forces();
+        break;
 
       default:
-      break;
+        break;
     }
   }
 }
