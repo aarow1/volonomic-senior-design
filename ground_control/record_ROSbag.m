@@ -1,12 +1,13 @@
 % must be in ROSBAG folder
 % rosbag record /vicon/VI
 % 
-filepath = '../ROSBAG/lalala.bag';
-% bag = rosbag(filepath);
+filepath = '../ROSBAG/this one may be better.bag';
+bag = rosbag(filepath);
 bagselect = select(bag, 'MessageType','nav_msgs/Odometry');
 allmsg = readMessages(bagselect);
 [l,~] = size(allmsg);
 
+%% Initialize Variables
 realtimeSec = zeros(l,1);
 realtimeNsec = zeros(l,1);
 x_pos = zeros(l,1);
@@ -27,6 +28,7 @@ x_pos_des = zeros(l,1);
 y_pos_des = zeros(l,1);
 z_pos_des = zeros(l,1);
 
+%%
 for i = 1:l
 %     time(i) = allmsg{i}.Header.Stamp.Sec;
     realtimeSec(i) = double(allmsg{i}.Header.Stamp.Sec);
@@ -45,56 +47,85 @@ for i = 1:l
     y_twist_lin(i) = allmsg{i}.Twist.Twist.Linear.Y;
     z_twist_lin(i) = allmsg{i}.Twist.Twist.Linear.Z;
     
-    time_desSec(i) = pos_store{i}.time.Sec;
-    time_desNsec(i) = pos_store{i}.time.Nsec;
-    x_pos_des(i) = pos_store{i}.pos(1);
-    y_pos_des(i) = pos_store{i}.pos(2);
-    z_pos_des(i) = pos_store{i}.pos(3);
+%     time_desSec(i) = pos_store{i}.time.Sec;
+%     time_desNsec(i) = pos_store{i}.time.Nsec;
+%     x_pos_des(i) = pos_store{i}.pos(1);
+%     y_pos_des(i) = pos_store{i}.pos(2);
+%     z_pos_des(i) = pos_store{i}.pos(3);
     
 end
 
-x_pos_des = pos_store.
+% x_pos_des = pos_store.
 % Calulate time
 % realtimeSec = realtimeSec - realtimeSec(1);
 realtime = realtimeSec - realtimeSec(1) + realtimeNsec;
 
 %% Plot Position
+tstart = 3000;
+tfinish = 5000;
 figure('Name', 'Position');
 subplot(3,1,1);
-plot(realtime, x_pos);
+plot(realtime(tstart:tfinish), x_pos(tstart:tfinish));
 ylabel('(m)');
 xlabel('(sec)');
 title('X Position');
 subplot(3,1,2);
-plot(realtime, y_pos);
+plot(realtime(tstart:tfinish), y_pos(tstart:tfinish));
 ylabel('(m)');
 xlabel('(sec)');
 title('Y Position');
 subplot(3,1,3);
-plot(realtime, z_pos);
+plot(realtime(tstart:tfinish), z_pos(tstart:tfinish));
 ylabel('(m)');
 xlabel('(sec)');
 title('Z Position');
+hold on
+z_pos_des = ones(l)*z_pos(tstart)+0.1;
+plot(realtime(tstart:tfinish), z_pos_des(tstart:tfinish));
+
+%% JUST Z POSITIONS
+us_color= [244 126 54]/255;
+them_color = [153 153 153]/255;
+time_switch = 3700;
+time_end = 4915;
+figure
+plot(realtime(tstart:tfinish), z_pos(tstart:tfinish), 'Color', us_color, 'LineWidth', 2);
+ylabel('(m)');
+xlabel('(sec)');
+% title('Z Position');
+hold on
+z_pos_des = ones(l,1)*z_pos(tstart);
+z_pos_des(time_switch:l) = z_pos_des(time_switch:l) + 0.1;
+z_pos_des(time_end:l) = z_pos_des(time_end:l) + 0.5;
+plot(realtime(tstart:tfinish), z_pos_des(tstart:tfinish), 'Color', them_color, 'LineWidth', 2);
+% set(gcf, 'Color', 'none');
+% set(gcf, 'color', 'none',...
+%          'inverthardcopy', 'off');
+
+z_error = z_pos_des - z_pos + 0.5;
+% plot(realtime(tstart:tfinish), z_error(tstart:tfinish), '--', 'Color', them_color, 'LineWidth', 1);
+
+print( 'Z Position Validation2','-depsc');
 
 %% Plot Orientation
 figure('Name', 'Orientation');
 subplot(4,1,1);
-plot(realtime, w_orient);
+plot(realtime(tstart:tfinish), w_orient(tstart:tfinish));
 ylabel('(rad)');
 xlabel('(sec)');
 title('W Orientation');
 subplot(4,1,2);
-plot(realtime, x_orient);
+plot(realtime(tstart:tfinish), x_orient(tstart:tfinish));
 ylabel('(rad)');
 xlabel('(sec)');
 title('X Orientation');
 subplot(4,1,3);
-plot(realtime, y_orient);
+plot(realtime(tstart:tfinish), y_orient(tstart:tfinish));
 ylabel('(rad)');
 xlabel('(sec)');
 title('Y Orientation');
 subplot(4,1,4);
-plot(realtime, z_orient);
+plot(realtime(tstart:tfinish), z_orient(tstart:tfinish));
 ylabel('(rad)');
 xlabel('(sec)');
 title('Z Orientation');
@@ -102,13 +133,13 @@ title('Z Orientation');
 %% Plot Angular Twist
 figure('Name', 'Angular Twist')
 subplot(3,1,1);
-plot(realtime, x_twist_ang);
+plot(realtime(tstart:tfinish), x_twist_ang(tstart:tfinish));
 title('X Twist Angle');
 subplot(3,1,2);
-plot(realtime, y_twist_ang);
+plot(realtime(tstart:tfinish), y_twist_ang(tstart:tfinish));
 title('Y Twist Angle');
 subplot(3,1,3);
-plot(realtime, z_twist_ang);
+plot(realtime(tstart:tfinish), z_twist_ang(tstart:tfinish));
 title('Z Twist Angle');
 
 
