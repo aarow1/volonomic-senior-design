@@ -6,10 +6,16 @@ global motor_forces motor_speeds
 global tau_att tau_w ki_torque
 global xbee send_vicon
 global ping_time
-persistent time
+global pos_store time_store quat_store pos_des
+persistent time 
 
 if isempty(time)
     time = 0;
+end
+if isempty(pos_store)
+    pos_store = [];
+    quat_store = [];
+    time_store = [];
 end
 %% Packet entry definitions
 PKT_START_ENTRY = 32;
@@ -104,6 +110,11 @@ if send_vicon
         ctr = 0;
         time = toc;
     end
+
+pos_store = [pos_store; pos_des];
+quat_store = [quat_store; q_des];
+time_store = [time_store; rostime('now')];
+
 elseif ~isequal(pkt_type,'ping')
     fprintf('sending %s pkt\n',pkt_type);
 end

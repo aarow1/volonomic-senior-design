@@ -43,7 +43,7 @@ time = toc;
             
             err_prev = err;
             
-            VI_mass = .76;
+            VI_mass = .73;
             g = 9.8;
             
             f_des = sum(pos_gains.*[err' der' integral_0'],2)' + [0, 0, (VI_mass*g)];

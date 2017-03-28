@@ -1,11 +1,11 @@
 % must be in ROSBAG folder
 % rosbag record /vicon/VI
 % 
-% filepath = '../ROSBAG/test2.bag';
+filepath = '../ROSBAG/lalala.bag';
 % bag = rosbag(filepath);
-% bagselect = select(bag, 'MessageType','nav_msgs/Odometry');
-% allmsg = readMessages(bagselect);
-% [l,~] = size(allmsg);
+bagselect = select(bag, 'MessageType','nav_msgs/Odometry');
+allmsg = readMessages(bagselect);
+[l,~] = size(allmsg);
 
 realtimeSec = zeros(l,1);
 realtimeNsec = zeros(l,1);

@@ -30,7 +30,7 @@ global xbee
 
 if using_xbee 
 %         xbee = serial('/dev/tty.usbserial-DN02MM5K') %MAC
-    xbee = serial('/dev/ttyUSB5'); %LINUX    
+    xbee = serial('/dev/ttyUSB2'); %LINUX    
     set(xbee,'DataBits',8)
     set(xbee,'StopBits',1)
     set(xbee,'Parity','none')
@@ -42,6 +42,7 @@ end
 %% SET UP ROS
 if using_vicon
     rosshutdown;
+    addpath 'MATLAB tools'
     global q_curr_vicon pos_vicon pos_des pos_store pos_control_on gains w_vicon ping_time
     send_vicon = 0; pos_control_on = 0; pos_store = {};
     q_curr_vicon = [1 0 0 0]; pos_vicon = zeros(1,3); w_vicon = zeros(1,6);
