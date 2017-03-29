@@ -44,7 +44,8 @@ if using_vicon
     rosshutdown;
     addpath 'MATLAB tools'
     global q_curr_vicon pos_vicon pos_des pos_store pos_control_on gains w_vicon ping_time
-    send_vicon = 0; pos_control_on = 0; pos_store = {};
+    global quat_store time_store 
+    send_vicon = 0; pos_control_on = 0; pos_store = []; quat_store = []; time_store = [];
     q_curr_vicon = [1 0 0 0]; pos_vicon = zeros(1,3); w_vicon = zeros(1,6);
     if isempty(pos_des)
         pos_des = zeros(1,3);

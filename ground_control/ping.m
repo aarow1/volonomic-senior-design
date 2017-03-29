@@ -1,5 +1,5 @@
 function [] = ping()
-disp('pinging...');
+fprintf('pinging...');
 global xbee ping_time
 ping_length = 20;
 reading = 0;
@@ -16,12 +16,13 @@ for nPings = 1:ping_length
             ping_times(nPings, 2) = toc*1000;
             flushinput(xbee);
             reading = 0;
+            fprintf('.');
         end
     end
     pause(.1);
 end
+fprintf(' finished pinging\n');
 sendPkt('stop');
-disp('finished pinging');
 end
 
 
