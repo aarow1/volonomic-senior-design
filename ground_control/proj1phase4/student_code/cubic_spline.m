@@ -1,4 +1,5 @@
 function [ c_x, c_y, c_z ] = cubic_spline( n_splines, newpath, time2 )
+disp('wtf');
 %CUBIC_SPLINE 
     x_coefs = zeros(4*n_splines, 4*n_splines);
     y_coefs_x = zeros(4*n_splines,1);
@@ -36,5 +37,7 @@ function [ c_x, c_y, c_z ] = cubic_spline( n_splines, newpath, time2 )
     c_x = reshape(x_coefs \ y_coefs_x,[4,n_splines])';
     c_y = reshape(x_coefs \ y_coefs_y,[4,n_splines])';
     c_z = reshape(x_coefs \ y_coefs_z,[4,n_splines])';
+    disp(x_coefs);
+    disp('yay');
 end
 

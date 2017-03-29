@@ -36,5 +36,6 @@ function [ c_x, c_y, c_z ] = cubic_spline( n_splines, newpath, time2 )
     c_x = reshape(x_coefs \ y_coefs_x,[4,n_splines])';
     c_y = reshape(x_coefs \ y_coefs_y,[4,n_splines])';
     c_z = reshape(x_coefs \ y_coefs_z,[4,n_splines])';
+    x_coefs
 end
 
