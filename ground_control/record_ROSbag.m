@@ -1,14 +1,14 @@
 % must be in ROSBAG folder
-% rosbag record /vicon/VI
+% rosbag record /vicon/VI/odom
 % 
-filepath = '../ROSBAG/to_box.bag';
-bag = rosbag(filepath);
-bagselect = select(bag, 'MessageType','nav_msgs/Odometry');
-allmsg = readMessages(bagselect);
-[l,~] = size(allmsg);
+% filepath = '../ROSBAG/to_box.bag';
+% bag = rosbag(filepath);
+% bagselect = select(bag, 'MessageType','nav_msgs/Odometry');
+% allmsg = readMessages(bagselect);
+% [l,~] = size(allmsg);
 
 %% Initialize Variables
-realtimeSec = zeroes(l,1);
+realtimeSec = zeros(l,1);
 realtimeNsec = zeros(l,1);
 x_pos = zeros(l,1);
 y_pos = zeros(l,1);
@@ -87,9 +87,9 @@ realtime = realtimeSec - realtimeSec(1) + realtimeNsec;
 us_color= [244 126 54]/255;
 them_color = [153 153 153]/255;
 
-x_pos = x_pos - x_pos(1);
-y_pos = y_pos - y_pos(1);
-z_pos = z_pos - z_pos(1);
+x_pos_adj = x_pos - x_pos(1)*ones(l,1);
+y_pos_adj = y_pos - y_pos(1)*ones(l,1);
+z_pos_adj = z_pos - z_pos(1)*ones(l,1);
 
 x_des = zeros(l,1);
 % x_des(2300:l) = x_des(2300:l)-1;
@@ -102,21 +102,19 @@ y_des = zeros(l,1);
 
 z_des = zeros(l,1);
 % z_step = ones(
-z_des(2480:l) = z_des(2480:l) + 0.05;
-z_des(2600:l) = z_des(2600:l) + 0.05;
+z_des(2480:l) = z_des(2480:l) + 0.1;
+z_des(2600:l) = z_des(2600:l) + 0.1;
 z_des(2800:l) = z_des(2800:l) + 0.1;
-z_des(4400:l) = z_des(4400:l) - 0.2;
+z_des(4400:l) = z_des(4400:l) - 0.1;
 z_des(4700:l) = z_des(4700:l) - 0.1;
 
-% tstart = 2340;
-% tfinish = 4636;
-tstart = 3000;
-tfinish = 4000;
+tstart = 2340;
+tfinish = 4636;
 figure('Name', 'Position');
 subplot(3,1,1);
 % x_err = immse(x_des(tstart:tfinish),x_pos(tstart:tfinish));
 
-plot(realtime(tstart:tfinish), x_pos(tstart:tfinish), 'Color', us_color, 'LineWidth', 2);
+plot(realtime(tstart:tfinish), x_pos_adj(tstart:tfinish), 'Color', us_color, 'LineWidth', 2);
 hold on
 plot(realtime(tstart:tfinish), x_des(tstart:tfinish), '--', 'Color', them_color, 'LineWidth', 2);
 
@@ -126,7 +124,7 @@ plot(realtime(tstart:tfinish), x_des(tstart:tfinish), '--', 'Color', them_color,
 axis([20 55 -0.5 2.5]);
 
 subplot(3,1,2);
-plot(realtime(tstart:tfinish), y_pos(tstart:tfinish), 'Color', us_color, 'LineWidth', 2);
+plot(realtime(tstart:tfinish), y_pos_adj(tstart:tfinish), 'Color', us_color, 'LineWidth', 2);
 hold on
 plot(realtime(tstart:tfinish), y_des(tstart:tfinish), '--', 'Color', them_color, 'LineWidth', 2);
 
@@ -136,7 +134,7 @@ plot(realtime(tstart:tfinish), y_des(tstart:tfinish), '--', 'Color', them_color,
 axis([20 55 -0.5 2.5]);
 
 subplot(3,1,3);
-plot(realtime(tstart:tfinish), z_pos(tstart:tfinish), 'Color', us_color, 'LineWidth', 2);
+plot(realtime(tstart:tfinish), z_pos_adj(tstart:tfinish), 'Color', us_color, 'LineWidth', 2);
 hold on
 plot(realtime(tstart:tfinish), z_des(tstart:tfinish), '--', 'Color', them_color, 'LineWidth', 2);
 % ylabel('(m)');
@@ -147,31 +145,31 @@ axis([20 55 -0.5 0.5]);
 % plot(realtime(tstart:tfinish), z_pos_des(tstart:tfinish));
 % print( 'back_from_box','-depsc');
 
-x = x_des(tstart:tfinish);
-xhat = x_pos(tstart:tfinish);
-(x - xhat);    % Errors
-(x - xhat).^2;   % Squared Error
-mean((x - xhat).^2);   % Mean Squared Error
-x_RMSE = sqrt(mean((x - xhat).^2));  % Root Mean Squared Error
+% x = x_des(tstart:tfinish);
+% xhat = x_pos(tstart:tfinish);
+% (x - xhat);    % Errors
+% (x - xhat).^2;   % Squared Error
+% mean((x - xhat).^2);   % Mean Squared Error
+% x_RMSE = sqrt(mean((x - xhat).^2));  % Root Mean Squared Error
+% 
+% y = y_des(tstart:tfinish);
+% yhat = y_pos(tstart:tfinish);
+% (y - yhat);    % Errors
+% (y - yhat).^2;   % Squared Error
+% mean((y - yhat).^2);   % Mean Squared Error
+% y_RMSE = sqrt(mean((y - yhat).^2));  % Root Mean Squared Error
+% 
+% z = z_des(tstart:tfinish);
+% zhat = z_pos(tstart:tfinish);
+% z_RMSE = sqrt(mean((z - zhat).^2));  % Root Mean Squared Error
+t = tfinish-tstart;
+x_err = sum(abs(x_des(tstart:tfinish)-x_pos_adj(tstart:tfinish)))/t
+y_err = sum(abs(y_des(tstart:tfinish)-y_pos_adj(tstart:tfinish)))/t
+z_err = sum(abs(z_des(tstart:tfinish)-z_pos_adj(tstart:tfinish)))/t
 
-y = y_des(tstart:tfinish);
-yhat = y_pos(tstart:tfinish);
-(y - yhat);    % Errors
-(y - yhat).^2;   % Squared Error
-mean((y - yhat).^2);   % Mean Squared Error
-y_RMSE = sqrt(mean((y - yhat).^2));  % Root Mean Squared Error
-
-z = z_des(tstart:tfinish);
-zhat = z_pos(tstart:tfinish);
-z_RMSE = sqrt(mean((z - zhat).^2));  % Root Mean Squared Error
-
-x_err = (abs(x_des-x_pos))
-y_err = (abs(y_des-y_pos))
-z_err = (abs(z_des-z_pos))
-
-x_merr = mean(abs(x_des-x_pos))
-y_merr = mean(abs(y_des-y_pos))
-z_merr = mean(abs(z_des-z_pos))
+% x_merr = mean(abs(x_des-x_pos))
+% y_merr = mean(abs(y_des-y_pos))
+% z_merr = mean(abs(z_des-z_pos))
 
 %% JUST Z POSITIONS
 us_color= [244 126 54]/255;
@@ -179,12 +177,12 @@ them_color = [153 153 153]/255;
 time_switch = 2500;
 time_end = 4915;
 figure
-plot(realtime(tstart:tfinish), z_pos(tstart:tfinish), 'Color', us_color, 'LineWidth', 2);
+plot(realtime(tstart:tfinish), z_pos_adj(tstart:tfinish), 'Color', us_color, 'LineWidth', 2);
 ylabel('(m)');
 xlabel('(sec)');
 % title('Z Position');
 hold on
-z_pos_des = ones(l,1)*z_pos(tstart);
+z_pos_des = ones(l,1)*z_pos_adj(tstart);
 z_pos_des(time_switch:l) = z_pos_des(time_switch:l) + 0.1;
 z_pos_des(time_end:l) = z_pos_des(time_end:l) + 0.5;
 plot(realtime(tstart:tfinish), z_pos_des(tstart:tfinish), 'Color', them_color, 'LineWidth', 2);
