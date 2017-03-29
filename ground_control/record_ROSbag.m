@@ -1,5 +1,5 @@
 % must be in ROSBAG folder
-% rosbag record /vicon/VI
+% rosbag record /vicon/VI/odom
 % 
 filepath = '../ROSBAG/this one may be better.bag';
 bag = rosbag(filepath);
