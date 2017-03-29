@@ -114,14 +114,11 @@ void loop() {
         q_curr_shift = qMultiply(q_curr_vicon, qInverse(q_curr_imu_buffer[idx]));
         w_curr_shift = w_curr_imu_buffer[idx] - w_curr_vicon;
         match_delay = 1;
-        Serial.printf("I think vicon time (%i) \t == buffer time (%i)? idx = %i/200\n",
-                    vicon_time, time_buffer[idx], idx);
       }
       else {
         idx--;
         if (idx < 0) {
           idx = buffer_length - 1;
-          Serial.printf("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!fuck! buffer_idx = %i\n", buffer_idx);
         }
       }
 //      Serial.printf("\tis vicon time (%i) \t == buffer time (%i)? idx = %i/200\n",
