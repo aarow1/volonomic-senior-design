@@ -1,14 +1,17 @@
-function [] = follow_trajectory()
-global C way_times traj_start follow_traj
-global q_des pos_des
+function [ ] = plot_trajectory()
+global C way_times
+disp('plotting trajctory...');
 num_segments = size(way_times,1)-1;
-
-t = toc - traj_start;
-
-if t > way_times(end)
-    follow_traj = 0;
-    disp('made it!');
-else
+close all
+axis equal;
+grid on;
+axis([-4 4 -4 4 -4 4]);
+hold on;
+dt = .1;
+R = eye(3);
+t = way_times;
+for t_path = way_times(1):dt:way_times(end)
+    clf();
     t_vec = zeros(6*num_segments,1);
     t_vec_basic = [1 t_path t_path^2 t_path^3 t_path^4 t_path^5]';
     
@@ -23,9 +26,21 @@ else
         num =  C(:,dim)' * t_vec;
         state(dim) = num;
     end
+    t_vec;
+    state;
     R = eul2rotm(deg2rad(state(4:6)), 'zyx');
-    q_des = rotm2quat(R);
-    pos_des = state(1:3);
+    
+    h0 = plotCoordinateFrameOff(state(1:3), R, 0, [0 0 1]);
+    
+    axis equal;
+    grid on;
+    axis([-4 4 -4 4 -4 4]);
+%     view(2);
+    title(t_path);
+    drawnow();
+    pause(dt);
 end
+disp('done plotting');
+
 end
 

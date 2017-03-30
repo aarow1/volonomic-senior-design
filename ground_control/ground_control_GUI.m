@@ -22,7 +22,7 @@ function varargout = ground_control_GUI(varargin)
 
 % Edit the above text to modify the response to help ground_control_GUI
 
-% Last Modified by GUIDE v2.5 27-Mar-2017 14:15:31
+% Last Modified by GUIDE v2.5 29-Mar-2017 22:09:34
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -350,7 +350,8 @@ function edit11_Callback(hObject, eventdata, handles)
 
 % Hints: get(hObject,'String') returns contents of edit11 as text
 %        str2double(get(hObject,'String')) returns contents of edit11 as a double
-goTo(str2num(get(hObject,'String')));
+global waypts_temp
+waypts_temp = (str2num(get(hObject,'String')))
 
 
 % --- Executes during object creation, after setting all properties.
@@ -421,7 +422,10 @@ function pushbutton11_Callback(hObject, eventdata, handles)
 % hObject    handle to pushbutton11 (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
-hover
+global q_curr_vicon pos_vicon home_pos home_q
+home_pos = pos_vicon; home_q = q_curr_vicon;
+fprintf('home position: [%2.2f, \t%2.2f, \t%2.2f] \thome q: [\t%2.2f  \t%2.2f \t%2.2f \t%2.2f]\n',...
+    home_pos(1),home_pos(2),home_pos(3),home_q(1),home_q(2),home_q(3),home_q(4));
 
 % --- Executes on button press in pushbutton12.
 function pushbutton12_Callback(hObject, eventdata, handles)
@@ -512,3 +516,44 @@ function edit14_CreateFcn(hObject, eventdata, handles)
 if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
     set(hObject,'BackgroundColor','white');
 end
+
+
+% --- Executes on button press in pushbutton17.
+function pushbutton17_Callback(hObject, eventdata, handles)
+% hObject    handle to pushbutton17 (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+% global waypts_temp waypts traj_start
+% waypts = waypts_temp;
+% traj_start = toc;
+% trajectory_generator(waypts);
+
+
+% --- Executes on button press in pushbutton18.
+function pushbutton18_Callback(hObject, eventdata, handles)
+% hObject    handle to pushbutton18 (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+global waypts_temp waypts traj_start
+waypts = waypts_temp;
+trajectory_generator(waypts);
+
+
+% --- Executes on button press in pushbutton19.
+function pushbutton19_Callback(hObject, eventdata, handles)
+% hObject    handle to pushbutton19 (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+plot_trajectory();
+
+
+% --- Executes on button press in pushbutton20.
+function pushbutton20_Callback(hObject, eventdata, handles)
+% hObject    handle to pushbutton20 (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+global home_pos home_q waypts
+home_rot = rad2deg(quat2eul(home_q,'zyx'));
+waypts = [home_pos home_rot];
+disp('going home!');
+trajectory_generator(waypts);
