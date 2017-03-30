@@ -22,7 +22,7 @@ function varargout = ground_control_GUI(varargin)
 
 % Edit the above text to modify the response to help ground_control_GUI
 
-% Last Modified by GUIDE v2.5 29-Mar-2017 22:09:34
+% Last Modified by GUIDE v2.5 29-Mar-2017 23:08:29
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -422,8 +422,9 @@ function pushbutton11_Callback(hObject, eventdata, handles)
 % hObject    handle to pushbutton11 (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
-global q_curr_vicon pos_vicon home_pos home_q
+global q_curr_vicon pos_vicon home_pos home_q pos_des q_des
 home_pos = pos_vicon; home_q = q_curr_vicon;
+pos_des = home_pos; q_des = home_q;
 fprintf('home position: [%2.2f, \t%2.2f, \t%2.2f] \thome q: [\t%2.2f  \t%2.2f \t%2.2f \t%2.2f]\n',...
     home_pos(1),home_pos(2),home_pos(3),home_q(1),home_q(2),home_q(3),home_q(4));
 
@@ -534,9 +535,9 @@ function pushbutton18_Callback(hObject, eventdata, handles)
 % hObject    handle to pushbutton18 (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
-global waypts_temp waypts traj_start
-waypts = waypts_temp;
-trajectory_generator(waypts);
+global waypts_temp waypoints traj_start
+waypoints = waypts_temp;
+trajectory_generator();
 
 
 % --- Executes on button press in pushbutton19.
@@ -556,4 +557,28 @@ global home_pos home_q waypts
 home_rot = rad2deg(quat2eul(home_q,'zyx'));
 waypts = [home_pos home_rot];
 disp('going home!');
-trajectory_generator(waypts);
+trajectory_generator();
+
+
+
+function edit15_Callback(hObject, eventdata, handles)
+% hObject    handle to edit15 (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hints: get(hObject,'String') returns contents of edit15 as text
+%        str2double(get(hObject,'String')) returns contents of edit15 as a double
+global waypts_temp
+waypts_temp = (str2num(get(hObject,'String')))
+
+% --- Executes during object creation, after setting all properties.
+function edit15_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to edit15 (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+% Hint: edit controls usually have a white background on Windows.
+%       See ISPC and COMPUTER.
+if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor','white');
+end

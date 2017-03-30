@@ -6,7 +6,7 @@ global motor_forces motor_speeds
 global tau_att tau_w ki_torque
 global xbee send_vicon
 global ping_time
-global pos_store time_store quat_store pos_des
+global pos_store time_store quat_store pos_des pos_store_new
 persistent time 
 
 if isempty(time)
@@ -112,6 +112,7 @@ if send_vicon
     end
 
 pos_store = [pos_store; pos_des];
+pos_store_new = [pos_store_new; pos_des];
 quat_store = [quat_store; q_des];
 time_store = [time_store; rostime('now')];
 

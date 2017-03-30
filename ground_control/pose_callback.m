@@ -1,5 +1,5 @@
 function [] = pose_callback(~,msg)
-global q_curr_vicon pos_vicon f_des gains w_vicon pos_des
+global q_curr_vicon pos_vicon f_des gains w_vicon pos_des q_des
 global send_vicon pos_control_on
 global integral_1
 global follow_traj
@@ -19,6 +19,12 @@ T = toc - time;
 time = toc;
 % disp('ppoooppopo');
 
+%% COMMENT THIS IF YOU WANT TO FLY
+% follow_trajectory();
+% pos_des
+
+%%
+
 q_curr_vicon = [msg.Pose.Pose.Orientation.W;
     msg.Pose.Pose.Orientation.X;
     msg.Pose.Pose.Orientation.Y;
@@ -31,10 +37,13 @@ pos_vicon = [ msg.Pose.Pose.Position.X;
 w_vicon = [msg.Twist.Twist.Angular.X;
     msg.Twist.Twist.Angular.Y;
     msg.Twist.Twist.Angular.Z]';
+
 if send_vicon
     if pos_control_on
         if follow_traj
             follow_trajectory();
+            pos_des;
+            q_des;
         end
         pos_gains = [gains; gains; gains];
         err = pos_des - pos_vicon;
@@ -46,7 +55,7 @@ if send_vicon
         
         err_prev = err;
         
-        VI_mass = .73;
+        VI_mass = .72;
         g = 9.8;
         
         f_des = sum(pos_gains.*[err' der' integral_0'],2)' + [0, 0, (VI_mass*g)];

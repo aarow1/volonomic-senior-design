@@ -1,16 +1,16 @@
-function [] = trajectory_generator(waypoints) 
+function [] = trajectory_generator() 
 disp('generating trajectory...')
-global C way_times pos_vicon q_curr_vicon follow_traj waypts traj_start
-q_curr = rad2deg(quat2eul(q_curr_vicon,'zyx'));
+global C way_times pos_vicon q_curr_vicon follow_traj waypoints traj_start pos_des q_des
+eul_start = rad2deg(quat2eul(q_des,'zyx'));
 
-waypoints = [pos_vicon q_curr; waypoints];
+waypoints = [pos_des eul_start; waypoints];
 num_waypoints = size(waypoints,1);
 num_segments = num_waypoints-1;
 deltas = diff(waypoints);
 
 %% Time approximation
-v_des = .5; %approximate m/s
-w_des = 45;  %approcimate deg/s
+v_des = .3; %approximate m/s
+w_des = 15;  %approximate deg/s
 
 t0 = 0;
 way_times = zeros(num_waypoints, 1);

@@ -35,7 +35,7 @@ for t_path = way_times(1):dt:way_times(end)
     axis equal;
     grid on;
     axis([-4 4 -4 4 -4 4]);
-%     view(2);
+    view(2);
     title(t_path);
     drawnow();
     pause(dt);
