@@ -47,8 +47,10 @@ if using_vicon
     global follow_traj waypoints C way_times
     global quat_store time_store 
     global home_pos home_quat
+    global v_des w_des
     global cubic
     cubic = 0;
+    v_des = .3; w_des = 15;
     follow_traj = 0; waypoints = [0 0 0 0 0 0]; way_times = 0; C = [0 0; 0 0];
     send_vicon = 0; pos_control_on = 0; pos_store_new = []; quat_store = []; time_store = [];
     q_curr_vicon = [1 0 0 0]; pos_vicon = zeros(1,3); w_vicon = zeros(1,6);

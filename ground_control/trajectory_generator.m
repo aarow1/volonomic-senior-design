@@ -1,7 +1,7 @@
 function [] = trajectory_generator()
 disp('generating trajectory...')
 global C way_times pos_vicon q_curr_vicon follow_traj waypoints traj_start pos_des q_des
-global cubic
+global cubic v_des w_des
 eul_start = rad2deg(quat2eul(q_des,'zyx'));
 
 waypoints = [pos_des eul_start; waypoints];
@@ -10,8 +10,8 @@ num_segments = num_waypoints-1;
 deltas = diff(waypoints);
 
 %% Time approximation
-v_des = 1; %approximate m/s
-w_des = 15;  %approximate deg/s
+% v_des = .3; %approximate m/s
+% w_des = 15;  %approximate deg/s
 
 t0 = 0;
 way_times = zeros(num_waypoints, 1);
@@ -29,7 +29,7 @@ end
 t = way_times;
 if cubic
     A = zeros(4*num_segments, 4*num_segments);
-    X = zeros(4*num_segments, 4);
+    X = zeros(4*num_segments, 6);
     
     %start point constraings
     A(1,1:4) = [1*t(1)^0 1*t(1)^1 1*t(1)^2 1*t(1)^3]; %position
@@ -40,15 +40,15 @@ if cubic
     % Mid point continuity constraints
 for i = 1:(num_segments-1)
     i1 = i+1;
-    A((4*(i-1))+1+1 , (4*(i-1))+(1:4))  = [1*t(i1)^0 1*t(i1)^1  1*t(i1)^2  1*t(i1)^3]; %position at end of previous segment
-    A((4*(i-1))+1+2 , (4*(i  ))+(1:4))  = [1*t(i1)^0 1*t(i1)^1  1*t(i1)^2  1*t(i1)^3]; %position at beginning of next segment
-    A((4*(i-1))+1+3 , (4*(i-1))+(1:8)) = [0        1*t(i1)^0   2*t(i1)^1  3*t(i1)^2 ...
+    A((4*(i-1))+3+1 , (4*(i-1))+(1:4))  = [1*t(i1)^0 1*t(i1)^1  1*t(i1)^2  1*t(i1)^3]; %position at end of previous segment
+    A((4*(i-1))+3+2 , (4*(i  ))+(1:4))  = [1*t(i1)^0 1*t(i1)^1  1*t(i1)^2  1*t(i1)^3]; %position at beginning of next segment
+    A((4*(i-1))+3+3 , (4*(i-1))+(1:8)) = [0        1*t(i1)^0   2*t(i1)^1  3*t(i1)^2 ...
         0       -1*t(i1)^0  -2*t(i1)^1 -3*t(i1)^2 ]; %velocity continuity
-    A((4*(i-1))+1+4 , (4*(i-1))+(1:8)) = [0        0           2*t(i1)^0  6*t(i1)^1 ...
+    A((4*(i-1))+3+4 , (4*(i-1))+(1:8)) = [0        0           2*t(i1)^0  6*t(i1)^1 ...
         0        0          -2*t(i1)^0 -6*t(i1)^1]; %acceleration continuity
     
-    X((4*(i-1))+1+1, :) = waypoints(i+1,:);
-    X((4*(i-1))+1+2, :) = waypoints(i+1,:);
+    X((4*(i-1))+3+1, :) = waypoints(i+1,:);
+    X((4*(i-1))+3+2, :) = waypoints(i+1,:);
 end
 
 % End point constraints
