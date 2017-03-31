@@ -55,7 +55,7 @@ if send_vicon
         
         err_prev = err;
         
-        VI_mass = .72;
+        VI_mass = .615;
         g = 9.8;
         
         f_des = sum(pos_gains.*[err' der' integral_0'],2)' + [0, 0, (VI_mass*g)];

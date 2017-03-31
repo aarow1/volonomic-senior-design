@@ -425,8 +425,10 @@ function pushbutton11_Callback(hObject, eventdata, handles)
 global q_curr_vicon pos_vicon home_pos home_q pos_des q_des
 home_pos = pos_vicon; home_q = q_curr_vicon;
 pos_des = home_pos; q_des = home_q;
+home_euler = rad2deg(quat2eul(home_q));
 fprintf('home position: [%2.2f, \t%2.2f, \t%2.2f] \thome q: [\t%2.2f  \t%2.2f \t%2.2f \t%2.2f]\n',...
     home_pos(1),home_pos(2),home_pos(3),home_q(1),home_q(2),home_q(3),home_q(4));
+fprintf('home euler: [%3.4f \t%3.4f \t%3.4f]\n', home_euler(1), home_euler(2), home_euler(3));
 
 % --- Executes on button press in pushbutton12.
 function pushbutton12_Callback(hObject, eventdata, handles)
@@ -553,9 +555,9 @@ function pushbutton20_Callback(hObject, eventdata, handles)
 % hObject    handle to pushbutton20 (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
-global home_pos home_q waypts
+global home_pos home_q waypoints
 home_rot = rad2deg(quat2eul(home_q,'zyx'));
-waypts = [home_pos home_rot];
+waypoints = [home_pos home_rot];
 disp('going home!');
 trajectory_generator();
 

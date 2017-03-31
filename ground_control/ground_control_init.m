@@ -43,12 +43,14 @@ end
 if using_vicon
     rosshutdown;
     addpath 'MATLAB tools'
-    global q_curr_vicon pos_vicon pos_des pos_store pos_control_on gains w_vicon ping_time
+    global q_curr_vicon pos_vicon pos_des pos_store_new pos_control_on gains w_vicon ping_time
     global follow_traj waypoints C way_times
     global quat_store time_store 
     global home_pos home_quat
+    global cubic
+    cubic = 0;
     follow_traj = 0; waypoints = [0 0 0 0 0 0]; way_times = 0; C = [0 0; 0 0];
-    send_vicon = 0; pos_control_on = 0; pos_store = []; quat_store = []; time_store = [];
+    send_vicon = 0; pos_control_on = 0; pos_store_new = []; quat_store = []; time_store = [];
     q_curr_vicon = [1 0 0 0]; pos_vicon = zeros(1,3); w_vicon = zeros(1,6);
     if isempty(pos_des)
         pos_des = zeros(1,3);

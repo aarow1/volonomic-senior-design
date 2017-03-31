@@ -1,6 +1,7 @@
-function [] = trajectory_generator() 
+function [] = trajectory_generator()
 disp('generating trajectory...')
 global C way_times pos_vicon q_curr_vicon follow_traj waypoints traj_start pos_des q_des
+global cubic
 eul_start = rad2deg(quat2eul(q_des,'zyx'));
 
 waypoints = [pos_des eul_start; waypoints];
@@ -9,26 +10,58 @@ num_segments = num_waypoints-1;
 deltas = diff(waypoints);
 
 %% Time approximation
-v_des = .3; %approximate m/s
+v_des = 1; %approximate m/s
 w_des = 15;  %approximate deg/s
 
 t0 = 0;
 way_times = zeros(num_waypoints, 1);
-
 for i = 2:num_waypoints
     lin_dist = sqrt(deltas(i-1,1)^2 + deltas(i-1,2)^2 + deltas(i-1,3)^2);
     ang_dist = sqrt(deltas(i-1,4)^2 + deltas(i-1,5)^2 + deltas(i-1,6)^2);
-
+    
     lin_time = lin_dist / v_des;
     ang_time = ang_dist / w_des;
-
+    
     way_times(i) = way_times(i-1) + max([lin_time ang_time]);
 end
 
 
 t = way_times;
+if cubic
+    A = zeros(4*num_segments, 4*num_segments);
+    X = zeros(4*num_segments, 4);
+    
+    %start point constraings
+    A(1,1:4) = [1*t(1)^0 1*t(1)^1 1*t(1)^2 1*t(1)^3]; %position
+    A(2,1:4) = [0        1*t(1)^0 2*t(1)^1 3*t(1)^2]; %velocity
+    A(3,1:4) = [0        0        2*t(1)^0 6*t(1)^1]; %acceleration
+    X(1,:) = waypoints(1,:);
+    
+    % Mid point continuity constraints
+for i = 1:(num_segments-1)
+    i1 = i+1;
+    A((4*(i-1))+1+1 , (4*(i-1))+(1:4))  = [1*t(i1)^0 1*t(i1)^1  1*t(i1)^2  1*t(i1)^3]; %position at end of previous segment
+    A((4*(i-1))+1+2 , (4*(i  ))+(1:4))  = [1*t(i1)^0 1*t(i1)^1  1*t(i1)^2  1*t(i1)^3]; %position at beginning of next segment
+    A((4*(i-1))+1+3 , (4*(i-1))+(1:8)) = [0        1*t(i1)^0   2*t(i1)^1  3*t(i1)^2 ...
+        0       -1*t(i1)^0  -2*t(i1)^1 -3*t(i1)^2 ]; %velocity continuity
+    A((4*(i-1))+1+4 , (4*(i-1))+(1:8)) = [0        0           2*t(i1)^0  6*t(i1)^1 ...
+        0        0          -2*t(i1)^0 -6*t(i1)^1]; %acceleration continuity
+    
+    X((4*(i-1))+1+1, :) = waypoints(i+1,:);
+    X((4*(i-1))+1+2, :) = waypoints(i+1,:);
+end
 
-%% Coefficient calculations
+% End point constraints
+A((4*num_segments)-2,(4*(num_segments-1))+(1:4)) = [1*t(num_waypoints)^0  1*t(num_waypoints)^1 1*t(num_waypoints)^2 1*t(num_waypoints)^3]; %position
+A((4*num_segments)-1,(4*(num_segments-1))+(1:4)) = [0                     1*t(num_waypoints)^0 2*t(num_waypoints)^1 3*t(num_waypoints)^2]; %velocity
+A((4*num_segments)-0,(6*(num_segments-1))+(1:4)) = [0                     0                    2*t(num_waypoints)^0 6*t(num_waypoints)^1]; %acceleration
+
+X((4*num_segments)-2,:) = waypoints(num_segments+1,:);
+
+C = A\X;
+    
+else
+%% Coefficient calculations for quintic
 A = zeros(6*num_segments, 6*num_segments);
 X = zeros(6*num_segments, 6);
 
@@ -64,7 +97,7 @@ A((6*num_segments)-0,(6*(num_segments-1))+(1:6)) = [0                     0     
 X((6*num_segments)-2,:) = waypoints(num_segments+1,:);
 
 C = A\X;
-
+end
 traj_start = toc;
 follow_traj = 1;
 
