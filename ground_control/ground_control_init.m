@@ -1,9 +1,9 @@
-close all 
+close all
 clear all
 
 %% SET UP GLOBAL VARIABLES
 global using_vicon send_vicon
-using_vicon = 1;
+using_vicon = 0;
 global using_xbee
 using_xbee = 1;
 
@@ -28,9 +28,9 @@ tic;
 %% SET UP XBEE
 global xbee
 
-if using_xbee 
-%         xbee = serial('/dev/tty.usbserial-DN02MM5K') %MAC
-    xbee = serial('/dev/ttyUSB0'); %LINUX    
+if using_xbee
+    xbee = serial('/dev/tty.usbserial-DN02MM5K') %MAC
+    %     xbee = serial('/dev/ttyUSB0'); %LINUX
     set(xbee,'DataBits',8)
     set(xbee,'StopBits',1)
     set(xbee,'Parity','none')
@@ -45,7 +45,7 @@ if using_vicon
     addpath 'MATLAB tools'
     global q_curr_vicon pos_vicon pos_des pos_store_new pos_control_on gains w_vicon ping_time
     global follow_traj waypoints C way_times
-    global quat_store time_store 
+    global quat_store time_store
     global home_pos home_quat
     global v_des w_des
     global cubic
@@ -63,6 +63,6 @@ if using_vicon
     
     rosinit();
     odom_sub = rossubscriber('/vicon/VI/odom','nav_msgs/Odometry',@pose_callback);
-%     packet_pub = rospublisher('/xbee_packets', 'std_msgs/ByteMultiArray');
+    %     packet_pub = rospublisher('/xbee_packets', 'std_msgs/ByteMultiArray');
     tic;
 end

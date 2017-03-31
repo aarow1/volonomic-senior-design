@@ -27,6 +27,8 @@ Vec6 motor_speeds;
 #define MOTORS_ENABLED 1
 #define PRINT_SPEEDS 0
 
+float motor_voltage = 10;
+
 void spinMotors_forces() {
 
   bool saturated = 0;
@@ -51,7 +53,11 @@ void spinMotors_forces() {
   spinMotors_speeds();
 }
 
+void readVoltage();
+
 void spinMotors_speeds() {
+  readVoltage();
+  
   if (MOTORS_ENABLED) {
     motor_client_0.cmd_velocity_.set(com, (int)motor_speeds(0));
     motor_client_1.cmd_velocity_.set(com, (int)motor_speeds(1));
@@ -72,6 +78,45 @@ void spinMotors_speeds() {
 
     SerialMotors.write(communication_buffer, communication_length);
   }
-
 }
+
+void readVoltage(){  
+  motor_client_4.obs_supply_volts_.get(com);
+  motor_client_4.obs_velocity_.get(com);
+  motor_client_4.drive_pwm_.get(com);
+  
+  // Reads however many bytes are currently available
+  communication_length = SerialMotors.readBytes(communication_buffer, SerialMotors.available());
+  
+  // Puts the recently read bytes into com's receive queue
+  com.SetRxBytes(communication_buffer,communication_length);
+
+  uint8_t *rx_data;   // temporary pointer to received type+data bytes
+  uint8_t rx_length;  // number of received type+data bytes
+  // while we have message packets to parse
+//  com.PeekPacket(&rx_data,&rx_length);
+  while(com.PeekPacket(&rx_data,&rx_length))
+  {    
+    // Share that packet with all client objects
+    motor_client_4.ReadMsg(com,rx_data,rx_length);
+
+    // Once we're done with the message packet, drop it
+    com.DropPacket();
+  }
+//  if(!com.PeekPacket((&rx_data,&rx_length))) Serial.println("NOT the thing");
+
+  // Check if we have any fresh data
+  // Checking for fresh data is not required, it simply
+  // lets you know if you received a message that you
+  // have not yet read.
+  if(motor_client_4.obs_supply_volts_.IsFresh())
+  {
+    motor_voltage = motor_client_4.obs_supply_volts_.get_reply();
+    Serial.printf("%2.2f,\t%2.2f,\t%2.2f\n", 
+      motor_voltage, motor_client_4.obs_velocity_.get_reply(),motor_client_4.drive_pwm_.get_reply());
+    
+  }
+}
+
+
 
