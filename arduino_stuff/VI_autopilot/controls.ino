@@ -27,6 +27,13 @@ Matrix<6, 6, float> A_inv = A_vi.Inverse();
 float x_arr[4][1] = {0.0, 1.0, 0.0, 0.0};
 Quaternion x(x_arr);
 
+float f_hover_arr[3][1] = {0.0, 0.0, VI_mass*g}; 
+Vec3 f_hover(f_hover_arr);
+float t_hover_arr[3][1] = {0.0, 0.0, 0.0}; 
+Vec3 t_hover(t_hover_arr);
+// Vec6 motor_speeds;
+// Vec6 motor_speeds_hover;
+
 template <typename T> T sign(T& val);
 Quaternion qInverse(Quaternion q);
 Quaternion qMultiply(Quaternion a, Quaternion b);
@@ -103,13 +110,18 @@ void calculateMotorForces() {
 
     // Add in integral control
     t_des = t_des + scalar_multiply(ki_torque, t_des_integral);
-    Serial.printf("t_des =[%2.2f,\t%2.2f,\t%2.2f]\n", t_des(0), t_des(1), t_des(2));
   }
 
   // Rotate f_des into body frame
-  static Vec3 f_des_body;
+  static Vec3 f_des_body; 
   f_des_body = qRotate(f_des, q_curr);
   Multiply(A_inv, (f_des_body && t_des), motor_forces);
+
+  //forces rqd to hover
+  static Vec3 f_hover_body;
+  f_hover_body = qRotate(f_hover, q_curr);
+  Multiply(A_inv, (f_hover_body && t_hover), motor_forces_hover);
+
 
   if (DEBUG_calculateMotorForces) {
         Serial.print("q_curr"); q_toString(q_curr);

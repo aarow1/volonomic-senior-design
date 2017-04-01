@@ -64,6 +64,14 @@ Vec3 scalar_multiply(float a, Vec3 b) {
   return c;
 }
 
+Vec6 scalar_multiply(float a, Vec6 b) {
+  static Vec6 c;
+  for (int i = 0; i < 6; i++) {
+    c(i) = a * b(i);
+  }
+  return c;
+}
+
 void q_toString(Quaternion q) {
   Serial.printf("[%2.2f,\t%2.2f,\t%2.2f,\t%2.2f]\n", q(0), q(1), q(2), q(3));
 }

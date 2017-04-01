@@ -27,6 +27,7 @@ GAINS_TYPE = 37;
 PING_TYPE = 38;
 RETURN_TYPE = 39;
 STOP_TYPE = 40;
+CHECK_VOLTAGE_TYPE = 41;
 PKT_END_ENTRY = 69;
 
 INT_16_MAX  = 32767.0;
@@ -84,6 +85,8 @@ switch (pkt_type)
             ping_data_1 ...
             ping_data_2 ...
             PKT_END_ENTRY];
+    case 'check_voltage'
+        pkt = [PKT_START_ENTRY CHECK_VOLTAGE_TYPE PKT_END_ENTRY];
     case 'stop'
         pkt = [PKT_START_ENTRY STOP_TYPE PKT_END_ENTRY];
     otherwise

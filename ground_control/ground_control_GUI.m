@@ -22,7 +22,7 @@ function varargout = ground_control_GUI(varargin)
 
 % Edit the above text to modify the response to help ground_control_GUI
 
-% Last Modified by GUIDE v2.5 31-Mar-2017 03:56:55
+% Last Modified by GUIDE v2.5 01-Apr-2017 00:24:05
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -648,3 +648,10 @@ function checkbox4_Callback(hObject, eventdata, handles)
 global cubic
 cubic = get(hObject,'Value');
 fprintf('cubic = %i\n',cubic);
+
+
+% --- Executes on button press in pushbutton21.
+sendPkt('check_voltage');
+% hObject    handle to pushbutton21 (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)

@@ -22,42 +22,74 @@ ComplexMotorControlClient motor_client_3(3); //
 ComplexMotorControlClient motor_client_4(4); //
 ComplexMotorControlClient motor_client_5(5); //
 
-Vec6 motor_speeds;
+float motor_voltage = 10.0;
+
 #define MAX_MOTOR_SPEED 2000
 #define MOTORS_ENABLED 1
 #define PRINT_SPEEDS 0
 
-float motor_voltage = 10;
 
 void spinMotors_forces() {
 
-  bool saturated = 0;
+
+  static bool saturated; static int motor_saturated;
+  static float overage = 0;
   saturated = 0;
   for (int j = 0; j < 6; j++) {
     const float prop_const =  0.0000011858;
     motor_speeds(j) = sqrt(((1.0 / prop_const) * abs(motor_forces(j)))) * sign(motor_forces(j));
-
+    motor_speeds_hover(j) = sqrt(((1.0 / prop_const) * abs(motor_forces_hover(j)))) * sign(motor_forces_hover(j));
     // Limit motor speed to not go crazy
     if (motor_speeds(j) > MAX_MOTOR_SPEED) {
-      motor_speeds(j) = MAX_MOTOR_SPEED;
+      // motor_speeds(j) = MAX_MOTOR_SPEED;
       saturated = 1;
+      motor_saturated = j;
+      overage = motor_speeds(j) - MAX_MOTOR_SPEED;
     }
     else if (motor_speeds(j) < -1 * MAX_MOTOR_SPEED) {
-      motor_speeds(j) = -1 * MAX_MOTOR_SPEED;
+      // motor_speeds(j) = -1 * MAX_MOTOR_SPEED;
       saturated = 1;
+      motor_saturated = j;
+      overage = motor_speeds(j) + MAX_MOTOR_SPEED;
     }
   }
+  //go down by overage
+  Vec6 motor_speeds_scaled(six_zeros); 
+  static float non_hover_speed; static float saturated_non_hover_speed;
+  static Vec6 non_hover_speeds;
+  if (saturated) {
+    non_hover_speed = motor_speeds(motor_saturated) - motor_speeds_hover(motor_saturated);
+    saturated_non_hover_speed = non_hover_speed - overage;
+    Subtract(motor_speeds,motor_speeds_hover,non_hover_speeds);
+    motor_speeds_scaled = scalar_multiply(abs(saturated_non_hover_speed/non_hover_speed),
+      non_hover_speeds); 
+    motor_speeds = motor_speeds_scaled + motor_speeds_hover;
+  } 
+  // Serial.println(saturated);
+  digitalWrite(ledPin, saturated);
+  // bool saturated = 0;
+  // saturated = 0;
+  // for (int j = 0; j < 6; j++) {
+  //   const float prop_const =  0.0000011858;
+  //   motor_speeds(j) = sqrt(((1.0 / prop_const) * abs(motor_forces(j)))) * sign(motor_forces(j));
+
+  //   // Limit motor speed to not go crazy
+  //   if (motor_speeds(j) > MAX_MOTOR_SPEED) {
+  //     motor_speeds(j) = MAX_MOTOR_SPEED;
+  //     saturated = 1;
+  //   }
+  //   else if (motor_speeds(j) < -1 * MAX_MOTOR_SPEED) {
+  //     motor_speeds(j) = -1 * MAX_MOTOR_SPEED;
+  //     saturated = 1;
+  //   }
+  // }
 
   // Serial.println(saturated);
   digitalWrite(ledPin, saturated);
   spinMotors_speeds();
 }
 
-void readVoltage();
-
 void spinMotors_speeds() {
-  readVoltage();
-  
   if (MOTORS_ENABLED) {
     motor_client_0.cmd_velocity_.set(com, (int)motor_speeds(0));
     motor_client_1.cmd_velocity_.set(com, (int)motor_speeds(1));
@@ -69,8 +101,8 @@ void spinMotors_speeds() {
 
   if (PRINT_SPEEDS) {
     Serial.printf("motor_speeds = [%i,\t%i,\t%i,\t%i,\t%i,\t%i]\n",
-                  (int)motor_speeds(0), (int)motor_speeds(1), (int)motor_speeds(2),
-                  (int)motor_speeds(3), (int)motor_speeds(4), (int)motor_speeds(5));
+      (int)motor_speeds(0), (int)motor_speeds(1), (int)motor_speeds(2),
+      (int)motor_speeds(3), (int)motor_speeds(4), (int)motor_speeds(5));
   }
 
   if (com.GetTxBytes(communication_buffer, communication_length))
@@ -80,7 +112,7 @@ void spinMotors_speeds() {
   }
 }
 
-void readVoltage(){  
+float readVoltage(){  
   motor_client_4.obs_supply_volts_.get(com);
   motor_client_4.obs_velocity_.get(com);
   motor_client_4.drive_pwm_.get(com);
@@ -112,10 +144,10 @@ void readVoltage(){
   if(motor_client_4.obs_supply_volts_.IsFresh())
   {
     motor_voltage = motor_client_4.obs_supply_volts_.get_reply();
-    Serial.printf("%2.2f,\t%2.2f,\t%2.2f\n", 
-      motor_voltage, motor_client_4.obs_velocity_.get_reply(),motor_client_4.drive_pwm_.get_reply());
-    
+    // Serial.printf("%2.2f,\t%2.2f,\t%2.2f\n", 
+      // motor_voltage, motor_client_4.obs_velocity_.get_reply(),motor_client_4.drive_pwm_.get_reply());
   }
+  return motor_voltage;
 }
 
 
