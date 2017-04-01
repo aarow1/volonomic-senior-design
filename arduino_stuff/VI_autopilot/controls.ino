@@ -27,13 +27,6 @@ Matrix<6, 6, float> A_inv = A_vi.Inverse();
 float x_arr[4][1] = {0.0, 1.0, 0.0, 0.0};
 Quaternion x(x_arr);
 
-float f_hover_arr[3][1] = {0.0, 0.0, VI_mass*g}; 
-Vec3 f_hover(f_hover_arr);
-float t_hover_arr[3][1] = {0.0, 0.0, 0.0}; 
-Vec3 t_hover(t_hover_arr);
-// Vec6 motor_speeds;
-// Vec6 motor_speeds_hover;
-
 template <typename T> T sign(T& val);
 Quaternion qInverse(Quaternion q);
 Quaternion qMultiply(Quaternion a, Quaternion b);
@@ -98,13 +91,13 @@ void calculateMotorForces() {
     //    + cross(w_curr, J_vi * w_curr);
 
     // Calculate integral from unintegrated calculated t
-//    const float t_des_integral_lim = 1;
+    //    const float t_des_integral_lim = 1;
     for (int i = 0; i < 3; i++) {
       //    t_des_integral(i) = constrain(t_des_integral(i) + t_des(i)*dt,
       //      -1*t_des_integral_lim, t_des_integral_lim);
       t_des_integral(i) = t_des_integral(i) + t_des(i) * dt;
     }
-//    Serial.printf("t_des_integral =[%2.2f,\t%2.2f,\t%2.2f]\t", t_des_integral(0), t_des_integral(1), t_des_integral(2));
+    //    Serial.printf("t_des_integral =[%2.2f,\t%2.2f,\t%2.2f]\t", t_des_integral(0), t_des_integral(1), t_des_integral(2));
 
     last_control = millis();
 
@@ -113,21 +106,16 @@ void calculateMotorForces() {
   }
 
   // Rotate f_des into body frame
-  static Vec3 f_des_body; 
+  static Vec3 f_des_body;
   f_des_body = qRotate(f_des, q_curr);
   Multiply(A_inv, (f_des_body && t_des), motor_forces);
 
-  //forces rqd to hover
-  static Vec3 f_hover_body;
-  f_hover_body = qRotate(f_hover, q_curr);
-  Multiply(A_inv, (f_hover_body && t_hover), motor_forces_hover);
-
 
   if (DEBUG_calculateMotorForces) {
-        Serial.print("q_curr"); q_toString(q_curr);
-        Serial.print("q_des"); q_toString(q_des);
-        Serial.print("q_err"); q_toString(q_err);
-        Serial.printf("w_des =[%2.8f,\t%2.8f,\t%2.8f]\t", w_des(0), w_des(1), w_des(2));
+    Serial.print("q_curr"); q_toString(q_curr);
+    Serial.print("q_des"); q_toString(q_des);
+    Serial.print("q_err"); q_toString(q_err);
+    Serial.printf("w_des =[%2.8f,\t%2.8f,\t%2.8f]\t", w_des(0), w_des(1), w_des(2));
     //    Serial.printf("w_curr =[%2.2f,\t%2.2f,\t%2.2f]\n", w_curr(0), w_curr(1), w_curr(2));
     //    Serial.printf("dt = %2.5f\t", dt);
     Serial.printf("t_des =[%2.2f,\t%2.2f,\t%2.2f]\t", t_des(0), t_des(1), t_des(2));

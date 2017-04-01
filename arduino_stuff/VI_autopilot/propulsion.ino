@@ -28,61 +28,35 @@ float motor_voltage = 10.0;
 #define MOTORS_ENABLED 1
 #define PRINT_SPEEDS 0
 
-
-void spinMotors_forces() {
-
-
-  static bool saturated; static int motor_saturated;
-  static float overage = 0;
+bool saturated;  int motor_saturated;
+bool check_saturation () {
   saturated = 0;
   for (int j = 0; j < 6; j++) {
-    const float prop_const =  0.0000011858;
-    motor_speeds(j) = sqrt(((1.0 / prop_const) * abs(motor_forces(j)))) * sign(motor_forces(j));
-    motor_speeds_hover(j) = sqrt(((1.0 / prop_const) * abs(motor_forces_hover(j)))) * sign(motor_forces_hover(j));
-    // Limit motor speed to not go crazy
-    if (motor_speeds(j) > MAX_MOTOR_SPEED) {
+    if ((motor_speeds(j) > MAX_MOTOR_SPEED) || (motor_speeds(j) < -1 * MAX_MOTOR_SPEED)) {
       // motor_speeds(j) = MAX_MOTOR_SPEED;
       saturated = 1;
       motor_saturated = j;
-      overage = motor_speeds(j) - MAX_MOTOR_SPEED;
-    }
-    else if (motor_speeds(j) < -1 * MAX_MOTOR_SPEED) {
-      // motor_speeds(j) = -1 * MAX_MOTOR_SPEED;
-      saturated = 1;
-      motor_saturated = j;
-      overage = motor_speeds(j) + MAX_MOTOR_SPEED;
+      return saturated;
+      // overage = motor_speeds(j) - MAX_MOTOR_SPEED;
     }
   }
-  //go down by overage
-  Vec6 motor_speeds_scaled(six_zeros); 
-  static float non_hover_speed; static float saturated_non_hover_speed;
-  static Vec6 non_hover_speeds;
-  if (saturated) {
-    non_hover_speed = motor_speeds(motor_saturated) - motor_speeds_hover(motor_saturated);
-    saturated_non_hover_speed = non_hover_speed - overage;
-    Subtract(motor_speeds,motor_speeds_hover,non_hover_speeds);
-    motor_speeds_scaled = scalar_multiply(abs(saturated_non_hover_speed/non_hover_speed),
-      non_hover_speeds); 
-    motor_speeds = motor_speeds_scaled + motor_speeds_hover;
-  } 
-  // Serial.println(saturated);
-  digitalWrite(ledPin, saturated);
-  // bool saturated = 0;
-  // saturated = 0;
-  // for (int j = 0; j < 6; j++) {
-  //   const float prop_const =  0.0000011858;
-  //   motor_speeds(j) = sqrt(((1.0 / prop_const) * abs(motor_forces(j)))) * sign(motor_forces(j));
+  return saturated;
+}
 
-  //   // Limit motor speed to not go crazy
-  //   if (motor_speeds(j) > MAX_MOTOR_SPEED) {
-  //     motor_speeds(j) = MAX_MOTOR_SPEED;
-  //     saturated = 1;
-  //   }
-  //   else if (motor_speeds(j) < -1 * MAX_MOTOR_SPEED) {
-  //     motor_speeds(j) = -1 * MAX_MOTOR_SPEED;
-  //     saturated = 1;
-  //   }
-  // }
+void spinMotors_forces() {
+  // static float overage = 0;
+  for (int j = 0; j < 6; j++) {
+    const float prop_const =  0.0000011858;
+    motor_speeds(j) = sqrt(((1.0 / prop_const) * abs(motor_forces(j)))) * sign(motor_forces(j));
+  }
+
+  while (check_saturation()) {
+    motor_forces = scalar_multiply(MAX_MOTOR_SPEED / abs(motor_forces(motor_saturated)), motor_forces);
+    
+    for (int j = 0; j < 6; j++) {
+    const float prop_const =  0.0000011858;
+    motor_speeds(j) = sqrt(((1.0 / prop_const) * abs(motor_forces(j)))) * sign(motor_forces(j));
+  }
 
   // Serial.println(saturated);
   digitalWrite(ledPin, saturated);
@@ -101,8 +75,8 @@ void spinMotors_speeds() {
 
   if (PRINT_SPEEDS) {
     Serial.printf("motor_speeds = [%i,\t%i,\t%i,\t%i,\t%i,\t%i]\n",
-      (int)motor_speeds(0), (int)motor_speeds(1), (int)motor_speeds(2),
-      (int)motor_speeds(3), (int)motor_speeds(4), (int)motor_speeds(5));
+                  (int)motor_speeds(0), (int)motor_speeds(1), (int)motor_speeds(2),
+                  (int)motor_speeds(3), (int)motor_speeds(4), (int)motor_speeds(5));
   }
 
   if (com.GetTxBytes(communication_buffer, communication_length))
@@ -112,40 +86,40 @@ void spinMotors_speeds() {
   }
 }
 
-float readVoltage(){  
+float readVoltage() {
   motor_client_4.obs_supply_volts_.get(com);
   motor_client_4.obs_velocity_.get(com);
   motor_client_4.drive_pwm_.get(com);
-  
+
   // Reads however many bytes are currently available
   communication_length = SerialMotors.readBytes(communication_buffer, SerialMotors.available());
-  
+
   // Puts the recently read bytes into com's receive queue
-  com.SetRxBytes(communication_buffer,communication_length);
+  com.SetRxBytes(communication_buffer, communication_length);
 
   uint8_t *rx_data;   // temporary pointer to received type+data bytes
   uint8_t rx_length;  // number of received type+data bytes
   // while we have message packets to parse
-//  com.PeekPacket(&rx_data,&rx_length);
-  while(com.PeekPacket(&rx_data,&rx_length))
-  {    
+  //  com.PeekPacket(&rx_data,&rx_length);
+  while (com.PeekPacket(&rx_data, &rx_length))
+  {
     // Share that packet with all client objects
-    motor_client_4.ReadMsg(com,rx_data,rx_length);
+    motor_client_4.ReadMsg(com, rx_data, rx_length);
 
     // Once we're done with the message packet, drop it
     com.DropPacket();
   }
-//  if(!com.PeekPacket((&rx_data,&rx_length))) Serial.println("NOT the thing");
+  //  if(!com.PeekPacket((&rx_data,&rx_length))) Serial.println("NOT the thing");
 
   // Check if we have any fresh data
   // Checking for fresh data is not required, it simply
   // lets you know if you received a message that you
   // have not yet read.
-  if(motor_client_4.obs_supply_volts_.IsFresh())
+  if (motor_client_4.obs_supply_volts_.IsFresh())
   {
     motor_voltage = motor_client_4.obs_supply_volts_.get_reply();
-    // Serial.printf("%2.2f,\t%2.2f,\t%2.2f\n", 
-      // motor_voltage, motor_client_4.obs_velocity_.get_reply(),motor_client_4.drive_pwm_.get_reply());
+    // Serial.printf("%2.2f,\t%2.2f,\t%2.2f\n",
+    // motor_voltage, motor_client_4.obs_velocity_.get_reply(),motor_client_4.drive_pwm_.get_reply());
   }
   return motor_voltage;
 }
