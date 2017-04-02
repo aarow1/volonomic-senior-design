@@ -22,7 +22,7 @@ function varargout = ground_control_GUI(varargin)
 
 % Edit the above text to modify the response to help ground_control_GUI
 
-% Last Modified by GUIDE v2.5 01-Apr-2017 00:24:05
+% Last Modified by GUIDE v2.5 01-Apr-2017 12:30:06
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -428,7 +428,7 @@ pos_des = home_pos; q_des = home_q;
 home_euler = rad2deg(quat2eul(home_q));
 fprintf('home position: [%2.2f, \t%2.2f, \t%2.2f] \thome q: [\t%2.2f  \t%2.2f \t%2.2f \t%2.2f]\n',...
     home_pos(1),home_pos(2),home_pos(3),home_q(1),home_q(2),home_q(3),home_q(4));
-fprintf('home euler: [%3.4f \t%3.4f \t%3.4f]\n', home_euler(1), home_euler(2), home_euler(3));
+fprintf('home way: [%2.2f, \t%2.2f, \t%2.2f,\t %3.4f \t%3.4f \t%3.4f]\n',  home_pos(1),home_pos(2),home_pos(3), home_euler(1), home_euler(2), home_euler(3));
 
 % --- Executes on button press in pushbutton12.
 function pushbutton12_Callback(hObject, eventdata, handles)
@@ -557,6 +557,7 @@ function pushbutton20_Callback(hObject, eventdata, handles)
 % handles    structure with handles and user data (see GUIDATA)
 global home_pos home_q waypoints
 home_rot = rad2deg(quat2eul(home_q,'zyx'));
+home_pos(3) = home_pos(3) + .3;
 waypoints = [home_pos home_rot];
 disp('going home!');
 trajectory_generator();
@@ -655,3 +656,11 @@ sendPkt('check_voltage');
 % hObject    handle to pushbutton21 (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
+
+
+% --- Executes on button press in pushbutton22.
+function pushbutton22_Callback(hObject, eventdata, handles)
+% hObject    handle to pushbutton22 (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+sendPkt('check_voltage');

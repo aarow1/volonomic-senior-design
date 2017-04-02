@@ -24,6 +24,7 @@ else
         num =  C(:,dim)' * t_vec;
         state(dim) = num;
     end
+    state
     R = eul2rotm(deg2rad(state(4:6)), 'zyx');
     q_des = rotm2quat(R);
     pos_des = state(1:3);
