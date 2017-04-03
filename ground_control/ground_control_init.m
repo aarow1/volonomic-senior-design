@@ -3,7 +3,7 @@ clear all
 
 %% SET UP GLOBAL VARIABLES
 global using_vicon send_vicon
-using_vicon = 0;
+using_vicon = 1;
 global using_xbee
 using_xbee = 1;
 
@@ -29,8 +29,8 @@ tic;
 global xbee
 
 if using_xbee
-    xbee = serial('/dev/tty.usbserial-DN02MM5K') %MAC
-    %     xbee = serial('/dev/ttyUSB0'); %LINUX
+    %     xbee = serial('/dev/tty.usbserial-DN02MM5K') %MAC
+    xbee = serial('/dev/ttyUSB0'); %LINUX
     set(xbee,'DataBits',8)
     set(xbee,'StopBits',1)
     set(xbee,'Parity','none')
