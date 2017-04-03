@@ -22,12 +22,6 @@ function varargout = ground_control_GUI(varargin)
 
 % Edit the above text to modify the response to help ground_control_GUI
 
-<<<<<<< HEAD
-% Last Modified by GUIDE v2.5 02-Apr-2017 22:15:10
-=======
-% Last Modified by GUIDE v2.5 01-Apr-2017 12:30:06
->>>>>>> origin/master
-
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
 gui_State = struct('gui_Name',       mfilename, ...
@@ -662,8 +656,6 @@ sendPkt('check_voltage');
 % handles    structure with handles and user data (see GUIDATA)
 
 
-<<<<<<< HEAD
-
 function edit18_Callback(hObject, eventdata, handles)
 % hObject    handle to edit18 (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
@@ -690,7 +682,7 @@ function edit18_CreateFcn(hObject, eventdata, handles)
 %       See ISPC and COMPUTER.
 if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
     set(hObject,'BackgroundColor','white');
-end
+en
 % --- Executes on button press in pushbutton22.
 function pushbutton22_Callback(hObject, eventdata, handles)
 % hObject    handle to pushbutton22 (see GCBO)
