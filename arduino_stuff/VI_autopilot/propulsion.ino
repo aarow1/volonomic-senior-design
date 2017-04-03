@@ -57,6 +57,7 @@ void spinMotors_forces() {
     const float prop_const =  0.0000011858;
     motor_speeds(j) = sqrt(((1.0 / prop_const) * abs(motor_forces(j)))) * sign(motor_forces(j));
   }
+  }
 
   // Serial.println(saturated);
   digitalWrite(ledPin, saturated);

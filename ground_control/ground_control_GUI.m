@@ -22,7 +22,7 @@ function varargout = ground_control_GUI(varargin)
 
 % Edit the above text to modify the response to help ground_control_GUI
 
-% Last Modified by GUIDE v2.5 01-Apr-2017 00:24:05
+% Last Modified by GUIDE v2.5 02-Apr-2017 22:15:10
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -655,3 +655,33 @@ sendPkt('check_voltage');
 % hObject    handle to pushbutton21 (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
+
+
+
+function edit18_Callback(hObject, eventdata, handles)
+% hObject    handle to edit18 (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hints: get(hObject,'String') returns contents of edit18 as text
+%        str2double(get(hObject,'String')) returns contents of edit18 as a double
+global q_des f_des w_des 
+rot = [0 0 str2double(get(hObject,'String'))];
+q_des = eul2quat(deg2rad(rot));
+f_des = [0 0 0]; w_des = [0 0 0];
+fprintf('rot_des = [%2.2f \t2.2f \t2.2f]\n',rot(1), rot(2), rot(3));
+fprintf('q_des = [%2.2f \t%2.2f \t%2.2f \t%2.2f]\n',q_des(1),q_des(2),q_des(3),q_des(4));
+sendPkt('no_vicon');
+
+
+% --- Executes during object creation, after setting all properties.
+function edit18_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to edit18 (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+% Hint: edit controls usually have a white background on Windows.
+%       See ISPC and COMPUTER.
+if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor','white');
+end
